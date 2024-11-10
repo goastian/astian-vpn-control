@@ -51,8 +51,7 @@ class WgTransformer extends TransformerAbstract
                 'index' => route('wgs.index'),
                 'store' => route('wgs.store'),
                 'show' => route('wgs.show', ['wg' => $data->id]),
-                'update' => route('wgs.update', ['wg' => $data->id]),
-                'disable' => route('wgs.destroy', ['wg' => $data->id]),
+                'delete' => route('wgs.destroy', ['wg' => $data->id]),
                 'toggle' => route('wgs.toggle', ['wg' => $data->id]),
             ],
         ];
