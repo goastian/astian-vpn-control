@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Wg;
 
-use App\Http\Controllers\GlobalController as Controller;
 use App\Models\Server\Wg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Elyerr\ApiResponse\Exceptions\ReportError;
+use App\Http\Controllers\GlobalController as Controller;
 
 class WgController extends Controller
 {
@@ -119,6 +120,8 @@ class WgController extends Controller
      */
     public function destroy(Wg $wg)
     {
+        throw_if($wg->peers()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
+
         $wg->delete();
 
         return $this->showOne($wg, $wg->transformer);

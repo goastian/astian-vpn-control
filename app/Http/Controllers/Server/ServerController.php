@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Server;
 
 use App\Http\Controllers\GlobalController;
 use App\Models\Server\Server;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ServerController extends GlobalController
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -105,6 +105,8 @@ class ServerController extends GlobalController
      */
     public function destroy(Server $server)
     {
+        throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
+
         $server->delete();
 
         return $this->show($server);
