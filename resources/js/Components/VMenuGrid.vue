@@ -4,7 +4,7 @@
             <v-icon
                 color="light-blue-darken-1"
                 :icon="$utils.toKebabCase('mdiViewGrid')"
-                size="25" 
+                size="25"
             ></v-icon>
         </template>
         <v-menu activator="parent">
@@ -33,18 +33,34 @@
 </template>
 <script>
 export default {
-    props: {
-        menus: {
-            type: [Object, Array],
-            required: true,
-        },
-    },
 
     data() {
         return {
             drawer: false,
             apps: {},
             visible: false,
+            menus: [
+                {
+                    name: "Cloud",
+                    icon: "mdiCloudCheckVariantOutline",
+                    route: "https://cloud.astian.org",
+                },
+                {
+                    name: "Notes",
+                    icon: "mdiNotebookHeartOutline",
+                    route: "https://notes.astian.org",
+                },
+                {
+                    name: "Calendar",
+                    icon: "mdiCalendarMultiselectOutline",
+                    route: "https://calendar.astian.org",
+                },
+                {
+                    name: "Contacts",
+                    icon: "mdiCardAccountMailOutline",
+                    route: "https://notes.astian.org",
+                },
+            ],
         };
     },
 
