@@ -59,7 +59,7 @@ class PeerController extends Controller
             $peer->preshared_key = $preshared_key;
             $peer->allowed_ips = $peer->generateUniqueIp();
             $peer->persistent_keepalive = 25;
-            $peer->user_id = '008649e3-1561-471b-bef3-02293a8826f3';
+            $peer->user_id = $this->user()->id;
             $peer->wg_id = $wg->id;
             $peer->save();
 
