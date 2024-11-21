@@ -34,9 +34,7 @@ class ServerController extends GlobalController
         $request->validate([
             'country' => ['string', 'max:190'],
             'ipv4' => ['required', 'unique:servers,ipv4', 'ipv4'],
-            'city' => ['nullable', 'max:190'],
-            'ipv6' => ['nullable', 'ipv6'],
-            'uri' => ['nullable', 'max:190'],
+            'port' => ['required', 'max:6'],
         ]);
 
         DB::transaction(function () use ($request, $server) {
@@ -62,32 +60,25 @@ class ServerController extends GlobalController
     {
         $request->validate([
             'country' => ['string', 'max:190'],
-            'city' => ['string', 'max:190'],
             'ipv4' => ['required', 'unique:servers,ipv4,' . $server->id, 'ipv4'],
-            'ipv6' => ['nullable', 'ipv6'],
-            'uri' => ['nullable', 'max:190'],
+            'port' => ['required', 'max:6']
         ]);
 
         DB::transaction(function () use ($request, $server) {
 
             $updated = false;
 
-            if ($this->is_diferent($server->country, $request->country)) {
+            if ($this->is_different($server->country, $request->country)) {
                 $updated = true;
                 $server->country = $request->country;
             }
 
-            if ($this->is_diferent($server->city, $request->city)) {
-                $updated = true;
-                $server->city = $request->city;
-            }
-
-            if ($this->is_diferent($server->ipv4, $request->ipv4)) {
+            if ($this->is_different($server->ipv4, $request->ipv4)) {
                 $updated = true;
                 $server->ipv4 = $request->ipv4;
             }
 
-            if ($this->is_diferent($server->ipv6, $request->ipv6)) {
+            if ($this->is_different($server->ipv6, $request->ipv6)) {
                 $updated = true;
                 $server->ipv6 = $request->ipv6;
             }

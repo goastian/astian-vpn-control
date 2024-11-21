@@ -2,57 +2,76 @@
 
 namespace App\Http\Controllers\Wg;
 
+use App\Wrapper\Core;
 use App\Models\Server\Wg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Exception\ClientException;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 use App\Http\Controllers\GlobalController as Controller;
 
 class WgController extends Controller
 {
-
     public function __construct()
     {
         parent::__construct();
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Show the all resources
+     * @param \App\Models\Server\Wg $wg
+     * @return \Elyerr\ApiResponse\Assets\Json
      */
     public function index(Wg $wg)
     {
-        $params = $this->filter_transform($wg->transformaer);
+        $params = $this->filter_transform($wg->transformer);
         $wgs = $this->search($wg->table, $params);
 
         return $this->showAll($wgs, $wg->transformer);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Create a new resource
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Server\Wg $wg
+     * @return \Elyerr\ApiResponse\Assets\Json
      */
     public function store(Request $request, Wg $wg)
     {
         $request->validate([
-            'name' => ['required', 'max:20'],
+            'name' => [
+                'required',
+                'max:20',
+                function ($attribute, $value, $fail) use ($request) {
+                    $wg = Wg::where('name', $value)->first();
+
+                    if ($wg && $request->server_id && $wg->server_id == $request->server_id) {
+                        $fail("The $value has already been registered on this server.");
+                    }
+                }
+            ],
             'listen_port' => ['required', 'max:10'],
+            'interface' => ['required', 'max:50'],
+            'server_id' => ['required', 'exists:servers,id'],
             'dns_1' => ['nullable', 'max:190'],
             'dns_2' => ['nullable', 'max:190'],
-            'server_id' => ['required', 'exists:servers,id'],
         ]);
 
+
         DB::transaction(function () use ($request, $wg) {
-            //generate a private key
 
             $wg = $wg->fill($request->except('private_key'));
-            $wg->private_key = $wg->genratePrivKey();
-
+            $wg->private_key = $wg->generatePrivKey();
+            $wg->active = true;
             $wg->save();
-
+            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core->mountInterface(
+                $request->name,
+                "10.0.0.1/8",
+                $wg->private_key,
+                $wg->interface,
+                $wg->listen_port
+            );
         });
 
         return $this->showOne($wg, $wg->transformer, 201);
@@ -60,10 +79,9 @@ class WgController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Show a resource
+     * @param \App\Models\Server\Wg $server
+     * @return \Elyerr\ApiResponse\Assets\Json
      */
     public function show(Wg $server)
     {
@@ -79,6 +97,8 @@ class WgController extends Controller
      */
     public function update(Request $request, Wg $wg)
     {
+        throw_if($wg->active, new ReportError(__('This action can be done, please stop the Wireguard Interface'), 422));
+
         $request->validate([
             'name' => ['nullable', 'max:20'],
             'dns_1' => ['nullable', 'max:190'],
@@ -89,17 +109,12 @@ class WgController extends Controller
 
             $updated = false;
 
-            if ($this->is_diferent($wg->name, $request->name)) {
-                $updated = true;
-                $wg->name = $request->name;
-            }
-
-            if ($this->is_diferent($wg->dns_1, $request->dns_1)) {
+            if ($this->is_different($wg->dns_1, $request->dns_1)) {
                 $updated = true;
                 $wg->dns_1 = $request->dns_1;
             }
 
-            if ($this->is_diferent($wg->dns_2, $request->dns_2)) {
+            if ($this->is_different($wg->dns_2, $request->dns_2)) {
                 $updated = true;
                 $wg->dns_2 = $request->dns_2;
             }
@@ -113,16 +128,22 @@ class WgController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Destroy current resource
+     * @param \App\Models\Server\Wg $wg
+     * @return \Elyerr\ApiResponse\Assets\Json
      */
     public function destroy(Wg $wg)
     {
+        throw_if($wg->active, new ReportError(__('Unable to delete this resource because is active. Please shutdown and try again.'), 403));
         throw_if($wg->peers()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
 
-        $wg->delete();
+        DB::transaction(function () use ($wg) {
+
+            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core->removeInterface($wg->name, $wg->interface);
+
+            $wg->delete();
+        });
 
         return $this->showOne($wg, $wg->transformer);
     }
@@ -134,12 +155,30 @@ class WgController extends Controller
      */
     public function toggle(Wg $wg)
     {
-        /**
-         * More action
-         */
-        $wg->active = !$wg->active ? now() : null;
-        $wg->push();
+        if ($wg->active) {
+            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core->shutdownInterface($wg->name);
+            $wg->active = !$wg->active;
+            $wg->push();
+        } else {
+            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core->startInterface($wg->name);
+            $wg->active = !$wg->active;
+            $wg->push();
+        }
 
         return $this->showOne($wg, $wg->transformer, 201);
+    }
+
+    /**
+     * show interfaces of interfaces
+     * @param mixed $ip
+     * @param mixed $port
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function interfaces($ip, $port)
+    {
+        $server = new Core($ip, $port);
+        return $server->networkInterfaces();
     }
 }

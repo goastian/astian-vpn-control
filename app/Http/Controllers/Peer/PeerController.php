@@ -2,44 +2,57 @@
 
 namespace App\Http\Controllers\Peer;
 
-use App\Http\Controllers\GlobalController as Controller;
-use App\Models\Server\Peer;
+use App\Wrapper\Core;
 use App\Models\Server\Wg;
+use App\Models\Server\Peer;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\GlobalController as Controller;
 
 class PeerController extends Controller
 {
-
     public function __construct()
     {
         parent::__construct();
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Show all resources
+     * @param \App\Models\Server\Peer $peer
+     * @return \Elyerr\ApiResponse\Assets\Json
      */
     public function index(Peer $peer)
     {
-        $params = $this->filter_transform($peer->tranformer);
+        $params = $this->filter_transform($peer->transformer);
         $data = $this->search($peer->table, $params);
 
         return $this->showAll($data, $peer->transformer);
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * Store a new resource
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Server\Peer $peer
+     * @param \App\Models\Server\Wg $wg
+     * @return \Elyerr\ApiResponse\Assets\Json
      */
     public function store(Request $request, Peer $peer, Wg $wg)
     {
         $request->validate([
             'name' => ['required'],
-            'wg_id' => ['required', 'exists:wgs,id'],
+            'wg_id' => [
+                'required',
+                'exists:wgs,id',
+                function ($attribute, $value, $fail) use ($wg) {
+
+                    $wg = $wg->where('id', $value)->first();
+
+                    if (!$wg->active) {
+                        $fail("The $wg->name is currently offline and cannot be used.");
+                    }
+                }
+            ],
         ]);
 
         //Wireguar interface
@@ -52,12 +65,13 @@ class PeerController extends Controller
 
             //Preshared key
             $preshared_key = $peer->generatePresharedkey();
+            $ip_allowed = $peer->generateUniqueIp();
 
             //peer
             $peer = $peer->fill($request->only('name'));
             $peer->public_key = $keys['public_key'];
             $peer->preshared_key = $preshared_key;
-            $peer->allowed_ips = $peer->generateUniqueIp();
+            $peer->allowed_ips = $ip_allowed;
             $peer->persistent_keepalive = 25;
             $peer->user_id = $this->user()->id;
             $peer->wg_id = $wg->id;
@@ -71,7 +85,7 @@ class PeerController extends Controller
                 "",
                 "[Peer]",
                 "PublicKey = {$wg->generatePubKey()}",
-                "Endpoint = {$wg->getEndpoint()}",
+                "Endpoint = {$wg->getServer()}",
                 "AllowedIPs = 0.0.0.0/0",
                 "PresharedKey = {$preshared_key}",
                 "PersistentKeepalive = {$peer->persistent_keepalive}",
@@ -83,26 +97,17 @@ class PeerController extends Controller
         return $this->showOne($peer, $peer->transformer, 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|void
      */
     public function destroy(Peer $peer)
     {
+        throw_if($peer->active, new ReportError(__("This peer is active, please stop and try again"), 403));
+
         $peer->delete();
 
         $this->showOne($peer, $peer->transformer);
@@ -110,10 +115,31 @@ class PeerController extends Controller
 
     /**
      * On and off the current peer
+     * @param \App\Models\Server\Peer $peer
+     * @return \Elyerr\ApiResponse\Assets\Json
      */
     public function toggle(Peer $peer)
     {
-        $peer->active = !$peer->active ? now() : null;
+        $core = new Core($peer->wg->server->ipv4, $peer->wg->server->port);
+
+        if ($peer->active) {
+
+            $peer->active = !$peer->active;
+            $core->deletePeer($peer->wg->name, $peer->public_key);
+
+        } else {
+            $peer->active = !$peer->active;
+            $core->addPeer(
+                $peer->name,
+                $peer->wg->name,
+                $peer->public_key,
+                $peer->allowed_ips,
+                "{$peer->wg->server->ipv4}:{$peer->wg->server->port}",
+                $peer->preshared_key,
+                $peer->persistent_keepalive
+            );
+        }
+
         $peer->push();
 
         return $this->showOne($peer, $peer->transformer, 201);
