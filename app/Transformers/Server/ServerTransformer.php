@@ -34,10 +34,8 @@ class ServerTransformer extends TransformerAbstract
         return [
             'id' => $data->id,
             'country' => $data->country,
-            'city' => $data->city,
             'ipv4' => $data->ipv4,
-            'ipv6' => $data->ipv6,
-            'uri' => $data->uri,
+            'port' => $data->port,
             'active' => $data->active,
             'updated' => $data->updated_at,
             'created' => $data->created_at,
@@ -61,9 +59,12 @@ class ServerTransformer extends TransformerAbstract
     public static function getOriginalAttributes($index)
     {
         $attributes = [
-            'id' => 'id',
-            'nombre' => 'name',
-            'descripcion' => 'description',
+            'country' => 'country',
+            'ipv4' => 'ipv4',
+            'port' => 'port',
+            'ipv6' => 'ipv6',
+            'uri' => 'uri',
+            'active' => 'active',
         ];
 
         return isset($attributes[$index]) ? $attributes[$index] : null;

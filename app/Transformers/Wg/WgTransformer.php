@@ -3,6 +3,7 @@
 namespace App\Transformers\Wg;
 
 use App\Models\Server\Wg;
+use App\Wrapper\Core;
 use League\Fractal\TransformerAbstract;
 
 class WgTransformer extends TransformerAbstract
@@ -40,6 +41,7 @@ class WgTransformer extends TransformerAbstract
             'id' => $data->id,
             'name' => $data->name,
             'listen_port' => $data->listen_port,
+            'interface' => $data->interface,
             'dns_1' => $data->dns_1,
             'dns_2' => $data->dns_2,
             'created' => $data->created_at,
