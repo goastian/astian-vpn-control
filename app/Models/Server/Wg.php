@@ -5,12 +5,21 @@ namespace App\Models\Server;
 use App\Models\Master;
 use App\Models\Server\Peer;
 use App\Transformers\Wg\WgTransformer;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Wg extends Master
 {
+    /**
+     * Name of table to the model
+     * @var string
+     */
     public $table = "wgs";
 
+    /**
+     * Transformer class to output information to the client
+     * @var
+     */
     public $transformer = WgTransformer::class;
 
     public $fillable = [
@@ -21,6 +30,7 @@ class Wg extends Master
         'dns_2',
         'server_id',
         'active',
+        'interface'
     ];
 
     public $append = [
@@ -28,6 +38,7 @@ class Wg extends Master
     ];
 
     /**
+     * Relationship belongs to
      * @return BelongsTo
      */
     public function server()
@@ -36,7 +47,7 @@ class Wg extends Master
     }
 
     /**
-     * Peers
+     * relationship has many
      *
      * @return HasMany
      */
@@ -46,15 +57,17 @@ class Wg extends Master
     }
 
     /**
-     * Generate a private key
+     * Generate PrivKey
+     * @return string
      */
-    public function genratePrivKey()
+    public function generatePrivKey()
     {
         return trim(shell_exec('wg genkey'));
     }
 
     /**
-     * Generate public key
+     * Generate a public key
+     * @return string
      */
     public function generatePubKey()
     {
@@ -62,11 +75,11 @@ class Wg extends Master
     }
 
     /**
-     * Endpoint
+     * Get the full server
      *
-     * @return String
+     * @return string
      */
-    public function getEndpoint()
+    public function getServer()
     {
         return "{$this->server->ipv4}:{$this->listen_port}";
     }

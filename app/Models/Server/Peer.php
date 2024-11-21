@@ -8,9 +8,13 @@ use App\Transformers\Peer\PeerTransformer;
 
 class Peer extends Master
 {
-    public $transformer = PeerTransformer::class;
-
     public $table = 'peers';
+
+    /**
+     * Transform class to output information to the client
+     * @var
+     */
+    public $transformer = PeerTransformer::class;
 
     public $fillable = [
         'name',
@@ -24,7 +28,8 @@ class Peer extends Master
     ];
 
     /**
-     * @return BelongsTo
+     * Relationship belongs to
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function wg()
     {
@@ -32,9 +37,8 @@ class Peer extends Master
     }
 
     /**
-     * Generate a pair keys
-     *
-     * @return Array
+     *  Generate a pair keys (private and public key) for the config file to the client
+     * @return string[]
      */
     public function generatePairKeys()
     {
@@ -44,9 +48,8 @@ class Peer extends Master
     }
 
     /**
-     * Generate a preshared key
-     *
-     * @return String
+     * Generate a Preshared key for the config peer
+     * @return string
      */
     public function generatePresharedkey()
     {

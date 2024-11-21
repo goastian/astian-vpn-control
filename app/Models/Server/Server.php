@@ -8,21 +8,28 @@ use App\Transformers\Server\ServerTransformer;
 
 class Server extends Master
 {
+    /**
+     * Name of table to the model
+     * @var string
+     */
     public $table = 'servers';
 
+    /**
+     * Transformer class to output information to the client
+     * @var
+     */
     public $transformer = ServerTransformer::class;
 
     public $fillable = [
         'country',
-        'city',
-        //  'ipv6',
         'ipv4',
-        'uri',
+        'port',
         'active'
     ];
 
     /**
-     * @return HasMany
+     * Relationship has many
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function wgs()
     {
