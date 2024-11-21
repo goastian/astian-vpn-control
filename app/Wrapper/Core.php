@@ -2,8 +2,10 @@
 
 namespace App\Wrapper;
 
+use Elyerr\ApiResponse\Exceptions\ReportError;
 use GuzzleHttp\Client;
 use Illuminate\Http\Response;
+use GuzzleHttp\Exception\ConnectException;
 
 final class Core
 {
@@ -51,8 +53,8 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (ConnectException $th) {
+            throw new ReportError(__('Unable to connect with the server'), 500);
         }
     }
 
@@ -77,7 +79,7 @@ final class Core
             }
 
         } catch (\Throwable $th) {
-            throw $th;
+            throw new ReportError(__('Unable to connect with the server'), 500);
         }
     }
 
@@ -95,8 +97,8 @@ final class Core
                 return response(null, 200);
             }
 
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (ConnectException $th) {
+            throw new ReportError(__('Unable to connect with the server'), 500);
         }
     }
 
@@ -114,8 +116,8 @@ final class Core
                 return response(null, 200);
             }
 
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (ConnectException $th) {
+            throw new ReportError(__('Unable to connect with the server'), 500);
         }
     }
 
@@ -148,8 +150,8 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (ConnectException $th) {
+            throw new ReportError(__('Unable to connect with the server'), 500);
         }
     }
 
@@ -173,8 +175,8 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (ConnectException $th) {
+            throw new ReportError(__('Unable to connect with the server'), 500);
         }
     }
 
@@ -192,8 +194,8 @@ final class Core
                 return response()->json($data, 200);
             }
 
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (ConnectException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 }
