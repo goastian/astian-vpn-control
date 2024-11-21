@@ -13,3 +13,5 @@ Route::resource('wgs', WgController::class)->except('edit', 'create');
 
 Route::put('peers/{peer}/toggle', [PeerController::class, 'toggle'])->name('peers.toggle');
 Route::resource('peers', PeerController::class)->only('index', 'store', 'destroy');
+
+Route::get('/interfaces/{ip}/{port}', [WgController::class, 'interfaces']);
