@@ -13,7 +13,7 @@ return new class () extends Migration {
         Schema::create('servers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('country');
-            $table->string('ipv4');
+            $table->string('url');
             $table->string('port');
             $table->boolean('active')->default(false);
             $table->timestamps();

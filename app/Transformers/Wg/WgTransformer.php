@@ -47,8 +47,9 @@ class WgTransformer extends TransformerAbstract
             'created' => $data->created_at,
             'updated' => $data->updated_at,
             'active' => $data->active,
-            'country' => $data->server->country,
-            'ipv4' => $data->server->ipv4,
+            'server_country' => $data->server->country,
+            'server_url' => $data->server->url,
+            'server_id' => $data->server->id,
             'links' => [
                 'index' => route('wgs.index'),
                 'store' => route('wgs.store'),

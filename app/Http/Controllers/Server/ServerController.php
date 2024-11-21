@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Server;
 
-use App\Http\Controllers\GlobalController;
-use App\Models\Server\Server;
-use Elyerr\ApiResponse\Exceptions\ReportError;
+use App\Wrapper\Core;
 use Illuminate\Http\Request;
+use App\Models\Server\Server;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\GlobalController;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 
 class ServerController extends GlobalController
 {
@@ -33,7 +34,7 @@ class ServerController extends GlobalController
     {
         $request->validate([
             'country' => ['string', 'max:190'],
-            'ipv4' => ['required', 'unique:servers,ipv4', 'ipv4'],
+            'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
         ]);
 
@@ -60,7 +61,7 @@ class ServerController extends GlobalController
     {
         $request->validate([
             'country' => ['string', 'max:190'],
-            'ipv4' => ['required', 'unique:servers,ipv4,' . $server->id, 'ipv4'],
+            'url' => ['required', 'unique:servers,url,' . $server->id, 'url:http,https'],
             'port' => ['required', 'max:6']
         ]);
 
@@ -73,14 +74,9 @@ class ServerController extends GlobalController
                 $server->country = $request->country;
             }
 
-            if ($this->is_different($server->ipv4, $request->ipv4)) {
+            if ($this->is_different($server->url, $request->url)) {
                 $updated = true;
-                $server->ipv4 = $request->ipv4;
-            }
-
-            if ($this->is_different($server->ipv6, $request->ipv6)) {
-                $updated = true;
-                $server->ipv6 = $request->ipv6;
+                $server->url = $request->url;
             }
 
             if ($updated) {
@@ -104,7 +100,9 @@ class ServerController extends GlobalController
     }
 
     /**
-     * Enable the specified resource
+     * On and Off Server
+     * @param \App\Models\Server\Server $server
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function toggle(Server $server)
     {
@@ -112,5 +110,19 @@ class ServerController extends GlobalController
         $server->push();
 
         return $this->show($server, 201);
+    }
+
+
+    /**
+     * show interfaces of interfaces
+     * @param mixed $ip
+     * @param mixed $port
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function interfaces($id, Server $server)
+    {
+        $host = $server->findOrFail($id);
+        $core = new Core($host->url, $host->port);
+        return $core->networkInterfaces();
     }
 }

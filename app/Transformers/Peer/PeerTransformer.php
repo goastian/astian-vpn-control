@@ -46,7 +46,7 @@ class PeerTransformer extends TransformerAbstract
             'network' => [
                 'name' => $data->wg->name,
                 'listen_port' => $data->wg->listen_port,
-                'server' => $data->wg->server->ipv4,
+                'server' => $data->wg->server->url,
                 'server_name' => $data->wg->server->country,
             ],
             'links' => [

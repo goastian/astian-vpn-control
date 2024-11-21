@@ -64,7 +64,7 @@ class WgController extends Controller
             $wg->private_key = $wg->generatePrivKey();
             $wg->active = true;
             $wg->save();
-            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core = new Core($wg->server->url, $wg->server->port);
             $core->mountInterface(
                 $request->name,
                 "10.0.0.1/8",
@@ -139,7 +139,7 @@ class WgController extends Controller
 
         DB::transaction(function () use ($wg) {
 
-            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core = new Core($wg->server->url, $wg->server->port);
             $core->removeInterface($wg->name, $wg->interface);
 
             $wg->delete();
@@ -156,29 +156,17 @@ class WgController extends Controller
     public function toggle(Wg $wg)
     {
         if ($wg->active) {
-            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core = new Core($wg->server->url, $wg->server->port);
             $core->shutdownInterface($wg->name);
             $wg->active = !$wg->active;
             $wg->push();
         } else {
-            $core = new Core($wg->server->ipv4, $wg->server->port);
+            $core = new Core($wg->server->url, $wg->server->port);
             $core->startInterface($wg->name);
             $wg->active = !$wg->active;
             $wg->push();
         }
 
         return $this->showOne($wg, $wg->transformer, 201);
-    }
-
-    /**
-     * show interfaces of interfaces
-     * @param mixed $ip
-     * @param mixed $port
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function interfaces($ip, $port)
-    {
-        $server = new Core($ip, $port);
-        return $server->networkInterfaces();
     }
 }

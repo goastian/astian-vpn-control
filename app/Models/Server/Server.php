@@ -22,7 +22,7 @@ class Server extends Master
 
     public $fillable = [
         'country',
-        'ipv4',
+        'url',
         'port',
         'active'
     ];

@@ -120,7 +120,7 @@ class PeerController extends Controller
      */
     public function toggle(Peer $peer)
     {
-        $core = new Core($peer->wg->server->ipv4, $peer->wg->server->port);
+        $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
         if ($peer->active) {
 
@@ -134,7 +134,7 @@ class PeerController extends Controller
                 $peer->wg->name,
                 $peer->public_key,
                 $peer->allowed_ips,
-                "{$peer->wg->server->ipv4}:{$peer->wg->server->port}",
+                "{$peer->wg->server->url}:{$peer->wg->server->port}",
                 $peer->preshared_key,
                 $peer->persistent_keepalive
             );

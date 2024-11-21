@@ -34,7 +34,7 @@ class ServerTransformer extends TransformerAbstract
         return [
             'id' => $data->id,
             'country' => $data->country,
-            'ipv4' => $data->ipv4,
+            'url' => $data->url,
             'port' => $data->port,
             'active' => $data->active,
             'updated' => $data->updated_at,
@@ -54,13 +54,13 @@ class ServerTransformer extends TransformerAbstract
      * Retrieve Original Attributes to filter data
      *
      * @param string $index
-     * @return Array
+     * @return string|null
      */
     public static function getOriginalAttributes($index)
     {
         $attributes = [
             'country' => 'country',
-            'ipv4' => 'ipv4',
+            'url' => 'url',
             'port' => 'port',
             'ipv6' => 'ipv6',
             'uri' => 'uri',

@@ -81,6 +81,6 @@ class Wg extends Master
      */
     public function getServer()
     {
-        return "{$this->server->ipv4}:{$this->listen_port}";
+        return "{$this->server->url}:{$this->listen_port}";
     }
 }
