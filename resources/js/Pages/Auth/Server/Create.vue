@@ -28,9 +28,9 @@
                     </v-col>
 
                     <v-col cols="12" md="6">
-                        <v-text-field label="IPv4" v-model="form.ipv4">
+                        <v-text-field label="URL" v-model="form.url">
                             <template #details>
-                                <v-error :error="errors.ipv4"></v-error>
+                                <v-error :error="errors.url"></v-error>
                             </template>
                         </v-text-field>
                     </v-col>
@@ -75,8 +75,7 @@ export default {
             form: {
                 country: "",
                 city: "",
-                ipv4: "",
-                ipv6: "",
+                url: "",
                 domain: "",
             },
             errors: {},

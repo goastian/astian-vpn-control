@@ -29,9 +29,9 @@
                     </v-col>
 
                     <v-col cols="12" md="6">
-                        <v-text-field label="IPv4" v-model="item.ipv4">
+                        <v-text-field label="URL" v-model="item.url">
                             <template #details>
-                                <v-error :error="errors.ipv4"></v-error>
+                                <v-error :error="errors.url"></v-error>
                             </template>
                         </v-text-field>
                     </v-col>
@@ -61,7 +61,7 @@
                     color="primary"
                     text="Update"
                     variant="tonal"
-                    @click="updateServer"
+                    @click="updateServer(item)"
                 ></v-btn>
             </v-card-actions>
         </v-card>
@@ -84,9 +84,9 @@ export default {
         /**
          * Update server
          */
-        async updateServer() {
+        async updateServer(item) {
             try {
-                const res = await this.$api.put("/api/servers", this.item);
+                const res = await this.$api.put(item.links.update, this.item);
 
                 if (res.status == 201) {
                     this.errors = {};

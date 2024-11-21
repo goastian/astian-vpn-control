@@ -11,8 +11,8 @@
                 {{ $utils.toKebabCase("mdiCheckboxBlankCircle") }}
             </v-icon>
         </template>
-        <template #item.ipv4="{ item }">
-            <span class="font-bold text-blue-500">{{ item.ipv4 }}</span>
+        <template #item.url="{ item }">
+            <span class="font-bold text-blue-500">{{ item.url }}</span>
         </template>
         <template #item.actions="{ item }">
             <v-menu transition="scale-transition">
@@ -76,10 +76,10 @@ export default {
                     key: "country",
                 },
                 {
-                    title: "IPV4",
+                    title: "URL",
                     align: "start",
                     sortable: false,
-                    key: "ipv4",
+                    key: "url",
                 },
                 {
                     title: "PORT",

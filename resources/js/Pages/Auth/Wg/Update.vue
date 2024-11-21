@@ -41,7 +41,7 @@
                     <v-col cols="12" md="6">
                         <v-text-field
                             label="Server"
-                            v-model="wg.ipv4"
+                            v-model="wg.url"
                             disabled
                         >
                             <template #label>

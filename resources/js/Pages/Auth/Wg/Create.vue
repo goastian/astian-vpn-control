@@ -67,8 +67,8 @@
                             <template #selection="{ item }">
                                 <span class="text-body">
                                     {{ item.raw.country }}
-                                    <strong v-if="item.raw.ipv4">
-                                        : ipv4 {{ item.raw.ipv4 }}
+                                    <strong v-if="item.raw.url">
+                                        : url {{ item.raw.url }}
                                     </strong>
                                 </span>
                             </template>
@@ -77,7 +77,7 @@
                                 <v-list-item
                                     v-bind="props"
                                     :title="item.raw.country"
-                                    :subtitle="item.raw.ipv4"
+                                    :subtitle="item.raw.url"
                                 >
                                 </v-list-item
                             ></template>
@@ -143,7 +143,7 @@ export default {
 
     watch: {
         server_selected(value) {
-            this.getNetworkInterfaces(value.ipv4, value.port);
+            this.getNetworkInterfaces(value.id);
         },
     },
 
@@ -174,11 +174,9 @@ export default {
             }
         },
 
-        async getNetworkInterfaces(ip, port) {
+        async getNetworkInterfaces(id) {
             try {
-                const res = await this.$api.get(
-                    `/api/interfaces/${ip}/${port}`
-                );
+                const res = await this.$api.get(`/api/interfaces/${id}`);
                 if (res.status == 200) {
                     this.interfaces = res.data.data;
                 }

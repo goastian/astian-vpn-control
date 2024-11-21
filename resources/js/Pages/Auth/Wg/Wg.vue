@@ -7,7 +7,7 @@
             </div>
         </template>
         <template #item.server="{ item }">
-            {{ item.name }} - {{ item.country }} - {{ item.ipv4 }}
+            {{ item.server_country }} - {{ item.server_url }}
         </template>
         <template #item.active="{ item }">
             <v-toggle @updated="getWgs" :wg="item"></v-toggle>
