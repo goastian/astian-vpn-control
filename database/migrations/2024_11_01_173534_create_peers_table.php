@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('public_key')->index();
             $table->string('preshared_key');
             $table->string('allowed_ips')->unique()->index();
-            $table->string('persistent_keepalive')->default("25"); 
-            $table->dateTime('active')->nullable(); 
+            $table->string('persistent_keepalive')->default("25");
+            $table->boolean('active')->default(false);
             $table->uuid('user_id')->index();
             $table->uuid('wg_id')->index();
             $table->timestamps();
