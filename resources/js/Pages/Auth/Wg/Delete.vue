@@ -23,7 +23,7 @@
 
                 <v-btn @click="dialog = false"> Disagree </v-btn>
 
-                <v-btn @click="deleteServer(wg)"> Agree </v-btn>
+                <v-btn @click="deleteWg(wg)"> Agree </v-btn>
             </template>
         </v-card>
     </v-dialog>
@@ -44,14 +44,19 @@ export default {
         /**
          * Delete Server
          */
-        async deleteServer(item) {
+        async deleteWg(item) {
             try {
-                const res = await this.$api.put(item.links.delete);
+                const res = await this.$api.delete(item.links.delete);
                 if (res.status == 200) {
                     this.$emit("deleted", res.data);
                     this.dialog = false
                 }
-            } catch (err) {}
+            } catch (err) {
+                if (err.response.status == 403) {
+                    this.$notification.error(err.response.data.message);
+                }
+                this.dialog = false;
+            }
         },
     },
 };

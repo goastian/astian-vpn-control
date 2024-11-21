@@ -11,9 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
-    .vue()
-    .sass('resources/scss/app.scss', 'public/css')
+mix.js('resources/js/app.js', 'public/js').version()
+    .vue().version()
+    .sass('resources/scss/app.scss', 'public/css').version()
     .postCss('resources/css/app.css', 'public/css', [
         require("tailwindcss")
     ]).version();

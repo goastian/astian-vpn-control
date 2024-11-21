@@ -9,10 +9,7 @@
                 @click="getWgs"
                 color="blue-lighten-1"
             >
-                <v-icon
-                    :icon="$utils.toKebabCase('mdiKeyPlus')"
-                >
-                </v-icon>
+                <v-icon :icon="$utils.toKebabCase('mdiKeyPlus')"> </v-icon>
             </v-btn>
         </template>
 
@@ -54,7 +51,7 @@
                                 <v-list-item
                                     v-bind="props"
                                     :title="item.raw.name"
-                                    :subtitle="item.raw.country"
+                                    :subtitle="`${item.raw.country} - ${item.raw.ipv4}`"
                                 >
                                     <template v-slot:prepend>
                                         <v-icon
@@ -142,6 +139,11 @@ export default {
         };
     },
 
+
+    watch:{
+
+    },
+
     methods: {
         /**
          * Create a new server
@@ -197,6 +199,8 @@ export default {
                 }
             } catch (err) {}
         },
+
+
 
         /**
          * Download peer

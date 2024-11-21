@@ -44,14 +44,19 @@ export default {
         /**
          * Delete Server
          */
-        async deleteServer(item) {            
+        async deleteServer(item) {
             try {
                 const res = await this.$api.delete(item.links.delete);
                 if (res.status == 200) {
                     this.$emit("deleted", res.data);
                     this.dialog = false
                 }
-            } catch (err) {}
+            } catch (err) {
+                if (err.response.status == 403) {
+                    this.$notification.error(err.response.data.message);
+                }
+                this.dialog = false;
+            }
         },
     },
 };

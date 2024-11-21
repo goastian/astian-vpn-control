@@ -26,14 +26,20 @@ export const $host = axios.create({
     },
 });
 
-
 $server.interceptors.response.use(
     function (response) {
         return response;
     },
     function (error) {
+        if (
+            error.response.status === 401 &&
+            error.response.request.responseURL.includes("/api/gateway/user")
+        ) {
+            return Promise.reject(error);
+        }
+
         if (error.response.status === 401) {
-            redirectTo()
+            redirectTo();
         }
         return Promise.reject(error);
     }
@@ -45,7 +51,7 @@ $host.interceptors.response.use(
     },
     function (error) {
         if (error.response.status === 401) {
-            redirectTo()
+            redirectTo();
         }
         return Promise.reject(error);
     }

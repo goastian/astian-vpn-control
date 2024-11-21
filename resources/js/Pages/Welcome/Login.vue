@@ -20,7 +20,7 @@
         </nav>
         <div class="h-auto text-center">
             <p class="text-3xl text-gray-400">
-                Virtual Private Neteork With Wireguard
+                Virtual Private Network with WireGuard
             </p>
         </div>
         <div class="py-4 text-center text-gray-400">By @Elyerr</div>
@@ -29,17 +29,19 @@
 
 <script>
 export default {
+    inject: ["$user"],
+
     methods: {
         redirect() {
-            window.location.href = "/redirect";
-        },
-
-        isAuth() {
-            try {
-            } catch (error) {}
+            this.$server
+                .get("/api/gateway/user")
+                .then((res) => {
+                    this.$router.push({ name: "home" });
+                })
+                .catch((err) => {
+                    window.location.href = "/redirect";
+                });
         },
     },
 };
 </script>
-
-<style lang="scss" scoped></style>

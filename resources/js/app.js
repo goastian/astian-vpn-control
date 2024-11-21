@@ -5,6 +5,7 @@ import { custom_components } from "./Config/globalComponents";
 import { utils } from "./Config/utils";
 import { $host, $server } from "./Config/axios";
 import { router } from "./Config/routes";
+import { notyf } from "./Config/notification";
 
 // Vuetify
 import "@mdi/font/css/materialdesignicons.css";
@@ -33,6 +34,7 @@ app.config.globalProperties.$utils = utils;
 app.config.globalProperties.$appName = appName;
 app.config.globalProperties.$server = $server;
 app.config.globalProperties.$api = $host;
+app.config.globalProperties.$notification = notyf;
 //global components
 
 app.use(vuetify);

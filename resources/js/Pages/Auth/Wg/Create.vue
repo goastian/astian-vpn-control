@@ -7,9 +7,9 @@
                 variant="tonal"
                 v-bind="activatorProps"
                 @click="loadData"
+                color="blue-lighten-1"
             >
-                <v-icon color="blue-lighten-1" :icon="$utils.toKebabCase('mdiVpn')">
-                </v-icon>
+                <v-icon :icon="$utils.toKebabCase('mdiVpn')"> </v-icon>
             </v-btn>
         </template>
 
@@ -20,10 +20,7 @@
             <v-card-text>
                 <v-row dense>
                     <v-col cols="12" md="6">
-                        <v-text-field
-                            label="Name"
-                            v-model="form.name"
-                        >
+                        <v-text-field label="Name" v-model="form.name">
                             <template #details>
                                 <v-error :error="errors.name"></v-error>
                             </template>
@@ -57,13 +54,15 @@
                         </v-text-field>
                     </v-col>
 
-                    <v-col cols="12">
+                    <v-col cols="12" md="6">
                         <v-select
-                            v-model="form.server_id"
+                            v-model="server_selected"
                             :items="servers"
                             item-title="country"
                             item-value="id"
+                            label="Servers"
                             single-line
+                            return-object
                         >
                             <template #selection="{ item }">
                                 <span class="text-body">
@@ -71,14 +70,32 @@
                                     <strong v-if="item.raw.ipv4">
                                         : ipv4 {{ item.raw.ipv4 }}
                                     </strong>
-                                    -
-                                    <strong v-if="item.raw.ipv6">
-                                        : ipv6 {{ item.raw.ipv6 }}
-                                    </strong>
                                 </span>
                             </template>
+
+                            <template v-slot:item="{ props, item }">
+                                <v-list-item
+                                    v-bind="props"
+                                    :title="item.raw.country"
+                                    :subtitle="item.raw.ipv4"
+                                >
+                                </v-list-item
+                            ></template>
                         </v-select>
                         <v-error :error="errors.server_id"></v-error>
+                    </v-col>
+
+                    <v-col cols="12" md="6">
+                        <v-select
+                            v-model="form.interface"
+                            :items="interfaces"
+                            item-title="interface"
+                            item-value="interface"
+                            label="Network Interfaces"
+                            persistent-hint
+                            single-line
+                        ></v-select>
+                        <v-error :error="errors.interface"></v-error>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -111,6 +128,7 @@ export default {
         return {
             dialog: false,
             servers: [],
+            server_selected: {},
             form: {
                 name: "",
                 listen_port: "",
@@ -119,7 +137,14 @@ export default {
                 server_id: "",
             },
             errors: {},
+            interfaces: [],
         };
+    },
+
+    watch: {
+        server_selected(value) {
+            this.getNetworkInterfaces(value.ipv4, value.port);
+        },
     },
 
     methods: {
@@ -133,6 +158,7 @@ export default {
          */
         async createWG() {
             try {
+                this.form.server_id = this.server_selected.id;
                 const res = await this.$api.post("/api/wgs", this.form);
 
                 if (res.status == 201) {
@@ -146,6 +172,17 @@ export default {
                     this.errors = err.response.data.errors;
                 }
             }
+        },
+
+        async getNetworkInterfaces(ip, port) {
+            try {
+                const res = await this.$api.get(
+                    `/api/interfaces/${ip}/${port}`
+                );
+                if (res.status == 200) {
+                    this.interfaces = res.data.data;
+                }
+            } catch (error) {}
         },
 
         /**

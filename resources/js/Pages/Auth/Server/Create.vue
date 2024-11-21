@@ -6,11 +6,9 @@
                 icon
                 variant="tonal"
                 v-bind="activatorProps"
+                color="blue-lighten-1"
             >
-                <v-icon
-                    color="blue-lighten-1"
-                    :icon="$utils.toKebabCase('mdiServerPlusOutline')"
-                >
+                <v-icon :icon="$utils.toKebabCase('mdiServerPlusOutline')">
                 </v-icon>
             </v-btn>
         </template>
@@ -30,14 +28,6 @@
                     </v-col>
 
                     <v-col cols="12" md="6">
-                        <v-text-field label="City" v-model="form.city">
-                            <template #details>
-                                <v-error :error="errors.city"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
                         <v-text-field label="IPv4" v-model="form.ipv4">
                             <template #details>
                                 <v-error :error="errors.ipv4"></v-error>
@@ -45,18 +35,10 @@
                         </v-text-field>
                     </v-col>
 
-                    <!--<v-col cols="12" md="6">
-                        <v-text-field label="IPv6" v-model="form.ipv6">
+                    <v-col cols="12" md="6">
+                        <v-text-field label="Port" v-model="form.port">
                             <template #details>
-                                <v-error :error="errors.ipv6"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>-->
-
-                    <v-col cols="6">
-                        <v-text-field label="Domain" v-model="form.domain">
-                            <template #details>
-                                <v-error :error="errors.domain"></v-error>
+                                <v-error :error="errors.port"></v-error>
                             </template>
                         </v-text-field>
                     </v-col>

@@ -51,7 +51,11 @@ export default {
                     this.$emit("deleted", res.data);
                     this.dialog = false;
                 }
-            } catch (err) {}
+            } catch (err) {
+                if (err.response.status == 403) {
+                    this.$notification.error(err.response.data.message);
+                }
+            }
         },
     },
 };

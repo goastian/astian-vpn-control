@@ -2,7 +2,7 @@
     <v-dialog v-model="dialog" max-width="1000" with="100">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
-                class="text-none font-weight-regular mx-4"
+
                 icon
                 variant="tonal"
                 v-bind="activatorProps"
@@ -41,11 +41,11 @@
                     <v-col cols="12" md="6">
                         <v-text-field
                             label="Server"
-                            v-model="wg.server.ipv4"
+                            v-model="wg.ipv4"
                             disabled
                         >
                             <template #label>
-                                {{ wg.server.country }}
+                                {{ wg.country }}
                             </template>
                         </v-text-field>
                     </v-col>
@@ -97,7 +97,6 @@ export default {
     data() {
         return {
             dialog: false,
-            servers: [],
             errors: {},
         };
     },

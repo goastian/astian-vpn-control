@@ -29,14 +29,6 @@
                     </v-col>
 
                     <v-col cols="12" md="6">
-                        <v-text-field label="City" v-model="item.city">
-                            <template #details>
-                                <v-error :error="errors.city"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
                         <v-text-field label="IPv4" v-model="item.ipv4">
                             <template #details>
                                 <v-error :error="errors.ipv4"></v-error>
@@ -45,17 +37,9 @@
                     </v-col>
 
                     <v-col cols="12" md="6">
-                        <v-text-field label="IPv6" v-model="item.ipv6">
+                        <v-text-field label="Port" v-model="item.port">
                             <template #details>
-                                <v-error :error="errors.ipv6"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12">
-                        <v-text-field label="Domain" v-model="item.domain">
-                            <template #details>
-                                <v-error :error="errors.domain"></v-error>
+                                <v-error :error="errors.port"></v-error>
                             </template>
                         </v-text-field>
                     </v-col>

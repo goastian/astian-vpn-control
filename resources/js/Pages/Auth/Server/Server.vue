@@ -7,9 +7,12 @@
             </div>
         </template>
         <template #item.status="{ item }">
-            <v-icon :color="item.inactive ? 'red-accent-4' :'green-accent-4'">
-                {{ $utils.toKebabCase('mdiCheckboxBlankCircle') }}
+            <v-icon :color="!item.inactive ? 'red-accent-4' : 'green-accent-4'">
+                {{ $utils.toKebabCase("mdiCheckboxBlankCircle") }}
             </v-icon>
+        </template>
+        <template #item.ipv4="{ item }">
+            <span class="font-bold text-blue-500">{{ item.ipv4 }}</span>
         </template>
         <template #item.actions="{ item }">
             <v-menu transition="scale-transition">
@@ -73,22 +76,16 @@ export default {
                     key: "country",
                 },
                 {
-                    title: "City",
-                    align: "start",
-                    sortable: false,
-                    key: "city",
-                },
-                {
                     title: "IPV4",
                     align: "start",
                     sortable: false,
                     key: "ipv4",
                 },
                 {
-                    title: "IPV6",
+                    title: "PORT",
                     align: "start",
                     sortable: false,
-                    key: "ipv6",
+                    key: "port",
                 },
                 {
                     title: "Actions",

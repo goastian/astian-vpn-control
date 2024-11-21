@@ -79,6 +79,12 @@ export default {
                     key: "server",
                 },
                 {
+                    title: "NetLan",
+                    align: "start",
+                    sortable: false,
+                    key: "interface",
+                },
+                {
                     title: "Actions",
                     align: "center",
                     sortable: false,
