@@ -134,7 +134,7 @@ class PeerController extends Controller
                 $peer->wg->name,
                 $peer->public_key,
                 $peer->allowed_ips,
-                "{$peer->wg->server->url}:{$peer->wg->server->port}",
+                $peer->wg->getServer(),
                 $peer->preshared_key,
                 $peer->persistent_keepalive
             );
