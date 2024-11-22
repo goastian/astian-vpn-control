@@ -2,10 +2,11 @@
 
 namespace App\Wrapper;
 
-use Elyerr\ApiResponse\Exceptions\ReportError;
 use GuzzleHttp\Client;
 use Illuminate\Http\Response;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 
 final class Core
 {
@@ -55,6 +56,12 @@ final class Core
 
         } catch (ConnectException $th) {
             throw new ReportError(__('Unable to connect with the server'), 500);
+
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
         }
     }
 
@@ -78,8 +85,14 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (\Throwable $th) {
+        } catch (ConnectException $th) {
             throw new ReportError(__('Unable to connect with the server'), 500);
+
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
         }
     }
 
@@ -99,6 +112,11 @@ final class Core
 
         } catch (ConnectException $th) {
             throw new ReportError(__('Unable to connect with the server'), 500);
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
         }
     }
 
@@ -118,6 +136,11 @@ final class Core
 
         } catch (ConnectException $th) {
             throw new ReportError(__('Unable to connect with the server'), 500);
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
         }
     }
 
@@ -152,6 +175,12 @@ final class Core
 
         } catch (ConnectException $th) {
             throw new ReportError(__('Unable to connect with the server'), 500);
+
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
         }
     }
 
@@ -177,6 +206,12 @@ final class Core
 
         } catch (ConnectException $th) {
             throw new ReportError(__('Unable to connect with the server'), 500);
+
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
         }
     }
 
@@ -196,6 +231,12 @@ final class Core
 
         } catch (ConnectException $th) {
             throw new ReportError(__('Connection to the server failed'), 500);
+
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
         }
     }
 }
