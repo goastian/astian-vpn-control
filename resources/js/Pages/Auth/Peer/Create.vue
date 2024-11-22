@@ -51,7 +51,7 @@
                                 <v-list-item
                                     v-bind="props"
                                     :title="item.raw.name"
-                                    :subtitle="`${item.raw.country} - ${item.raw.url}`"
+                                    :subtitle="`${item.raw.server_country} - ${item.raw.server_url}`"
                                 >
                                     <template v-slot:prepend>
                                         <v-icon
