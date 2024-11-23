@@ -38,6 +38,12 @@ export default {
                     this.user = {};
                     this.$router.push({ name: "welcome" });
                 }
+                if (error.response.status == 404) {
+                    this.$notification.error(error.response.data.message);
+                }
+                if (error.response.status == 500) {
+                    this.$notification.error(error.response.data.message);
+                }
             }
         },
 

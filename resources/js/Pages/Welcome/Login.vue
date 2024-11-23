@@ -20,10 +20,10 @@
         </nav>
         <div class="h-auto text-center">
             <p class="text-3xl text-gray-400">
-                Virtual Private Network with WireGuard
+                Virtual Private Network
             </p>
         </div>
-        <div class="py-4 text-center text-gray-400">By @Elyerr</div>
+        <div class="py-4 text-center text-gray-400">By Astian, Inc</div>
     </div>
 </template>
 

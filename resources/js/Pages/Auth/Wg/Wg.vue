@@ -12,6 +12,9 @@
         <template #item.active="{ item }">
             <v-toggle @updated="getWgs" :wg="item"></v-toggle>
         </template>
+        <template #item.reload="{item}">
+            <v-reload :wg="item"></v-reload>
+        </template>
         <template #item.actions="{ item }">
             <v-menu transition="scale-transition">
                 <template v-slot:activator="{ props }">
@@ -42,6 +45,7 @@ import VCreate from "./Create.vue";
 import VUpdate from "./Update.vue";
 import VDelete from "./Delete.vue";
 import VToggle from "./Toggle.vue";
+import VReload from "./Reload.vue";
 
 export default {
     components: {
@@ -49,13 +53,14 @@ export default {
         VUpdate,
         VDelete,
         VToggle,
+        VReload
     },
 
     data() {
         return {
             headers: [
                 {
-                    title: "Status",
+                    title: "On And Off",
                     align: "center",
                     sortable: false,
                     key: "active",
@@ -77,6 +82,12 @@ export default {
                     align: "start",
                     sortable: false,
                     key: "server",
+                },
+                {
+                    title: "Reload",
+                    align: "start",
+                    sortable: false,
+                    key: "reload",
                 },
                 {
                     title: "NetLan",

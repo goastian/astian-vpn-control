@@ -119,6 +119,16 @@ export default {
                 if (err.response && err.response.status == 422) {
                     this.errors = err.response.data.errors;
                 }
+                if (err.response.status == 404) {
+                    this.$notification.error(err.response.data.message);
+                }
+                if (err.response.status == 403) {
+                    this.$notification.error(err.response.data.message);
+                }
+                if (err.response.status == 500) {
+                    this.$notification.error(err.response.data.message);
+                }
+                this.dialog = false;
             }
         },
     },

@@ -5,25 +5,18 @@
                 v-bind="activatorProps"
                 variant="tonal"
                 color="red-lighten-1"
-                icon
             >
-                <v-icon :color="!wg.active ? 'red-accent-4' : 'green-accent-4'">
-                    {{ $utils.toKebabCase("mdiCheckboxBlankCircle") }}
-                </v-icon>
+                Force Reload
             </v-btn>
         </template>
 
-        <v-card
-            prepend-icon="mdi-map-marker"
-            :text="!wg.active ? active.message : inactive.message"
-            :title="!wg.active ? active.title : inactive.title"
-        >
+        <v-card prepend-icon="mdi-map-marker" :text="title" :title="message">
             <template v-slot:actions>
                 <v-spacer></v-spacer>
 
                 <v-btn @click="dialog = false"> Disagree </v-btn>
 
-                <v-btn @click="toggle(wg)"> Agree </v-btn>
+                <v-btn @click="reload(wg)"> Agree </v-btn>
             </template>
         </v-card>
     </v-dialog>
@@ -37,16 +30,9 @@ export default {
     data() {
         return {
             dialog: false,
-            active: {
-                title: "Activate Network Interface",
-                message:
-                    "Are you sure you want to activate this network interface? It will be ready for use once activated.",
-            },
-            inactive: {
-                title: "Deactivate Network Interface",
-                message:
-                    "Are you sure you want to deactivate this network interface? This action will disconnect any active connections and may affect network access.",
-            },
+            title: "Force Restart Network Interface",
+            message:
+                "Are you sure you want to force a restart of this network interface? It will temporarily disconnect and reinitialize to apply the changes.",
         };
     },
 
@@ -54,11 +40,13 @@ export default {
         /**
          * Delete Server
          */
-        async toggle(item) {
+        async reload(item) {
             try {
-                const res = await this.$api.put(item.links.toggle);
+                const res = await this.$api.post(item.links.reload);
                 if (res.status == 201) {
-                    this.$emit("updated", res.data);
+                    this.$notification.success(
+                        "Network Interface reloaded successfully"
+                    );
                     this.dialog = false;
                 }
             } catch (err) {
@@ -70,6 +58,9 @@ export default {
                     this.$notification.error(err.response.data.message);
                 }
 
+                if (err.response.status == 422) {
+                    this.$notification.error(err.response.data.message);
+                }
                 if (err.response.status == 500) {
                     this.$notification.error(err.response.data.message);
                 }
