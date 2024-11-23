@@ -5,6 +5,7 @@ namespace App\Wrapper;
 use GuzzleHttp\Client;
 use Illuminate\Http\Response;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Exception\ConnectException;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 
@@ -62,6 +63,8 @@ final class Core
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
             throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 
@@ -93,6 +96,8 @@ final class Core
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
             throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 
@@ -117,6 +122,8 @@ final class Core
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
             throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 
@@ -141,6 +148,8 @@ final class Core
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
             throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 
@@ -181,6 +190,8 @@ final class Core
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
             throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 
@@ -212,6 +223,8 @@ final class Core
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
             throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 
@@ -237,6 +250,43 @@ final class Core
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
             throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
+        }
+    }
+
+    /**
+     * Force to reload the wireguard network interface using the config file
+     * @param mixed $interface_name
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function reloadNetwork($interface_name)
+    {
+        try {
+            $response = $this->client->request(
+                "POST",
+                "/api/system/reload-networks",
+                [
+                    'json' => [
+                        "name" => $interface_name,
+                    ]
+                ]
+            );
+
+            if ($response->getStatusCode() == 201) {
+                return response()->json(__("Wireguard Network Interface started successfully"), 200);
+            }
+
+        } catch (ConnectException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
+        } catch (ClientException $th) {
+            if ($th->getCode() === 404) {
+                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+            }
+            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+        } catch (ServerException $th) {
+            throw new ReportError(__('Connection to the server failed'), 500);
         }
     }
 }

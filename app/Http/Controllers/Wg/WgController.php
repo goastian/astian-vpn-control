@@ -169,4 +169,16 @@ class WgController extends Controller
 
         return $this->showOne($wg, $wg->transformer, 201);
     }
+
+    /**
+     * Reload Wireguard Network using a config file
+     * @param \App\Models\Server\Wg $wg
+     * @return \Elyerr\ApiResponse\Assets\Json
+     */
+    public function reload(Wg $wg)
+    {
+        $core = new Core($wg->server->url, $wg->server->port);
+        $core->reloadNetwork($wg->name);
+        return $this->showOne($wg, $wg->transformer, 201);
+    }
 }

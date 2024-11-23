@@ -56,6 +56,7 @@ class WgTransformer extends TransformerAbstract
                 'show' => route('wgs.show', ['wg' => $data->id]),
                 'delete' => route('wgs.destroy', ['wg' => $data->id]),
                 'toggle' => route('wgs.toggle', ['wg' => $data->id]),
+                'reload' => route('wgs.reload', ['wg' => $data->id]),
             ],
         ];
     }
