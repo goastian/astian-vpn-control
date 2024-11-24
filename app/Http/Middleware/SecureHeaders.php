@@ -21,13 +21,14 @@ class SecureHeaders
         view()->share('nonce', $nonce);
 
         $response = $next($request);
-
-        $response->headers->set("Referrer-Policy", "no-referrer");
-        $response->headers->set("X-Content-Type-Options", "nosniff");
-        $response->headers->set("X-Frame-Options", "DENY");
-        $response->headers->set("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), speaker=(self), display-capture=()");
-        $response->headers->set("Strict-Transport-Security", "max-age=31536000");
-        $response->headers->set("Content-Security-Policy", $this->ContentSecurityPolicy($nonce));
+        if (config('services.policy')) {
+            $response->headers->set("Referrer-Policy", "no-referrer");
+            $response->headers->set("X-Content-Type-Options", "nosniff");
+            $response->headers->set("X-Frame-Options", "DENY");
+            $response->headers->set("Permissions-Policy", "accelerometer=(), autoplay=(), camera=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), speaker=(self), display-capture=()");
+            $response->headers->set("Strict-Transport-Security", "max-age=31536000");
+            $response->headers->set("Content-Security-Policy", $this->ContentSecurityPolicy($nonce));
+        }
 
         return $response;
     }

@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'policy' => [
+        'activate' => env('POLICY_ACTIVATE', true)
+    ]
+
 ];
