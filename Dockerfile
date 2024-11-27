@@ -20,11 +20,15 @@ RUN apk add --no-cache \
     php82-session \
     php82-simplexml \
     php82-xmlwriter \
+    php82-soap \
+    php82-openssl \
+    php82-bcmath \
+    php82-gd \
+    php82-intl \
     vim \
     nginx \
     nodejs \
     npm \
-    git \
     curl \
     unzip
 
@@ -35,19 +39,19 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 WORKDIR /var/www/
 
-COPY . /var/www/ 
+COPY . /var/www/
 
 RUN composer install --no-dev --optimize-autoloader
 
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www 
+    && chmod -R 775 /var/www
 
 COPY docker/www.conf /etc/php82/php-fpm.d/www.conf
-COPY docker/nginx.conf /etc/nginx/nginx.conf 
-COPY docker/default.conf /etc/nginx/http.d/default.conf  
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/default.conf /etc/nginx/http.d/default.conf
 COPY docker/laravel-scripts.sh /usr/local/bin/laravel-scripts.sh
 
-RUN chmod 755 /etc/nginx/http.d/default.conf 
+RUN chmod 755 /etc/nginx/http.d/default.conf
 RUN chmod 755 /usr/local/bin/laravel-scripts.sh
 
 EXPOSE 80

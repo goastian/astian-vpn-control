@@ -1,26 +1,12 @@
 version: "3.9"
 
 services:
-    app:
-        image: elyerr/vpn-control:latest
-        container_name: vpn-control
-        ports:
-            - "8001:80"
-        depends_on:
-            - db
-        volumes:
-            - .env:/var/www/.env
-        command: sh -c "/usr/local/bin/laravel-scripts.sh"
-        networks:
-            - vpn_core_public_net
-            - vpn_core_internal_net
-
     db:
         image: postgres:latest
         container_name: vpn-control-postgres
         restart: always
         volumes:
-            - pg-data:/var/lib/postgresql/data
+            - pg-data-postgres:/var/lib/postgresql/data
         env_file:
             - .env
         environment:
@@ -28,7 +14,12 @@ services:
             POSTGRES_PASSWORD: "${DB_USERNAME}"
             POSTGRES_DB: "${DB_DATABASE}"
         networks:
-            - vpn_core_internal_net 
+            - vpn_core_internal_net
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "${DB_USERNAME}"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
     adminer:
         image: adminer:latest
@@ -36,15 +27,32 @@ services:
         ports:
             - "8002:8080"
         depends_on:
-            - db
+            db:
+                condition: service_healthy
         environment:
             ADMINER_DEFAULT_SERVER: db
         networks:
-            - vpn_core_public_net
             - vpn_core_internal_net
+            - vpn_core_public_net
+
+    app:
+        image: elyerr/vpn-control:latest
+        container_name: vpn-control
+        ports:
+            - "8001:80"
+        depends_on:
+            db:
+                condition: service_healthy
+        volumes:
+            - .env:/var/www/.env
+        command: sh -c "/usr/local/bin/laravel-scripts.sh"
+        networks:
+            - vpn_core_internal_net
+            - vpn_core_public_net
+
 
 volumes:
-    pg-data:
+    pg-data-postgres:
 
 networks:
     vpn_core_internal_net:
