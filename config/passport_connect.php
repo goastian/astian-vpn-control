@@ -5,80 +5,63 @@ use Illuminate\Support\Str;
 return [
 
     /**
-     * DNS o URL actual del microservicio que se esta desarollando
-     * por ejemplo :  http://clients.dominio.dom
+     * Host
      */
-    'host' => env('APP_URL') ?: 'localhost',
+    'host' => env('APP_URL'),
 
     /**
-     * Variable que determina la ubicacion principal del servidor de authorizacion
-     * esta variable de entorno si tienes laravel puedes configurarlo en el archivo env
-     * en caso contrario puedes remplazar su contenido con la url del servidor
-     * por ejemplo : http://aouth2.dominio.dom
+     *  Server URL AOTUH 2
      */
-    'server' => env('SERVER') ?: 'localhost:8080',
+    'server' => env('PASSPORT_SERVER'),
+
 
     /**
-     * Indentificador del server id del microservicio que se le asigno, este ID
-     * lo genera el servidor de autorizacion, esta clave solo sera necesario cuando el cliente es
-     * publico
+     * Client ID generated on the OAUTH 2 Server
      */
-    'server_id' => env('SERVER_ID') ?: null,
+    'server_id' => env('PASSPORT_SERVER_ID') ?: null,
 
     /**
-     * formas para pedir authorizacion, son tres formas aplicables
-     * none : modo desatendido, empleado cuando la palicacion no representan ningun riesgo
-     * consent: solicitara al usuario que intervenga para que otrogue la autorrizacion
-     * login: modo seguro, utilizado cuando la aplicacion a conectar contiene servicios confidenciales
-     * por ejemplo cuando el servicio necesita actualizar informacion de usuarios, solicitara que
-     * el usuario ingrese otra vez sus credenciales para que pueda realizar estas acciones
-     * valores aceptados [none, consent,login]
+     * Prompt to make request for authorization
+     * Accept values
+     * none : No ask to the user,
+     * consent: Asking to the user
+     * login: Generate a new login
      */
-    'prompt_mode' => env('PROMPT_MODE', 'consent') ?: 'login',
+    'prompt_mode' => env('PASSPORT_PROMPT_MODE', 'consent') ?: 'login',
 
     /**
-     * scopes o permisos para que los usuarios puedan accceder a las caracteristicas del cliente
+     * Scopes for this clients to provide to the user
      */
-    'scopes' => env('CLIENT_SCOPES', ''),
+    'scopes' => env('PASSPORT_CLIENT_SCOPES', '*'),
 
     /**
-     * Variable donde se manejara las credenciales de los usuarios, estas variables
-     * no es necesario cambiarlas, pero si lo haces todas deben tener un nombre distinto
-     */
+      * Name of cookies to save token jwt and refresh token
+      */
     'ids' => [
         'jwt_token' => env('PASSPORT_TOKEN', Str::slug(env('APP_NAME', 'passport'), '_') . '_outh2_server'),
         'jwt_refresh' => env('PASSPORT_REFRESH', Str::slug(env('APP_NAME', 'passport'), '_') . '_refresh_outh2_server'),
     ],
 
     /**
-     * ruta donde estara ubicado el login en tu aplicacion, eres libre de modificarlo
-     * dependiendo de la configuracion de tu microservicio
+     * Login route
      */
-    'login' => env('WELCOME_PAGE', 'welcome'),
+    'login' => env('PASSPORT_LOGIN_TO', '/login'),
 
     /**
-     * Pagina a donde debe ser redireccionado luego que se hayan
-     * genereado las credenciales en el la ruta /callback , debes ajustar el valor
-     * a dependiendo de la configuracion de tu microservicio
+     * Redirect paga after login
      */
-    'redirect_after_login' => env('REDIRECT_TO', '/'),
+    'redirect_after_login' => env('PASSPORT_REDIRECT_TO', '/'),
 
     /**
-     * Configuracion para la creacion de cookies, no es necesario cambiar la configuracion
-     * pero puedes ajustarla a tu conveniencia
+     * Set config for cookies to OAUTH2 Server
      */
     'cookie' => [
         'path' => '/',
         'domain' => env('PASSPORT_DOMAIN_SERVER'),
-        'time_expires' => 10,
-        'secure' => isset($_SERVER['HTTPS']) ? true : false,
-        'http_only' => true,
-        'same_site' => 'lax',
+        'time_expires' => env('PASSPORT_TIME_EXPIRES', 10),
+        'secure' => env('PASSPORT_SECURE_COOKIE', true),
+        'http_only' => env('PASSPORT_HTTP_ONLY_COOKIE', true),
+        'same_site' => env('PASSPORT_SAME_SITE_COOKIE', 'lax'),
+        'partitioned' => env('PASSPORT_PARTITIONED_COOKIE', false),
     ],
-
-    /**
-     * Key para permitir enviar notificaciones al server de autoriozacion
-     *
-     */
-    'verify_notification' => env('VERIFY_NOTIFICATION'),
 ];
