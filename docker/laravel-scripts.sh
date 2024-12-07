@@ -1,7 +1,8 @@
-#!/bin/sh 
+#!/bin/sh
 
 cd /var/www
 
+php artisan key:generate
 
 echo "Running migrations"
 php artisan migrate --force
@@ -13,7 +14,7 @@ npm run production
 echo "Nodejs ran successfully"
 
 
-php-fpm82 -D
+php-fpm83 -D
 
 nginx -g "daemon off;"
-echo "Server ran successfully" 
+echo "Server ran successfully"

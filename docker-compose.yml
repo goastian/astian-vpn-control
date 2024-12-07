@@ -14,7 +14,7 @@ services:
             POSTGRES_PASSWORD: "${DB_USERNAME}"
             POSTGRES_DB: "${DB_DATABASE}"
         networks:
-            - vpn_core_internal_net
+            - vpn-core-internal-net
         healthcheck:
             test: ["CMD", "pg_isready", "-U", "${DB_USERNAME}"]
             interval: 10s
@@ -32,8 +32,8 @@ services:
         environment:
             ADMINER_DEFAULT_SERVER: db
         networks:
-            - vpn_core_internal_net
-            - vpn_core_public_net
+            - vpn-core-internal-net
+            - vpn-core-public-net
 
     app:
         image: elyerr/vpn-control:latest
@@ -47,15 +47,14 @@ services:
             - .env:/var/www/.env
         command: sh -c "/usr/local/bin/laravel-scripts.sh"
         networks:
-            - vpn_core_internal_net
-            - vpn_core_public_net
-
+            - vpn-core-internal-net
+            - vpn-core-public-net
 
 volumes:
     pg-data-postgres:
 
 networks:
-    vpn_core_internal_net:
+    vpn-core-internal-net:
         internal: true
-    vpn_core_public_net:
+    vpn-core-public-net:
         driver: bridge
