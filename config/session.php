@@ -135,7 +135,7 @@ return [
     /**
      * Xcsrf Token custom name
      */
-    'xsrf-token' => env('XSRF-TOKEN',
+    'xcsrf-token' => env('XSRF-TOKEN',
         Str::slug(env('APP_NAME', 'laravel'), '_') . '_csrf_token'),
 
     /*

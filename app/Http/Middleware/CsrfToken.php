@@ -18,7 +18,7 @@ class CsrfToken extends Middleware
      */
     protected function getTokenFromRequest($request)
     {
-        $token = $request->input('_token') ?: $request->header('X-CSRF-TOKEN');
+        $token = $request->input('_token') ?: $request->header(config('session.xcsrf-token'));
 
         if (!$token && $header = $request->header('X-XSRF-TOKEN')) {
             try {
@@ -41,13 +41,13 @@ class CsrfToken extends Middleware
     protected function newCookie($request, $config): Cookie
     {
         return new Cookie(
-            config('session.xsrf-token'),
+            config('session.xcsrf-token'),
             $request->session()->token(),
             $this->availableAt(60 * $config['lifetime']),
             $config['path'],
             $config['domain'],
             $config['secure'],
-            true,
+            false,
             false,
             $config['same_site'] ?? null,
             $config['partitioned'] ?? false
