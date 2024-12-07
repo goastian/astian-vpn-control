@@ -1,9 +1,9 @@
 {
-    "name": "laravel/laravel",
+    "name": "elyerr/vpn-control",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
+    "description": "Server to manage VPN servers",
+    "keywords": ["laravel", "wireguard", "vpn", "server manage"],
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.2",
         "elyerr/api-response": "^1.0",
