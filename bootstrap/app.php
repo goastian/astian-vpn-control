@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CsrfToken;
+use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\SecureHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,10 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(
             remove: [
                 \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+                Illuminate\Cookie\Middleware\EncryptCookies::class,
             ],
             append: [
                 SecureHeaders::class,
                 CsrfToken::class,
+                EncryptCookies::class
             ]
         );
 
