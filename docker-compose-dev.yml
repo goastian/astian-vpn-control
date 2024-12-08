@@ -3,7 +3,6 @@ version: "3.9"
 services:
   db-dev:
     image: postgres:latest
-    container_name: vpn-control-dev-postgres
     restart: always
     volumes:
       - pg-data-postgres:/var/lib/postgresql/data
