@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  db-dev:
+    image: postgres:latest
+    container_name: vpn-control-dev-postgres
+    restart: always
+    volumes:
+      - pg-data-postgres:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_USERNAME}"
+      POSTGRES_DB: "${DB_DATABASE}"
+    networks:
+      - vpn-control-dev-internal-net
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${DB_USERNAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer-dev:
+    image: adminer:latest
+    restart: always
+    container_name: vpn-control-dev-adminer
+    ports:
+      - "8002:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    networks:
+      - vpn-control-dev-internal-net
+      - vpn-control-dev-public-net
+
+  app-dev:
+    image: elyerr/vpn-control-dev:latest
+    container_name: vpn-control-dev
+    ports:
+      - "8001:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .env:/var/www/.env
+    command: sh -c "/usr/local/bin/laravel-scripts.sh"
+    networks:
+      - vpn-control-dev-internal-net
+      - vpn-control-dev-public-net
+
+volumes:
+  pg-data-postgres:
+
+
+networks:
+  vpn-control-dev-internal-net:
+    internal: true
+  vpn-control-dev-public-net:
+    driver: bridge
