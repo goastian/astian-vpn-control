@@ -10,7 +10,7 @@ services:
             - .env
         environment:
             POSTGRES_USER: "${DB_USERNAME}"
-            POSTGRES_PASSWORD: "${DB_USERNAME}"
+            POSTGRES_PASSWORD: "${DB_PASSWORD}"
             POSTGRES_DB: "${DB_DATABASE}"
         networks:
             - vpn-control-internal-net
