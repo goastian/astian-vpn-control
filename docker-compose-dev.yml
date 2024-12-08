@@ -25,7 +25,7 @@ services:
     restart: always
     container_name: vpn-control-dev-adminer
     ports:
-      - "8002:8080"
+      - "8092:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
     image: elyerr/vpn-control:dev
     container_name: vpn-control-dev
     ports:
-      - "8001:80"
+      - "8091:80"
     depends_on:
       db:
         condition: service_healthy
