@@ -36,7 +36,7 @@ services:
       - vpn-control-dev-public-net
 
   app-dev:
-    image: elyerr/vpn-control-dev:latest
+    image: elyerr/vpn-control:dev
     container_name: vpn-control-dev
     ports:
       - "8001:80"
