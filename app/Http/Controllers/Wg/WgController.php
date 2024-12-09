@@ -28,9 +28,17 @@ class WgController extends Controller
         $this->checkMethod('get');
 
         $params = $this->filter_transform($wg->transformer);
-        $wgs = $this->search($wg->table, $params);
+        $data = $wg->query();
 
-        return $this->showAll($wgs, $wg->transformer);
+        if (count($params) > 0) {
+            foreach ($params as $key => $value) {
+                $data = $data->where($key, 'like', "%" . $value . "%");
+            }
+        }
+
+        $data = $data->get();
+
+        return $this->showAll($data, $wg->transformer);
     }
 
     /**
@@ -42,6 +50,12 @@ class WgController extends Controller
     public function store(Request $request, Wg $wg)
     {
         $this->checkMethod('post');
+
+        $last_subnet = $wg->latest()->first();
+
+        $subnet = $this->generateNextSubnet($last_subnet ? $last_subnet->subnet : null);
+
+        throw_if($wg->count() >= 10, new ReportError(__('The limit has been exceeded'), 403));
 
         $request->validate([
             'name' => [
@@ -55,7 +69,7 @@ class WgController extends Controller
                     }
                 }
             ],
-            'listen_port' => ['required', 'max:10'],
+            'listen_port' => ['required', 'max:10', 'unique:wgs,listen_port'],
             'interface' => ['required', 'max:50'],
             'server_id' => ['required', 'exists:servers,id'],
             'dns_1' => ['nullable', 'max:190'],
@@ -63,15 +77,17 @@ class WgController extends Controller
         ]);
 
 
-        DB::transaction(function () use ($request, $wg) {
+        DB::transaction(function () use ($request, $wg, $subnet) {
 
             $wg = $wg->fill($request->except('private_key'));
             $wg->private_key = $wg->generatePrivKey();
             $wg->active = true;
+            $wg->subnet = $subnet;
             $wg->save();
             $core = new Core($wg->server->url, $wg->server->port);
             $core->mountInterface(
                 $request->name,
+                $subnet,
                 $wg->private_key,
                 $wg->interface,
                 $wg->listen_port

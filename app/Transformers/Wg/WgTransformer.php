@@ -40,6 +40,7 @@ class WgTransformer extends TransformerAbstract
         return [
             'id' => $data->id,
             'name' => $data->name,
+            'subnet' => $data->subnet,
             'listen_port' => $data->listen_port,
             'interface' => $data->interface,
             'dns_1' => $data->dns_1,
@@ -65,7 +66,7 @@ class WgTransformer extends TransformerAbstract
      * Retrieve Original Attributes to filter data
      *
      * @param string $index
-     * @return Array
+     * @return Array|null
      */
     public static function getOriginalAttributes($index)
     {
@@ -80,6 +81,5 @@ class WgTransformer extends TransformerAbstract
         ];
 
         return isset($attributes[$index]) ? $attributes[$index] : null;
-
     }
 }

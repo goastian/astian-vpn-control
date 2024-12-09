@@ -32,21 +32,23 @@ final class Core
     /**
      * Mount wireguard interface
      * @param mixed $interface_name
+     * @param mixed $subnet
      * @param mixed $address
      * @param mixed $private_key
-     * @param mixed $out_interface
+     * @param mixed $physical_interface
      * @param mixed $listen_port
      * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
      */
-    public function mountInterface($interface_name, $private_key, $out_interface, $listen_port = 51820)
+    public function mountInterface($interface_name, $subnet, $private_key, $physical_interface, $listen_port = 51820)
     {
         try {
             $response = $this->client->request("POST", "/api/wireguard/mount", [
                 'json' => [
                     'interface_name' => $interface_name,
                     'private_key' => $private_key,
-                    'out_interface' => $out_interface,
-                    'listen_port' => $listen_port
+                    'physical_interface' => $physical_interface,
+                    'listen_port' => $listen_port,
+                    'subnet' => $subnet
                 ]
             ]);
 
@@ -79,7 +81,7 @@ final class Core
             $response = $this->client->request("DELETE", "/api/wireguard/umount", [
                 'json' => [
                     "interface_name" => $interface_name,
-                    "out_interface" => $net
+                    "physical_interface" => $net
                 ]
             ]);
 

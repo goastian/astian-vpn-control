@@ -26,6 +26,7 @@ class Wg extends Master
         'name',
         'private_key',
         'listen_port',
+        'subnet',
         'dns_1',
         'dns_2',
         'server_id',
