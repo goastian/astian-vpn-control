@@ -16,7 +16,7 @@
         <v-card :prepend-icon="$utils.toKebabCase('mdiLock')" title="Add Peer">
             <v-card-text>
                 <v-row dense>
-                    <v-col cols="12" md="6">
+                    <v-col cols="12" md="6" v-show="!peer.id">
                         <v-text-field label="Name" v-model="form.name">
                             <template #details>
                                 <v-error :error="errors.name"></v-error>
@@ -24,7 +24,7 @@
                         </v-text-field>
                     </v-col>
 
-                    <v-col cols="12">
+                    <v-col cols="12" v-show="!peer.id">
                         <v-select
                             v-model="form.wg_id"
                             :items="interfaces"
@@ -43,7 +43,7 @@
                                     "
                                 ></v-icon>
                                 <span class="text-body custom-selection">
-                                    {{ item.raw.name }} - {{ item.raw.country }}
+                                    {{ item.raw.name }} - {{ item.raw.server_country}}
                                 </span>
                             </template>
 
@@ -51,7 +51,7 @@
                                 <v-list-item
                                     v-bind="props"
                                     :title="item.raw.name"
-                                    :subtitle="`${item.raw.server_country} - ${item.raw.server_url}`"
+                                    :subtitle="`${item.raw.server_country} - ${item.raw.server_country}`"
                                 >
                                     <template v-slot:prepend>
                                         <v-icon

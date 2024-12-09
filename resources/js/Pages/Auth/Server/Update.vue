@@ -89,9 +89,11 @@ export default {
                 const res = await this.$api.put(item.links.update, this.item);
 
                 if (res.status == 201) {
+                    this.dialog = false;
                     this.errors = {};
                     this.form = {};
                     this.$emit("updated", res.data.data);
+                    this.$notification.success("Updated successfully");
                 }
             } catch (err) {
                 if (err.response && err.response.status == 422) {
@@ -107,7 +109,6 @@ export default {
                     this.$notification.error(err.response.data.message);
                 }
             }
-            s;
         },
     },
 };
