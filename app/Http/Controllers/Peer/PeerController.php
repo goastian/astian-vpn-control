@@ -139,7 +139,7 @@ class PeerController extends Controller
      */
     public function toggle(Peer $peer)
     {
-        $this->checkMethod('get');
+        $this->checkMethod('put');
 
         $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
