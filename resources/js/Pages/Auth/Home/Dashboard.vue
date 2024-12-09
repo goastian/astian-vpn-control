@@ -17,8 +17,15 @@
                             {{ item.name }}
                         </span>
                         <span>
-                            {{ item.network.server }} -
                             {{ item.network.server_name }}
+                            <v-icon
+                                :icon="$utils.toKebabCase('mdiAccessPoint')"
+                                :color="
+                                    item.active
+                                        ? 'green-darken-1'
+                                        : 'red-accent-2'
+                                "
+                            ></v-icon>
                         </span>
                     </div>
                 </v-card-title>
