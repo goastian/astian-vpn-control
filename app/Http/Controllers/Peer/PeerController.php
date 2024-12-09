@@ -42,6 +42,19 @@ class PeerController extends Controller
     public function store(Request $request, Peer $peer, Wg $wg)
     {
         $this->checkMethod('post');
+        $message = __('You have exceeded the device limit');
+        $data = $peer->query();
+        $data->where('user_id', $this->user()->id);
+
+        //check if the app is on dev mode
+        if (config('app.test')) {
+            throw_if($data->count() >= 5, new ReportError($message, 403));
+        }
+
+        //check scope in production mode
+        if (!config('app.test') && $this->userCan('vpn-free')) {
+            throw_if($data->count() >= 2, new ReportError($message, 403));
+        }
 
         $request->validate([
             'name' => ['required'],
@@ -59,7 +72,7 @@ class PeerController extends Controller
             ],
         ]);
 
-        //Wireguar interface
+        //Wireguard interface
         $wg = $wg->findOrFail($request->wg_id);
 
         DB::transaction(function () use ($request, $peer, $wg) {

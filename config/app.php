@@ -123,4 +123,11 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+
+    /**
+     * This key sets the app to environment mode so the user can check and test the application.
+     *  The maximum number of peers per user is up to 10
+     */
+    'test' => env('APP_TEST', false)
+
 ];
