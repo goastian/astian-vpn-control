@@ -43,7 +43,8 @@
                                     "
                                 ></v-icon>
                                 <span class="text-body custom-selection">
-                                    {{ item.raw.name }} - {{ item.raw.server_country}}
+                                    {{ item.raw.name }} -
+                                    {{ item.raw.server_country }}
                                 </span>
                             </template>
 
@@ -198,7 +199,11 @@ export default {
          */
         async getWgs() {
             try {
-                const res = await this.$api.get("/api/wgs");
+                const res = await this.$api.get("/api/wgs", {
+                    params: {
+                        active: true,
+                    },
+                });
 
                 if (res.status == 200) {
                     this.interfaces = res.data.data;
