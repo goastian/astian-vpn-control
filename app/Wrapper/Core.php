@@ -38,13 +38,12 @@ final class Core
      * @param mixed $listen_port
      * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
      */
-    public function mountInterface($interface_name, $address, $private_key, $out_interface, $listen_port = 51820)
+    public function mountInterface($interface_name, $private_key, $out_interface, $listen_port = 51820)
     {
         try {
             $response = $this->client->request("POST", "/api/wireguard/mount", [
                 'json' => [
                     'interface_name' => $interface_name,
-                    'address' => $address,
                     'private_key' => $private_key,
                     'out_interface' => $out_interface,
                     'listen_port' => $listen_port
@@ -259,7 +258,7 @@ final class Core
      * Force to reload the wireguard network interface using the config file
      * @param mixed $interface_name
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @return mixed|\Illuminate\Http\JsonResponse|void
      */
     public function reloadNetwork($interface_name)
     {
