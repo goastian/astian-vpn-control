@@ -21,6 +21,7 @@ class ServerController extends GlobalController
      */
     public function index(Server $server)
     {
+        $this->checkMethod('get');
         //filter params
         $params = $this->filter_transform($server->transformer);
         $data = $this->search($server->table, $params);
@@ -32,6 +33,8 @@ class ServerController extends GlobalController
      */
     public function store(Request $request, Server $server)
     {
+        $this->checkMethod('post');
+
         $request->validate([
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
@@ -51,6 +54,8 @@ class ServerController extends GlobalController
      */
     public function show(Server $server)
     {
+        $this->checkMethod('get');
+
         return $this->showOne($server);
     }
 
@@ -59,6 +64,8 @@ class ServerController extends GlobalController
      */
     public function update(Request $request, Server $server)
     {
+        $this->checkMethod('put');
+
         $request->validate([
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url,' . $server->id, 'url:http,https'],
@@ -92,11 +99,13 @@ class ServerController extends GlobalController
      */
     public function destroy(Server $server)
     {
+        $this->checkMethod('delete');
+
         throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
 
         $server->delete();
 
-        return $this->show($server);
+        return $this->showOne($server, $server->transformer);
     }
 
     /**
@@ -106,10 +115,12 @@ class ServerController extends GlobalController
      */
     public function toggle(Server $server)
     {
+        $this->checkMethod('put');
+
         $server->active = !$server->active ? now() : null;
         $server->push();
 
-        return $this->show($server, 201);
+        return $this->showOne($server, $server->transformer, 201);
     }
 
 
@@ -121,6 +132,8 @@ class ServerController extends GlobalController
      */
     public function interfaces($id, Server $server)
     {
+        $this->checkMethod('get');
+
         $host = $server->findOrFail($id);
         $core = new Core($host->url, $host->port);
         return $core->networkInterfaces();

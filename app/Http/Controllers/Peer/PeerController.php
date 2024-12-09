@@ -24,6 +24,8 @@ class PeerController extends Controller
      */
     public function index(Peer $peer)
     {
+        $this->checkMethod('get');
+
         $params = $this->filter_transform($peer->transformer);
         $data = $this->search($peer->table, $params);
 
@@ -39,6 +41,8 @@ class PeerController extends Controller
      */
     public function store(Request $request, Peer $peer, Wg $wg)
     {
+        $this->checkMethod('post');
+
         $request->validate([
             'name' => ['required'],
             'wg_id' => [
@@ -106,6 +110,8 @@ class PeerController extends Controller
      */
     public function destroy(Peer $peer)
     {
+        $this->checkMethod('delete');
+
         throw_if($peer->active, new ReportError(__("This peer is active, please stop and try again"), 403));
 
         $peer->delete();
@@ -120,6 +126,8 @@ class PeerController extends Controller
      */
     public function toggle(Peer $peer)
     {
+        $this->checkMethod('get');
+
         $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
         if ($peer->active) {

@@ -6,6 +6,7 @@ use App\Wrapper\Core;
 use App\Models\Server\Wg;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Exception\ClientException;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 use App\Http\Controllers\GlobalController as Controller;
@@ -24,6 +25,8 @@ class WgController extends Controller
      */
     public function index(Wg $wg)
     {
+        $this->checkMethod('get');
+
         $params = $this->filter_transform($wg->transformer);
         $wgs = $this->search($wg->table, $params);
 
@@ -38,6 +41,8 @@ class WgController extends Controller
      */
     public function store(Request $request, Wg $wg)
     {
+        $this->checkMethod('post');
+
         $request->validate([
             'name' => [
                 'required',
@@ -67,7 +72,6 @@ class WgController extends Controller
             $core = new Core($wg->server->url, $wg->server->port);
             $core->mountInterface(
                 $request->name,
-                "10.0.0.1/8",
                 $wg->private_key,
                 $wg->interface,
                 $wg->listen_port
@@ -85,6 +89,8 @@ class WgController extends Controller
      */
     public function show(Wg $server)
     {
+        $this->checkMethod('get');
+
         return $this->showOne($server, $server->transformer);
     }
 
@@ -97,6 +103,8 @@ class WgController extends Controller
      */
     public function update(Request $request, Wg $wg)
     {
+        $this->checkMethod("put");
+
         throw_if($wg->active, new ReportError(__('This action can be done, please stop the Wireguard Interface'), 422));
 
         $request->validate([
@@ -134,6 +142,8 @@ class WgController extends Controller
      */
     public function destroy(Wg $wg)
     {
+        $this->checkMethod("delete");
+
         throw_if($wg->active, new ReportError(__('Unable to delete this resource because is active. Please shutdown and try again.'), 403));
         throw_if($wg->peers()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
 
@@ -155,6 +165,8 @@ class WgController extends Controller
      */
     public function toggle(Wg $wg)
     {
+        $this->checkMethod('put');
+
         if ($wg->active) {
             $core = new Core($wg->server->url, $wg->server->port);
             $core->shutdownInterface($wg->name);
@@ -177,6 +189,8 @@ class WgController extends Controller
      */
     public function reload(Wg $wg)
     {
+        $this->checkMethod('get');
+
         $core = new Core($wg->server->url, $wg->server->port);
         $core->reloadNetwork($wg->name);
         return $this->showOne($wg, $wg->transformer, 201);
