@@ -205,7 +205,7 @@ class WgController extends Controller
      */
     public function reload(Wg $wg)
     {
-        $this->checkMethod('get');
+        $this->checkMethod('post');
 
         $core = new Core($wg->server->url, $wg->server->port);
         $core->reloadNetwork($wg->name);
