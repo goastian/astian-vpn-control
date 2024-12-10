@@ -27,7 +27,14 @@ class PeerController extends Controller
         $this->checkMethod('get');
 
         $params = $this->filter_transform($peer->transformer);
-        $data = $this->search($peer->table, $params);
+        $data = $peer->query();
+        $data = $data->where('user_id', $this->user()->id);
+
+        foreach ($params as $key => $value) {
+            $data = $data->where($key, 'LIKE', "%" . $value . "%");
+        }
+
+        $data = $data->get();
 
         return $this->showAll($data, $peer->transformer);
     }
@@ -82,7 +89,8 @@ class PeerController extends Controller
 
             //Preshared key
             $preshared_key = $peer->generatePresharedkey();
-            $ip_allowed = $peer->generateUniqueIp();
+
+            $ip_allowed = $this->generateRandomIp($wg->subnet);
 
             //peer
             $peer = $peer->fill($request->only('name'));
@@ -98,7 +106,8 @@ class PeerController extends Controller
             $config = [
                 "[Interface]",
                 "PrivateKey = {$keys['private_key']}",
-                "ListenPort = 21841",
+                "ListenPort = {$wg->listen_port}",
+                "Address =  {$ip_allowed}/32",
                 "",
                 "[Peer]",
                 "PublicKey = {$wg->generatePubKey()}",

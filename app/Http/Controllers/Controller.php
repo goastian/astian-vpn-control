@@ -19,7 +19,7 @@ abstract class Controller extends RoutingController
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      * @return string
      */
-    function generateNextSubnet($subnet = null)
+    public function generateNextSubnet($subnet = null)
     {
         $subnet_base = $subnet ?? "192.10.0.0/16";
 
@@ -41,4 +41,35 @@ abstract class Controller extends RoutingController
         return implode('.', $address) . "/" . $prefix;
     }
 
+    /**
+     * Summary of generateRandomIp
+     * @param mixed $subnet
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @return bool|string
+     */
+    public function generateRandomIp($subnet)
+    {
+        list($baseIp, $mask) = explode('/', $subnet);
+        $mask = (int) $mask;
+
+        $baseIpLong = ip2long($baseIp);
+        $hostCount = 2 ** (32 - $mask) - 2;
+
+        if ($hostCount < 1) {
+            throw new ReportError(__("The specified subnet does not allow valid host addresses."), 422);
+        }
+
+        $attempts = 5;
+        for ($i = 0; $i < $attempts; $i++) {
+            $randomOffset = rand(1, $hostCount);
+            $randomIpLong = $baseIpLong + $randomOffset;
+            $randomIp = long2ip($randomIpLong);
+
+            if (filter_var($randomIp, FILTER_VALIDATE_IP)) {
+                return $randomIp;
+            }
+        }
+
+        throw new ReportError(__("Failed to generate a valid IP address after :attempts attempts.", ['attempts' => $attempts]), 422);
+    }
 }
