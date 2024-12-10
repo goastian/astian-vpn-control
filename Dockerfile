@@ -32,6 +32,7 @@ RUN apk add --no-cache \
     nodejs \
     npm \
     curl \
+    wireguard-tools \
     unzip
 
 RUN getent passwd www-data || adduser -S -G www-data -s /usr/sbin/nologin www-data
