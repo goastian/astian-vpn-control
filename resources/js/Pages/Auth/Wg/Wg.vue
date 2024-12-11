@@ -13,7 +13,7 @@
             <v-toggle @updated="getWgs" :wg="item"></v-toggle>
         </template>
         <template #item.reload="{item}">
-            <v-reload :wg="item"></v-reload>
+            <v-reload :wg="item" @updated="getWgs"></v-reload>
         </template>
         <template #item.actions="{ item }">
             <v-menu transition="scale-transition">

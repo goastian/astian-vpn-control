@@ -48,6 +48,7 @@ export default {
                         "Network Interface reloaded successfully"
                     );
                     this.dialog = false;
+                    this.$emit("updated", true);
                 }
             } catch (err) {
                 if (err.response.status == 403) {
