@@ -207,8 +207,14 @@ class WgController extends Controller
     {
         $this->checkMethod('post');
 
-        $core = new Core($wg->server->url, $wg->server->port);
-        $core->reloadNetwork($wg->name);
+        DB::transaction(function () use ($wg) {
+            $core = new Core($wg->server->url, $wg->server->port);
+            $core->reloadNetwork($wg->name);
+
+            $wg->active = true;
+            $wg->push();
+        });
+
         return $this->showOne($wg, $wg->transformer, 201);
     }
 }
