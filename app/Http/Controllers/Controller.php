@@ -10,7 +10,8 @@ use Illuminate\Routing\Controller as RoutingController;
 
 abstract class Controller extends RoutingController
 {
-    use Asset, JsonResponser;
+    use Asset;
+    use JsonResponser;
 
 
     /**
@@ -23,23 +24,33 @@ abstract class Controller extends RoutingController
     {
         $subnet_base = $subnet ?? "192.10.0.0/16";
 
+        // Validar y dividir la subred base
         list($ip, $prefix) = explode('/', $subnet_base);
-
         if (!filter_var($ip, FILTER_VALIDATE_IP)) {
             throw new ReportError(__('Invalid IP address'), 403);
         }
 
-        //split subnet
-        throw_if($prefix != 16, new ReportError(__('Invalid prefix'), 403));
+        $prefix = (int) $prefix;
+        if ($prefix !== 16) {
+            throw new ReportError(__('Invalid prefix, only /16 is supported'), 403);
+        }
 
-        $address = explode('.', $ip);
-        $subnet_octet = $address[1] + 1;
+        $ip_long = ip2long($ip);
 
-        throw_if($subnet_octet > 254, new ReportError(__('The limit has been exceeded'), 403));
-        $address[1] = $subnet_octet;
+        $increment = 1 << (32 - $prefix);
+        $next_ip_long = $ip_long + $increment;
 
-        return implode('.', $address) . "/" . $prefix;
+        $max_ip_long = ip2long("192.255.255.255");
+        if ($next_ip_long > $max_ip_long) {
+            throw new ReportError(__('The limit has been exceeded for the /16 range'), 403);
+        }
+
+        $gateway_ip_long = explode('.', long2ip($next_ip_long));
+        $gateway_ip_long[3] = 1;
+
+        return implode('.', $gateway_ip_long) . '/' . $prefix;
     }
+
 
     /**
      * Summary of generateRandomIp
