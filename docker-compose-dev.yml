@@ -38,6 +38,7 @@ services:
   app-dev:
     image: elyerr/vpn-control:dev
     container_name: vpn-control-dev
+    restart: always
     ports:
       - "8091:80"
     depends_on:
