@@ -29,7 +29,6 @@ RUN apk add --no-cache \
     php83-intl \
     vim \
     nginx \
-    nodejs \
     npm \
     curl \
     wireguard-tools \
@@ -57,9 +56,4 @@ COPY docker/laravel-scripts.sh /usr/local/bin/laravel-scripts.sh
 RUN chmod 755 /etc/nginx/http.d/default.conf
 RUN chmod 755 /usr/local/bin/laravel-scripts.sh
 
-RUN mkdir -p /var/log/php
-RUN chmod -R 755 /var/log/php
-RUN chown -R www-data:www-data /var/log/php
-
 EXPOSE 80
-EXPOSE 443
