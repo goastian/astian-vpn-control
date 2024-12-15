@@ -72,16 +72,14 @@ final class Core
     /**
      * Remove the Wireguard Network Interface
      * @param mixed $interface_name
-     * @param mixed $net
      * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
      */
-    public function removeInterface($interface_name, $net)
+    public function removeInterface($interface_name)
     {
         try {
             $response = $this->client->request("DELETE", "/api/wireguard/umount", [
                 'json' => [
-                    "interface_name" => $interface_name,
-                    "physical_interface" => $net
+                    "interface_name" => $interface_name
                 ]
             ]);
 
