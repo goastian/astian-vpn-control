@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Wg;
 
 use App\Wrapper\Core;
 use App\Models\Server\Wg;
+use App\Models\Server\Peer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -156,19 +157,25 @@ class WgController extends Controller
      * @param \App\Models\Server\Wg $wg
      * @return \Elyerr\ApiResponse\Assets\Json
      */
-    public function destroy(Wg $wg)
+    public function destroy(Wg $wg, Peer $peer)
     {
         $this->checkMethod("delete");
 
         throw_if($wg->active, new ReportError(__('Unable to delete this resource because is active. Please shutdown and try again.'), 403));
-        throw_if($wg->peers()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
+        //throw_if($wg->peers()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
 
-        DB::transaction(function () use ($wg) {
+        DB::transaction(function () use ($wg, $peer) {
 
             $core = new Core($wg->server->url, $wg->server->port);
-            $core->removeInterface($wg->name, $wg->interface);
+            $core->removeInterface($wg->name);
 
-            $wg->delete();
+            $status = $wg->delete();
+
+            if ($status) {
+                $peers = $peer->query();
+                $peers = $peers->where('wg_id', $wg->id);
+                $peers->delete();
+            }
         });
 
         return $this->showOne($wg, $wg->transformer);
@@ -179,21 +186,34 @@ class WgController extends Controller
      *
      * @param Wg $wg
      */
-    public function toggle(Wg $wg)
+    public function toggle(Wg $wg, Peer $peer)
     {
         $this->checkMethod('put');
 
-        if ($wg->active) {
-            $core = new Core($wg->server->url, $wg->server->port);
-            $core->shutdownInterface($wg->name);
-            $wg->active = !$wg->active;
-            $wg->push();
-        } else {
-            $core = new Core($wg->server->url, $wg->server->port);
-            $core->startInterface($wg->name);
-            $wg->active = !$wg->active;
-            $wg->push();
-        }
+        DB::transaction(function () use ($wg, $peer) {
+            if ($wg->active) {
+                $core = new Core($wg->server->url, $wg->server->port);
+                $core->shutdownInterface($wg->name);
+                $wg->active = !$wg->active;
+                $status = $wg->push();
+
+                if ($status) {
+                    $peers = $peer->query();
+                    $peers = $peers->where('wg_id', $wg->id);
+                    $peers->update(['active' => 0]);
+                }
+            } else {
+                $core = new Core($wg->server->url, $wg->server->port);
+                $core->startInterface($wg->name);
+                $wg->active = !$wg->active;
+                $status = $wg->push();
+                if ($status) {
+                    $peers = $peer->query();
+                    $peers = $peers->where('wg_id', $wg->id);
+                    $peers->update(['active' => 1]);
+                }
+            }
+        });
 
         return $this->showOne($wg, $wg->transformer, 201);
     }
