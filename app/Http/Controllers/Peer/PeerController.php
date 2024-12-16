@@ -89,7 +89,7 @@ class PeerController extends Controller
 
             //Preshared key
             $preshared_key = $peer->generatePresharedkey();
-
+            $dns = str_replace('/16', '', $wg->subnet);
             $ip_allowed = $this->generateRandomIp($wg->subnet);
 
             //peer
@@ -108,11 +108,12 @@ class PeerController extends Controller
                 "PrivateKey = {$keys['private_key']}",
                 "ListenPort = {$wg->listen_port}",
                 "Address =  {$ip_allowed}/32",
+                "DNS =  {$dns}",
                 "",
                 "[Peer]",
                 "PublicKey = {$wg->generatePubKey()}",
                 "Endpoint = {$wg->getServer()}",
-                "AllowedIPs = 0.0.0.0/0",
+                "AllowedIPs = 0.0.0.0/0, ::/0",
                 "PresharedKey = {$preshared_key}",
                 "PersistentKeepalive = {$peer->persistent_keepalive}",
             ];
