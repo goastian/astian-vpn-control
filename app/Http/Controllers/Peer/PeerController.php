@@ -108,11 +108,11 @@ class PeerController extends Controller
                 "PrivateKey = {$keys['private_key']}",
                 "ListenPort = {$wg->listen_port}",
                 "Address =  {$ip_allowed}/32",
-                "DNS =  {$dns}",
+                "DNS = {$dns}",
                 "",
                 "[Peer]",
                 "PublicKey = {$wg->generatePubKey()}",
-                "Endpoint = {$wg->getServer()}",
+                "Endpoint = {$wg->getEndpoint()}",
                 "AllowedIPs = 0.0.0.0/0, ::/0",
                 "PresharedKey = {$preshared_key}",
                 "PersistentKeepalive = {$peer->persistent_keepalive}",
@@ -165,7 +165,7 @@ class PeerController extends Controller
                 $peer->wg->name,
                 $peer->public_key,
                 $peer->allowed_ips,
-                $peer->wg->getServer(),
+                $peer->wg->getEndpoint(),
                 $peer->preshared_key,
                 $peer->persistent_keepalive
             );

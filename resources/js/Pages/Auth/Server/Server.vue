@@ -88,6 +88,12 @@ export default {
                     key: "port",
                 },
                 {
+                    title: "IPV4",
+                    align: "start",
+                    sortable: false,
+                    key: "ipv4",
+                },
+                {
                     title: "Actions",
                     align: "start",
                     sortable: false,

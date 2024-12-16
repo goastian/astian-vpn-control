@@ -39,6 +39,8 @@ class ServerController extends GlobalController
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
+            'ip' => ['required', 'ipv4']
+
         ]);
 
         DB::transaction(function () use ($request, $server) {
@@ -69,7 +71,7 @@ class ServerController extends GlobalController
         $request->validate([
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url,' . $server->id, 'url:http,https'],
-            'port' => ['required', 'max:6']
+            'port' => ['required', 'max:6'],
         ]);
 
         DB::transaction(function () use ($request, $server) {

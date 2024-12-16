@@ -15,6 +15,7 @@ return new class () extends Migration {
             $table->string('country');
             $table->string('url');
             $table->string('port');
+            $table->ipAddress('ip');
             $table->boolean('active')->default(false);
             $table->timestamps();
         });

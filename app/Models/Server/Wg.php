@@ -82,7 +82,15 @@ class Wg extends Master
      */
     public function getServer()
     {
-        $url = str_replace(['https://', 'http://'], '', $this->server->url);
-        return "{$url}:{$this->listen_port}";
+        return "{$this->server->url}:{$this->listen_port}";
+    }
+
+    /**
+     * Get the endpoint server
+     * @return string
+     */
+    public function getEndpoint()
+    {
+        return "{$this->server->ip}:{$this->listen_port}";
     }
 }

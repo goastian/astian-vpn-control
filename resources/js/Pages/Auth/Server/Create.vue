@@ -42,6 +42,14 @@
                             </template>
                         </v-text-field>
                     </v-col>
+
+                    <v-col cols="12" md="6">
+                        <v-text-field label="IPv4" v-model="form.ip">
+                            <template #details>
+                                <v-error :error="errors.ip"></v-error>
+                            </template>
+                        </v-text-field>
+                    </v-col>
                 </v-row>
             </v-card-text>
 

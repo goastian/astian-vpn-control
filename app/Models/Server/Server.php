@@ -24,7 +24,8 @@ class Server extends Master
         'country',
         'url',
         'port',
-        'active'
+        'active',
+        'ip'
     ];
 
     /**
