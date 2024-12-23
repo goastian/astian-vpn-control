@@ -1,5 +1,5 @@
 <template>
-    <v-data-table :headers="headers" :items="servers">
+    <v-data-table :headers="headers" :items="servers" v-if="isAdmin()">
         <template #top>
             <div class="row d-flex justify-between py-4 px-4">
                 <h1 class="text-subtitle-1 underline">List of Servers</h1>
@@ -53,6 +53,8 @@ import VUpdate from "./Update.vue";
 import VDelete from "./Delete.vue";
 
 export default {
+    inject: ["$user"],
+
     components: {
         VCreate,
         VUpdate,
@@ -119,6 +121,11 @@ export default {
                     this.servers = res.data.data;
                 }
             } catch (err) {}
+        },
+
+        isAdmin() {
+            const group = this.$user.roles.find((item) => item.name == "admin");
+            return group ? true : false;
         },
     },
 };

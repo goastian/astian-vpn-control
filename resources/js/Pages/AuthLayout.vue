@@ -17,8 +17,7 @@
                     <v-app-bar-nav-icon
                         :icon="$utils.toKebabCase('mdiViewGrid')"
                         variant="text"
-                        @click.stop="drawer = !drawer"
-                        v-if="!$vuetify.display.mobile"
+                        @click="drawer = !drawer"
                     >
                     </v-app-bar-nav-icon>
                 </template>
@@ -31,11 +30,7 @@
             <!--end navbar-->
 
             <!--leftbar-->
-            <v-navigation-drawer
-                v-model="drawer"
-                v-if="!$vuetify.display.mobile"
-                width="200"
-            >
+            <v-navigation-drawer v-model="drawer" width="200">
                 <v-list density="compact" nav>
                     <v-list-item
                         density="compact"
@@ -45,7 +40,7 @@
                         :subtitle="item.name"
                         @click="openLink(item.route)"
                         class="mb-5"
-                        v-show="item.active"
+                        v-show="hasGroup(item.group)"
                     >
                         <template v-slot:prepend>
                             <v-icon
@@ -90,12 +85,14 @@ export default {
                     icon: "mdiServerSecurity",
                     route: "servers",
                     active: true,
+                    group: "admin",
                 },
                 {
                     name: "Wireguard",
                     icon: "mdiTools",
                     route: "wireguard",
                     active: true,
+                    group: "admin",
                 },
                 {
                     name: "Peers",
@@ -107,19 +104,19 @@ export default {
                     name: "Cloud",
                     icon: "mdiCloudCheckVariantOutline",
                     route: "https://cloud.astian.org",
-                    active: false,
+                    active: true,
                 },
                 {
                     name: "Notes",
                     icon: "mdiNotebookHeartOutline",
                     route: "https://notes.astian.org",
-                    active: false,
+                    active: true,
                 },
                 {
                     name: "Calendar",
                     icon: "mdiCalendarMultiselectOutline",
                     route: "https://calendar.astian.org",
-                    active: false,
+                    active: true,
                 },
                 {
                     name: "Contacts",
@@ -132,13 +129,39 @@ export default {
     },
 
     methods: {
-        //do not remove this line
         openLink(uri) {
             try {
                 this.$router.push({ name: uri });
             } catch (err) {
                 window.open(uri, "_self");
             }
+        },
+
+        hasGroup(groupName) {
+            if (this.isAdmin()) {
+                return true;
+            }
+
+            if (!groupName && this.isClient()) {
+                return true;
+            }
+
+            const group = this.$user.roles.find(
+                (item) => item.name == groupName
+            );
+            return group ? true : false;
+        },
+
+        isAdmin() {
+            const group = this.$user.roles.find((item) => item.name == "admin");
+            return group ? true : false;
+        },
+
+        isClient() {
+            const group = this.$user.roles.find(
+                (item) => item.name == "client"
+            );
+            return group ? true : false;
         },
     },
 };

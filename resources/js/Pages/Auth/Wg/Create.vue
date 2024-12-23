@@ -38,21 +38,13 @@
                         </v-text-field>
                     </v-col>
 
-                    <v-col cols="12" md="6">
-                        <v-text-field label="DNS 1" v-model="form.dns_1">
+                    <v-col cols="12">
+                        <v-text-field label="DNS Server" v-model="form.dns">
                             <template #details>
-                                <v-error :error="errors.dns_1"></v-error>
+                                <v-error :error="errors.dns"></v-error>
                             </template>
                         </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-text-field label="DNS 2" v-model="form.dns_2">
-                            <template #details>
-                                <v-error :error="errors.dns_2"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
+                    </v-col> 
 
                     <v-col cols="12" md="6">
                         <v-select
@@ -132,8 +124,7 @@ export default {
             form: {
                 name: "",
                 listen_port: "",
-                dns_1: "",
-                dns_2: "",
+                dns: "",
                 server_id: "",
             },
             errors: {},

@@ -1,5 +1,5 @@
 <template>
-    <v-data-table :headers="headers" :items="interfaces">
+    <v-data-table :headers="headers" :items="interfaces" v-if="isAdmin()">
         <template #top>
             <div class="row d-flex justify-between py-4 px-4">
                 <h1 class="text-subtitle-1 underline">Wireguard Interfaces</h1>
@@ -12,7 +12,7 @@
         <template #item.active="{ item }">
             <v-toggle @updated="getWgs" :wg="item"></v-toggle>
         </template>
-        <template #item.reload="{item}">
+        <template #item.reload="{ item }">
             <v-reload :wg="item" @updated="getWgs"></v-reload>
         </template>
         <template #item.actions="{ item }">
@@ -48,12 +48,14 @@ import VToggle from "./Toggle.vue";
 import VReload from "./Reload.vue";
 
 export default {
+    inject: ["$user"],
+
     components: {
         VCreate,
         VUpdate,
         VDelete,
         VToggle,
-        VReload
+        VReload,
     },
 
     data() {
@@ -119,6 +121,11 @@ export default {
                     this.interfaces = res.data.data;
                 }
             } catch (err) {}
+        },
+
+        isAdmin() {
+            const group = this.$user.roles.find((item) => item.name == "admin");
+            return group ? true : false;
         },
     },
 };

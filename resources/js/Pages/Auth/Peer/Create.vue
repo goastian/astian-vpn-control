@@ -6,7 +6,7 @@
                 icon
                 variant="tonal"
                 v-bind="activatorProps"
-                @click="getWgs"
+                @click="showForm"
                 color="blue-lighten-1"
             >
                 <v-icon :icon="$utils.toKebabCase('mdiKeyPlus')"> </v-icon>
@@ -17,7 +17,7 @@
             <v-card-text>
                 <v-row dense>
                     <v-col cols="12" md="6" v-show="!peer.id">
-                        <v-text-field label="Name" v-model="form.name">
+                        <v-text-field label="Device name" v-model="form.name">
                             <template #details>
                                 <v-error :error="errors.name"></v-error>
                             </template>
@@ -42,7 +42,13 @@
                                         $utils.toKebabCase('mdiCircleMedium')
                                     "
                                 ></v-icon>
-                                <span class="text-body custom-selection">
+                                <span v-if="!item.raw.id">
+                                    Choose the server
+                                </span>
+                                <span
+                                    v-else="item.raw.id"
+                                    class="text-body custom-selection"
+                                >
                                     {{ item.raw.name }} -
                                     {{ item.raw.server_country }}
                                 </span>
@@ -116,6 +122,7 @@
                     text="Save"
                     variant="tonal"
                     @click="addPeer"
+                    v-show="!peer.id"
                 ></v-btn>
             </v-card-actions>
         </v-card>
@@ -143,6 +150,14 @@ export default {
     watch: {},
 
     methods: {
+        /**
+         * Reset keys to create a new peer into the form
+         */
+        showForm() {
+            this.peer = {};
+            this.getWgs();
+        },
+
         /**
          * Create a new server
          */
@@ -191,7 +206,7 @@ export default {
             this.form = {};
             this.errors = {};
             this.peer = {};
-            this.dialog = false;
+            this.dialog = !this.dialog;
         },
 
         /*

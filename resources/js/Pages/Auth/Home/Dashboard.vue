@@ -1,8 +1,29 @@
 <template>
     <v-row class="pa-3">
-        <v-col cols="12">
+        <v-col cols="12" class="d-flex justify-between">
             <h1 class="underline">Dashboard</h1>
+            <v-btn variant="tonal" color="blue-darken-1" @click="goToPeers">
+                Add new device
+                <v-icon icon="mdi-key"> </v-icon>
+            </v-btn>
         </v-col>
+        <v-col
+            v-if="peers.length == 0"
+            cols="12"
+            class="flex py-5 text-center justify-center min-h-screen"
+        >
+            <p class="text-gray-600 py-5 text-center">
+                No VPN devices connected yet! 🌐 Stay private and secure—click
+                <router-link
+                    class="text-link text-blue-600"
+                    :to="{ name: 'peers' }"
+                >
+                    here
+                </router-link>
+                to add your first device and unlock your private network!
+            </p>
+        </v-col>
+
         <v-col
             cols="12"
             md="6"
@@ -45,6 +66,8 @@
 </template>
 <script>
 export default {
+    inject: ["$user"],
+
     data() {
         return {
             peers: [],
@@ -56,6 +79,10 @@ export default {
     },
 
     methods: {
+        goToPeers() {
+            this.$router.push({ name: "peers" });
+        },
+
         async getPeers() {
             try {
                 const res = await this.$api.get("/api/peers");
