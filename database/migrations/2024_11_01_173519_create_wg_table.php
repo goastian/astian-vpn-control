@@ -13,11 +13,12 @@ return new class () extends Migration {
         Schema::create('wgs', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->string('slug');
             $table->string('subnet', 150)->index();
-            $table->string('private_key');
-            $table->string('listen_port', 10)->unique();
-            $table->string('dns_1', 150)->nullable();
-            $table->string('dns_2', 150)->nullable();
+            $table->string('gateway', 150);
+            $table->string('private_key', 150);
+            $table->string('listen_port', 10)->unique(); 
+            $table->string('dns', 150)->nullable();
             $table->boolean('active')->default(false)->index();
             $table->boolean('mounted')->default(false)->index();
             $table->string('interface', 100);

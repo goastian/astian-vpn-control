@@ -33,13 +33,14 @@ final class Core
      * Mount wireguard interface
      * @param mixed $interface_name
      * @param mixed $subnet
-     * @param mixed $address
+     * @param mixed $gateway
      * @param mixed $private_key
      * @param mixed $physical_interface
      * @param mixed $listen_port
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
      */
-    public function mountInterface($interface_name, $subnet, $private_key, $physical_interface, $listen_port = 51820)
+    public function mountInterface($interface_name, $subnet, $gateway, $private_key, $physical_interface, $listen_port = 51820)
     {
         try {
             $response = $this->client->request("POST", "/api/wireguard/mount", [
@@ -48,7 +49,8 @@ final class Core
                     'private_key' => $private_key,
                     'physical_interface' => $physical_interface,
                     'listen_port' => $listen_port,
-                    'subnet' => $subnet
+                    'subnet' => $subnet,
+                    'address' => $gateway
                 ]
             ]);
 

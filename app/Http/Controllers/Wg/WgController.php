@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Wg;
 use App\Wrapper\Core;
 use App\Models\Server\Wg;
 use App\Models\Server\Peer;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use GuzzleHttp\Exception\ClientException;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 use App\Http\Controllers\GlobalController as Controller;
 
@@ -54,7 +53,9 @@ class WgController extends Controller
 
         $last_subnet = $wg->latest()->first();
 
-        $subnet = $this->generateNextSubnet($last_subnet ? $last_subnet->subnet : null);
+        $network = $this->generateNextSubnet($last_subnet ? $last_subnet->subnet : null);
+        $subnet = "{$network['subnet']}/{$network['prefix']}";
+        $gateway = "{$network['gateway']}/{$network['prefix']}";
 
         throw_if($wg->count() >= 10, new ReportError(__('The limit has been exceeded'), 403));
 
@@ -73,22 +74,27 @@ class WgController extends Controller
             'listen_port' => ['required', 'max:10', 'unique:wgs,listen_port'],
             'interface' => ['required', 'max:50'],
             'server_id' => ['required', 'exists:servers,id'],
-            'dns_1' => ['nullable', 'max:190'],
-            'dns_2' => ['nullable', 'max:190'],
+            'dns' => ['nullable', 'max:190'],
         ]);
 
+        $request->merge([
+            'slug' => Str::slug($request->name, "-")
+        ]);
 
-        DB::transaction(function () use ($request, $wg, $subnet) {
+        DB::transaction(function () use ($request, $wg, $subnet, $gateway) {
 
             $wg = $wg->fill($request->except('private_key'));
             $wg->private_key = $wg->generatePrivKey();
             $wg->active = true;
             $wg->subnet = $subnet;
+            $wg->gateway = $gateway;
             $wg->save();
+
             $core = new Core($wg->server->url, $wg->server->port);
             $core->mountInterface(
-                $request->name,
+                $request->slug,
                 $subnet,
+                $gateway,
                 $wg->private_key,
                 $wg->interface,
                 $wg->listen_port
@@ -96,7 +102,6 @@ class WgController extends Controller
         });
 
         return $this->showOne($wg, $wg->transformer, 201);
-
     }
 
     /**
@@ -126,22 +131,22 @@ class WgController extends Controller
 
         $request->validate([
             'name' => ['nullable', 'max:20'],
-            'dns_1' => ['nullable', 'max:190'],
-            'dns_2' => ['nullable', 'max:190'],
+            'gateway' => ['nullable', 'max:190'],
+            'dns' => ['nullable', 'max:190'],
         ]);
 
         DB::transaction(function () use ($request, $wg) {
 
             $updated = false;
 
-            if ($this->is_different($wg->dns_1, $request->dns_1)) {
+            if ($this->is_different($wg->gateway, $request->gateway)) {
                 $updated = true;
-                $wg->dns_1 = $request->dns_1;
+                $wg->gateway = $request->gateway;
             }
 
-            if ($this->is_different($wg->dns_2, $request->dns_2)) {
+            if ($this->is_different($wg->dns, $request->dns)) {
                 $updated = true;
-                $wg->dns_2 = $request->dns_2;
+                $wg->dns = $request->dns;
             }
 
             if ($updated) {
@@ -167,7 +172,7 @@ class WgController extends Controller
         DB::transaction(function () use ($wg, $peer) {
 
             $core = new Core($wg->server->url, $wg->server->port);
-            $core->removeInterface($wg->name);
+            $core->removeInterface($wg->slug);
 
             $status = $wg->delete();
 
@@ -193,7 +198,7 @@ class WgController extends Controller
         DB::transaction(function () use ($wg, $peer) {
             if ($wg->active) {
                 $core = new Core($wg->server->url, $wg->server->port);
-                $core->shutdownInterface($wg->name);
+                $core->shutdownInterface($wg->slug);
                 $wg->active = !$wg->active;
                 $status = $wg->push();
 
@@ -204,7 +209,7 @@ class WgController extends Controller
                 }
             } else {
                 $core = new Core($wg->server->url, $wg->server->port);
-                $core->startInterface($wg->name);
+                $core->startInterface($wg->slug);
                 $wg->active = !$wg->active;
                 $status = $wg->push();
                 if ($status) {
@@ -229,7 +234,7 @@ class WgController extends Controller
 
         DB::transaction(function () use ($wg) {
             $core = new Core($wg->server->url, $wg->server->port);
-            $core->reloadNetwork($wg->name);
+            $core->reloadNetwork($wg->slug);
 
             $wg->active = true;
             $wg->push();

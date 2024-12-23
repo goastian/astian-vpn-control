@@ -107,8 +107,7 @@ class PeerController extends Controller
                 "[Interface]",
                 "PrivateKey = {$keys['private_key']}",
                 "ListenPort = {$wg->listen_port}",
-                "Address =  {$ip_allowed}/32",
-                "DNS = {$dns}",
+                "Address =  {$ip_allowed}/32", 
                 "",
                 "[Peer]",
                 "PublicKey = {$wg->generatePubKey()}",
@@ -156,13 +155,13 @@ class PeerController extends Controller
         if ($peer->active) {
 
             $peer->active = !$peer->active;
-            $core->deletePeer($peer->wg->name, $peer->public_key);
+            $core->deletePeer($peer->wg->slug, $peer->public_key);
 
         } else {
             $peer->active = !$peer->active;
             $core->addPeer(
                 $peer->name,
-                $peer->wg->name,
+                $peer->wg->slug,
                 $peer->public_key,
                 $peer->allowed_ips,
                 $peer->wg->getEndpoint(),

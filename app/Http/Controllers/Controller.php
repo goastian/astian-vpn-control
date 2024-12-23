@@ -15,16 +15,15 @@ abstract class Controller extends RoutingController
 
 
     /**
-     * Summary of generateNextSubnet
+     * generateNextSubnet
      * @param mixed $subnet
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
-     * @return string
+     * @return array
      */
     public function generateNextSubnet($subnet = null)
     {
         $subnet_base = $subnet ?? "192.10.0.0/16";
 
-        // Validar y dividir la subred base
         list($ip, $prefix) = explode('/', $subnet_base);
         if (!filter_var($ip, FILTER_VALIDATE_IP)) {
             throw new ReportError(__('Invalid IP address'), 403);
@@ -45,10 +44,16 @@ abstract class Controller extends RoutingController
             throw new ReportError(__('The limit has been exceeded for the /16 range'), 403);
         }
 
-        $gateway_ip_long = explode('.', long2ip($next_ip_long));
-        $gateway_ip_long[3] = 1;
+        $gateway = explode('.', long2ip($next_ip_long));
+        $gateway[3] = 1;
 
-        return implode('.', $gateway_ip_long) . '/' . $prefix;
+        $data = [
+            "subnet" => long2ip($next_ip_long),
+            "gateway" => implode('.', $gateway),
+            "prefix" => $prefix
+        ];
+        
+        return $data;
     }
 
 
