@@ -49,17 +49,27 @@ class PeerController extends Controller
     public function store(Request $request, Peer $peer, Wg $wg)
     {
         $this->checkMethod('post');
+
         $message = __('You have exceeded the device limit');
         $data = $peer->query();
         $data->where('user_id', $this->user()->id);
 
-        //check if the app is on dev mode
+        //check if the app is on dev mode 
         if (config('app.test')) {
             throw_if($data->count() >= 5, new ReportError($message, 403));
         }
 
-        //check scope in production mode
-        if (!config('app.test') && $this->userCan('vpn-free')) {
+        //limit peer for admin
+        if ($this->userCan('admin')) {
+            throw_if($data->count() >= 10, new ReportError($message, 403));
+        }
+
+        //check scope in production mode         
+        if (!config('app.test') && !$this->userCan('admin')) {
+            if (!$this->userCan('vpn-free')) {
+                throw new ReportError(__('These features are not yet available to the general public. Please stay tuned for future updates and announcements regarding their release.'), 403);
+            }
+
             throw_if($data->count() >= 2, new ReportError($message, 403));
         }
 
@@ -107,7 +117,7 @@ class PeerController extends Controller
                 "[Interface]",
                 "PrivateKey = {$keys['private_key']}",
                 "ListenPort = {$wg->listen_port}",
-                "Address =  {$ip_allowed}/32", 
+                "Address =  {$ip_allowed}/32",
                 "",
                 "[Peer]",
                 "PublicKey = {$wg->generatePubKey()}",
