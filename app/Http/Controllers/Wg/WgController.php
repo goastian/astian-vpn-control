@@ -15,7 +15,7 @@ class WgController extends Controller
 {
     public function __construct()
     {
-        parent::__construct();
+        $this->middleware('scope:vpn-full')->except('index');
     }
 
     /**

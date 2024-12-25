@@ -13,7 +13,7 @@ class ServerController extends GlobalController
 {
     public function __construct()
     {
-        parent::__construct();
+        $this->middleware('scope:vpn-full');
     }
 
     /**

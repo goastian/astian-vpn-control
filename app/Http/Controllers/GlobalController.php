@@ -12,6 +12,6 @@ class GlobalController extends Controller
 
     public function __construct()
     {
-        $this->middleware(Authorization::class);
+        $this->middleware('server');
     }
 }
