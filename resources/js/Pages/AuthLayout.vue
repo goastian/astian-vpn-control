@@ -99,31 +99,7 @@ export default {
                     icon: "mdiVpn",
                     route: "peers",
                     active: true,
-                },
-                {
-                    name: "Cloud",
-                    icon: "mdiCloudCheckVariantOutline",
-                    route: "https://cloud.astian.org",
-                    active: true,
-                },
-                {
-                    name: "Notes",
-                    icon: "mdiNotebookHeartOutline",
-                    route: "https://notes.astian.org",
-                    active: true,
-                },
-                {
-                    name: "Calendar",
-                    icon: "mdiCalendarMultiselectOutline",
-                    route: "https://calendar.astian.org",
-                    active: true,
-                },
-                {
-                    name: "Contacts",
-                    icon: "mdiCardAccountMailOutline",
-                    route: "https://notes.astian.org",
-                    active: false,
-                },
+                }, 
             ],
         };
     },
