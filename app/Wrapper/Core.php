@@ -122,7 +122,7 @@ final class Core
             if ($th->getCode() === 404) {
                 throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
             }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+            throw new ReportError(__('T'), $th->getCode());
         } catch (ServerException $th) {
             throw new ReportError(__('Connection to the server failed'), 500);
         }
@@ -184,15 +184,13 @@ final class Core
             }
 
         } catch (ConnectException $th) {
-            throw new ReportError(__('Unable to connect with the server'), 500);
+            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
 
         } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
-            }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), $th->getCode());
+
         } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
         }
     }
 
@@ -217,15 +215,13 @@ final class Core
             }
 
         } catch (ConnectException $th) {
-            throw new ReportError(__('Unable to connect with the server'), 500);
+            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
 
         } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
-            }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
+            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), $th->getCode());
+
         } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
         }
     }
 
