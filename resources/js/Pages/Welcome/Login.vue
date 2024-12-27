@@ -1,81 +1,30 @@
 <template>
-    <div class="flex flex-col min-h-screen bg-gray-50">
-        <!-- Header -->
-        <header class="text-center bg-blue-500 text-white py-4">
-            <h1 class="text-3xl font-bold" v-text="app_name"></h1>
-            <p class="text-lg" v-text="app_title"></p>
-        </header>
-
-        <!-- Why Choose Our VPN -->
-        <section class="px-4 max-w-3xl mx-auto text-center mt-4">
-            <h2 class="text-2xl font-semibold text-blue-700">
-                Why Choose Our VPN?
-            </h2>
-            <p class="mt-2 text-gray-700">
-                Your online security is our top priority. With Secure VPN, you
-                can browse the internet safely and anonymously.
-            </p>
-            <ul class="mt-5 space-y-4 text-left">
-                <li class="flex items-start">
-                    <strong class="font-semibold text-blue-700"
-                        >Secure Connection:</strong
+    <div class="flex flex-col h-screen justify-between bg-slate-100">
+        <nav class="flex align-middle justify-between px-2 py-1">
+            <ul class="inline">
+                <li
+                    class="text-2xl text-gray-500 font-semibold"
+                    v-text="app_name"
+                ></li>
+            </ul>
+            <ul class="me-2 my-2 inline">
+                <li>
+                    <v-btn
+                        @click="redirect"
+                        variant="tonal"
+                        color="pink-lighten-1"
+                        rounded
+                        :append-icon="$utils.toKebabCase('mdiLogin')"
                     >
-                    <span class="ml-2"
-                        >Encrypt your internet traffic and protect your data
-                        from hackers.</span
-                    >
-                </li>
-                <li class="flex items-start">
-                    <strong class="font-semibold text-blue-700"
-                        >Access Anywhere:</strong
-                    >
-                    <span class="ml-2"
-                        >Enjoy unrestricted access to global content, bypassing
-                        geo-restrictions.</span
-                    >
-                </li>
-                <li class="flex items-start">
-                    <strong class="font-semibold text-blue-700"
-                        >Privacy First:</strong
-                    >
-                    <span class="ml-2"
-                        >We don’t track your activity. Stay truly anonymous
-                        online.</span
-                    >
-                </li>
-                <li class="flex items-start">
-                    <strong class="font-semibold text-blue-700"
-                        >Easy to Use:</strong
-                    >
-                    <span class="ml-2"
-                        >One-click setup and seamless performance on all your
-                        devices.</span
-                    >
+                        Sign In
+                    </v-btn>
                 </li>
             </ul>
-        </section>
-
-        <section class="text-center">
-            <button
-                class="bg-blue-accent-3 mt-4 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700"
-                @click="redirect"
-            >
-                Get Started Now
-            </button>
-        </section>
-
-        <section class="py-8 px-4 max-w-3xl mx-auto text-center">
-            <h2 class="text-2xl font-semibold text-blue-700">How It Works</h2>
-            <p class="mt-4 text-gray-700">
-                Our VPN creates a secure and encrypted tunnel between your
-                device and the internet. This protects your online identity and
-                ensures no one can monitor your activity.
-            </p>
-        </section>
-
-        <footer class="bg-blue-500 text-white text-center py-4 mt-auto">
-            <p v-text="app_footer"></p>
-        </footer>
+        </nav>
+        <div class="h-auto text-center">
+            <p class="text-3xl text-gray-400" v-text="app_title"></p>
+        </div>
+        <div class="py-4 text-center text-gray-400" v-text="app_footer"></div>
     </div>
 </template>
 
