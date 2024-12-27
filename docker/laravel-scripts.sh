@@ -8,6 +8,8 @@ echo "Running migrations"
 php artisan migrate --force
 echo "Migration ran successfully"
 
+php artisan settings:upload
+
 echo "Running nodejs"
 npm install
 npm run production
