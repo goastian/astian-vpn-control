@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Elyerr\ApiResponse\Exceptions\ReportError;
-use Elyerr\Passport\Connect\Traits\Passport;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Models\Server\Peer;
 use InvalidArgumentException;
 use Elyerr\ApiResponse\Assets\Asset;
 use Elyerr\ApiResponse\Assets\JsonResponser;
+use Elyerr\Passport\Connect\Traits\Passport;
+use Elyerr\ApiResponse\Exceptions\ReportError;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as RoutingController;
 
 abstract class Controller extends RoutingController
 {
-    use Asset,ValidatesRequests, Passport, JsonResponser;
+    use Asset, ValidatesRequests, Passport, JsonResponser;
 
 
     /**
@@ -53,7 +54,7 @@ abstract class Controller extends RoutingController
             "gateway" => implode('.', $gateway),
             "prefix" => $prefix
         ];
-        
+
         return $data;
     }
 
@@ -64,7 +65,7 @@ abstract class Controller extends RoutingController
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      * @return bool|string
      */
-    public function generateRandomIp($subnet)
+    public function generateRandomIp($subnet, $attempts = 10)
     {
         list($baseIp, $mask) = explode('/', $subnet);
         $mask = (int) $mask;
@@ -76,17 +77,34 @@ abstract class Controller extends RoutingController
             throw new ReportError(__("The specified subnet does not allow valid host addresses."), 422);
         }
 
-        $attempts = 5;
         for ($i = 0; $i < $attempts; $i++) {
             $randomOffset = rand(1, $hostCount);
             $randomIpLong = $baseIpLong + $randomOffset;
             $randomIp = long2ip($randomIpLong);
 
             if (filter_var($randomIp, FILTER_VALIDATE_IP)) {
-                return $randomIp;
+                $exists = $this->verifyIpExists($randomIp);
+
+                if (!$exists) {
+                    return $randomIp;
+                }
             }
         }
 
-        throw new ReportError(__("Failed to generate a valid IP address after :attempts attempts.", ['attempts' => $attempts]), 422);
+        throw new ReportError(
+            __("Unable to generate a valid IP address after :attempts attempts. The current server may be overloaded or unable to allocate new addresses. Please consider using a different server.", ['attempts' => $attempts]),
+            422
+        );
+    }
+
+    /**
+     * Verify the 
+     * @param mixed $ip
+     * @return bool|TModel|TValue
+     */
+    public function verifyIpExists($ip)
+    {
+        $peer = Peer::where('allowed_ips', $ip)->first();
+        return $peer ?? false;
     }
 }
