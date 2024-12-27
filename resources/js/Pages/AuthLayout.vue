@@ -55,7 +55,7 @@
 
             <!--main content-->
             <v-main>
-                <v-container class="spacing-playground pa-1" fluid>
+                <v-container class="spacing-playground" fluid>
                     <router-view></router-view>
                 </v-container>
             </v-main>
@@ -81,6 +81,13 @@ export default {
                     active: true,
                 },
                 {
+                    name: "Settings",
+                    icon: "mdiCog",
+                    route: "settings",
+                    active: true,
+                    group: "admin",
+                },
+                {
                     name: "Servers",
                     icon: "mdiServerSecurity",
                     route: "servers",
@@ -99,7 +106,7 @@ export default {
                     icon: "mdiVpn",
                     route: "peers",
                     active: true,
-                }, 
+                },
             ],
         };
     },

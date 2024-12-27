@@ -27,6 +27,11 @@ const routes = [
                 name: "peers",
                 component: () => import("../Pages/Auth/Peer/Peer.vue"),
             },
+            {
+                path: "/settings",
+                name: "settings",
+                component: () => import("../Pages/Auth/Setting/Index.vue"),
+            },
         ],
     },
 
