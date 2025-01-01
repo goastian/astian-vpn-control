@@ -2,8 +2,25 @@
     "name": "elyerr/vpn-control",
     "type": "project",
     "description": "Server to manage VPN servers",
-    "keywords": ["laravel", "wireguard", "vpn", "server manage"],
-    "license": "AGPL-3.0-or-later",
+    "keywords": [
+        "laravel",
+        "wireguard",
+        "vpn",
+        "server manage"
+    ],
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "Elvis Yerel Roman Concha",
+            "email": "yerel9212@yahoo.es",
+            "homepage": "https://gitlab.com/elyerr/oauth2-passport-server",
+            "role": "Owner",
+            "social": {
+                "telegram": "https://t.me/elyerr",
+                "linkedin": "https://www.linkedin.com/in/elyerr"
+            }
+        }
+    ],
     "require": {
         "php": "^8.2",
         "elyerr/api-response": "^1.0",
