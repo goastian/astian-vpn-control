@@ -14,11 +14,7 @@
             "name": "Elvis Yerel Roman Concha",
             "email": "yerel9212@yahoo.es",
             "homepage": "https://gitlab.com/elyerr/oauth2-passport-server",
-            "role": "Owner",
-            "social": {
-                "telegram": "https://t.me/elyerr",
-                "linkedin": "https://www.linkedin.com/in/elyerr"
-            }
+            "role": "Owner"
         }
     ],
     "require": {
