@@ -48,8 +48,6 @@ class PeerController extends Controller
      */
     public function store(Request $request, Peer $peer, Wg $wg)
     {
-        $this->checkMethod('post');
-
         $message = __('You have exceeded the device limit');
         $data = $peer->query();
         $data->where('user_id', $this->user()->id);
@@ -72,6 +70,9 @@ class PeerController extends Controller
 
             throw_if($data->count() >= 2, new ReportError($message, 403));
         }
+
+        $this->checkMethod('post');
+        $this->checkContentType($this->getPostHeader());
 
         $request->validate([
             'name' => ['required'],
@@ -143,6 +144,7 @@ class PeerController extends Controller
     public function destroy(Peer $peer)
     {
         $this->checkMethod('delete');
+        $this->checkContentType(null);
 
         throw_if($peer->active, new ReportError(__("This peer is active, please stop and try again"), 403));
 
@@ -158,8 +160,9 @@ class PeerController extends Controller
      */
     public function toggle(Peer $peer)
     {
-        $this->checkMethod('put');
-
+        $this->checkMethod('put'); 
+        $this->checkContentType($this->getUpdateHeader());
+        
         $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
         if ($peer->active) {

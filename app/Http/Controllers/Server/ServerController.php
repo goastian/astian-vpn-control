@@ -22,26 +22,36 @@ class ServerController extends GlobalController
     public function index(Server $server)
     {
         $this->checkMethod('get');
+
         //filter params
         $params = $this->filter_transform($server->transformer);
-        $data = $this->search($server->table, $params);
+
+        $data = $server->query();
+
+        $this->search($data, $params);
+
+        $data = $data->get();
+
         return $this->showAll($data, $server->transformer);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * create a new resource
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Server\Server $server
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function store(Request $request, Server $server)
     {
-        $this->checkMethod('post');
-
         $request->validate([
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
             'ip' => ['required', 'ipv4']
-
         ]);
+
+        $this->checkMethod('post');
+        $this->checkContentType($this->getPostHeader());
 
         DB::transaction(function () use ($request, $server) {
             $server = $server->fill($request->all());
@@ -52,11 +62,14 @@ class ServerController extends GlobalController
     }
 
     /**
-     * Display the specified resource.
+     * show details
+     * @param \App\Models\Server\Server $server
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function show(Server $server)
     {
         $this->checkMethod('get');
+        $this->checkContentType(null);
 
         return $this->showOne($server);
     }
@@ -66,13 +79,14 @@ class ServerController extends GlobalController
      */
     public function update(Request $request, Server $server)
     {
-        $this->checkMethod('put');
-
         $request->validate([
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url,' . $server->id, 'url:http,https'],
             'port' => ['required', 'max:6'],
         ]);
+
+        $this->checkMethod('put');
+        $this->checkContentType($this->getUpdateHeader());
 
         DB::transaction(function () use ($request, $server) {
 
@@ -102,6 +116,7 @@ class ServerController extends GlobalController
     public function destroy(Server $server)
     {
         $this->checkMethod('delete');
+        $this->checkContentType(null);
 
         throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
 
@@ -118,6 +133,7 @@ class ServerController extends GlobalController
     public function toggle(Server $server)
     {
         $this->checkMethod('put');
+        $this->checkContentType($this->getUpdateHeader());
 
         $server->active = !$server->active ? now() : null;
         $server->push();
@@ -135,6 +151,7 @@ class ServerController extends GlobalController
     public function interfaces($id, Server $server)
     {
         $this->checkMethod('get');
+        $this->checkContentType(null);
 
         $host = $server->findOrFail($id);
         $core = new Core($host->url, $host->port);

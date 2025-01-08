@@ -23,7 +23,6 @@ class SettingController extends Controller
     public function index(Setting $setting)
     {
         $data = $setting->query();
-        $data = $data->take(150);
         $data = $data->get();
 
         return $this->showAll($data, null, 200, false);
@@ -41,6 +40,9 @@ class SettingController extends Controller
         $this->validate($request, [
             'key' => ['required'],
         ]);
+
+        $this->checkMethod('post');
+        $this->checkContentType($this->getPostHeader());
 
         $request->merge([
             'key' => Str::slug($request->key, '.')

@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
-use Elyerr\ApiResponse\Assets\Asset;
-use Elyerr\ApiResponse\Assets\Timestamps;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Master extends Model
 {
-    use HasUuids, Timestamps, HasFactory;
+    use HasUuids, HasFactory;
 
     /**
      * The data type of the auto-incrementing ID.
@@ -31,7 +29,7 @@ class Master extends Model
         return date('Y-m-d H:i:s', strtotime($value));
     }
 
-     public function getUpdatedAtAttribute($value)
+    public function getUpdatedAtAttribute($value)
     {
         return date('Y-m-d H:i:s', strtotime($value));
     }

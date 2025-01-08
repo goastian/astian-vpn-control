@@ -49,8 +49,6 @@ class WgController extends Controller
      */
     public function store(Request $request, Wg $wg)
     {
-        $this->checkMethod('post');
-
         $last_subnet = $wg->latest()->first();
 
         $network = $this->generateNextSubnet($last_subnet ? $last_subnet->subnet : null);
@@ -76,6 +74,9 @@ class WgController extends Controller
             'server_id' => ['required', 'exists:servers,id'],
             'dns' => ['nullable', 'max:190'],
         ]);
+
+        $this->checkMethod('post');
+        $this->checkContentType($this->getPostHeader());
 
         $request->merge([
             'slug' => Str::slug($request->name, "-")
@@ -112,6 +113,7 @@ class WgController extends Controller
     public function show(Wg $server)
     {
         $this->checkMethod('get');
+        $this->checkContentType(null);
 
         return $this->showOne($server, $server->transformer);
     }
@@ -125,8 +127,6 @@ class WgController extends Controller
      */
     public function update(Request $request, Wg $wg)
     {
-        $this->checkMethod("put");
-
         throw_if($wg->active, new ReportError(__('This action can be done, please stop the Wireguard Interface'), 422));
 
         $request->validate([
@@ -134,6 +134,9 @@ class WgController extends Controller
             'gateway' => ['nullable', 'max:190'],
             'dns' => ['nullable', 'max:190'],
         ]);
+
+        $this->checkMethod('put');
+        $this->checkContentType($this->getUpdateHeader());
 
         DB::transaction(function () use ($request, $wg) {
 
@@ -164,7 +167,8 @@ class WgController extends Controller
      */
     public function destroy(Wg $wg, Peer $peer)
     {
-        $this->checkMethod("delete");
+        $this->checkMethod('delete');
+        $this->checkContentType(null);
 
         throw_if($wg->active, new ReportError(__('Unable to delete this resource because is active. Please shutdown and try again.'), 403));
         //throw_if($wg->peers()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
@@ -194,6 +198,7 @@ class WgController extends Controller
     public function toggle(Wg $wg, Peer $peer)
     {
         $this->checkMethod('put');
+        $this->checkContentType($this->getUpdateHeader());
 
         DB::transaction(function () use ($wg, $peer) {
             if ($wg->active) {
@@ -231,6 +236,7 @@ class WgController extends Controller
     public function reload(Wg $wg)
     {
         $this->checkMethod('post');
+        $this->checkContentType($this->getPostHeader());
 
         DB::transaction(function () use ($wg) {
             $core = new Core($wg->server->url, $wg->server->port);
