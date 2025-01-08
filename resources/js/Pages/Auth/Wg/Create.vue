@@ -44,7 +44,7 @@
                                 <v-error :error="errors.dns"></v-error>
                             </template>
                         </v-text-field>
-                    </v-col> 
+                    </v-col>
 
                     <v-col cols="12" md="6">
                         <v-select
@@ -150,7 +150,11 @@ export default {
         async createWG() {
             try {
                 this.form.server_id = this.server_selected.id;
-                const res = await this.$api.post("/api/wgs", this.form);
+                const res = await this.$api.post("/api/wgs", this.form, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
 
                 if (res.status == 201) {
                     this.dialog = false;

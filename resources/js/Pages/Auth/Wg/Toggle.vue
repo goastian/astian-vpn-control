@@ -56,7 +56,11 @@ export default {
          */
         async toggle(item) {
             try {
-                const res = await this.$api.put(item.links.toggle);
+                const res = await this.$api.put(item.links.toggle, {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                });
                 if (res.status == 201) {
                     this.$emit("updated", res.data);
                     this.dialog = false;

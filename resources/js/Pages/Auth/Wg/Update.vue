@@ -2,7 +2,6 @@
     <v-dialog v-model="dialog" max-width="1000" with="100">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
-
                 icon
                 variant="tonal"
                 v-bind="activatorProps"
@@ -21,11 +20,7 @@
             <v-card-text>
                 <v-row dense>
                     <v-col cols="12" md="6">
-                        <v-text-field
-                            label="Name"
-                            v-model="wg.name"
-                            disabled
-                        >
+                        <v-text-field label="Name" v-model="wg.name" disabled>
                         </v-text-field>
                     </v-col>
 
@@ -39,11 +34,7 @@
                     </v-col>
 
                     <v-col cols="12" md="6">
-                        <v-text-field
-                            label="Server"
-                            v-model="wg.url"
-                            disabled
-                        >
+                        <v-text-field label="Server" v-model="wg.url" disabled>
                             <template #label>
                                 {{ wg.country }}
                             </template>
@@ -107,7 +98,11 @@ export default {
          */
         async updateWG() {
             try {
-                const res = await this.$api.put(this.wg.links.update, this.wg);
+                const res = await this.$api.put(this.wg.links.update, this.wg, {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                });
 
                 if (res.status == 201) {
                     this.dialog = false;

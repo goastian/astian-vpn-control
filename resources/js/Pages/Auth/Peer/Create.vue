@@ -163,7 +163,11 @@ export default {
          */
         async addPeer() {
             try {
-                const res = await this.$api.post("/api/peers", this.form);
+                const res = await this.$api.post("/api/peers", this.form, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
 
                 if (res.status == 201) {
                     this.peer = res.data.data;

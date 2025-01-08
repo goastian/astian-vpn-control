@@ -42,7 +42,11 @@ export default {
          */
         async reload(item) {
             try {
-                const res = await this.$api.post(item.links.reload);
+                const res = await this.$api.post(item.links.reload, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
                 if (res.status == 201) {
                     this.$notification.success(
                         "Network Interface reloaded successfully"

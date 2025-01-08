@@ -96,7 +96,11 @@ export default {
          */
         async createServer() {
             try {
-                const res = await this.$api.post("/api/servers", this.form);
+                const res = await this.$api.post("/api/servers", this.form, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
 
                 if (res.status == 201) {
                     this.dialog = false;

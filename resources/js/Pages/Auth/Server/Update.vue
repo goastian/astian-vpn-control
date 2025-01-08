@@ -86,7 +86,11 @@ export default {
          */
         async updateServer(item) {
             try {
-                const res = await this.$api.put(item.links.update, this.item);
+                const res = await this.$api.put(item.links.update, this.item, {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                });
 
                 if (res.status == 201) {
                     this.dialog = false;
