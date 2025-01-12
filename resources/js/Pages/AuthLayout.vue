@@ -22,7 +22,11 @@
                     </v-app-bar-nav-icon>
                 </template>
 
-                <v-toolbar-title> {{ $appName }}</v-toolbar-title>
+                <v-toolbar-title>
+                    <span class="text-white">
+                        {{ $appName }}
+                    </span>
+                </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-menu-grid></v-menu-grid>
                 <v-logout></v-logout>
