@@ -25,6 +25,7 @@ class PeerController extends Controller
     public function index(Peer $peer)
     {
         $this->checkMethod('get');
+        $this->checkContentType(null);
 
         $params = $this->filter_transform($peer->transformer);
         $data = $peer->query();
@@ -160,9 +161,9 @@ class PeerController extends Controller
      */
     public function toggle(Peer $peer)
     {
-        $this->checkMethod('put'); 
-        $this->checkContentType($this->getUpdateHeader());
-        
+        $this->checkMethod('put');
+        $this->checkContentType($this->getJsonHeader());
+
         $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
         if ($peer->active) {
