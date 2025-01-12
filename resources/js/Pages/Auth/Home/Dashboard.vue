@@ -1,5 +1,9 @@
 <template>
     <v-row class="pa-3">
+        <v-col cols="12">
+            <v-filter :params="['name']" @change="searcher"></v-filter>
+        </v-col>
+
         <v-col cols="12" class="d-flex justify-between">
             <h1 class="text-gray-600 font-bold">Dashboard</h1>
             <v-create @created="getPeers"></v-create>
@@ -40,7 +44,7 @@
                                             v-bind="props"
                                             v-if="item.stand_by"
                                             icon="mdi-traffic-light"
-                                            color="yellow-accent-2"
+                                            color="yellow-accent-4"
                                         ></v-icon>
                                     </template>
                                 </v-tooltip>
@@ -83,6 +87,14 @@
 
             <v-create @created="getPeers"></v-create>
         </v-col>
+
+        <v-col cols="12">
+            <v-pagination
+                v-model="search.page"
+                :length="search.total_pages"
+                :total-visible="7"
+            ></v-pagination>
+        </v-col>
     </v-row>
 </template>
 
@@ -103,6 +115,13 @@ export default {
     data() {
         return {
             peers: [],
+            search: {
+                page: 1,
+                per_page: 50,
+                total_pages: 0,
+            },
+
+            params: {},
         };
     },
 
@@ -111,12 +130,21 @@ export default {
     },
 
     methods: {
+        searcher(event) {
+            this.params = event;
+
+            this.getPeers();
+        },
+
         async getPeers() {
             try {
-                const res = await this.$api.get("/api/peers");
+                const res = await this.$api.get("/api/peers", {
+                    params: this.params,
+                });
 
                 if (res.status === 200) {
                     this.peers = res.data.data;
+                    this.search = res.data.meta;
                 }
             } catch (err) {
                 console.error("Error fetching peers:", err);

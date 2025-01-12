@@ -1,6 +1,18 @@
 <template>
     <v-data-table :headers="headers" :items="interfaces" v-if="isAdmin()">
         <template #top>
+            <v-filter
+                :params="[
+                    'name',
+                    'subnet',
+                    'private_key',
+                    'listen_port',
+                    'gateway',
+                    'dns',
+                    'active',
+                ]"
+                @change="searcher"
+            ></v-filter>
             <div class="row d-flex justify-between py-4 px-4">
                 <h1 class="text-subtitle-1 underline">Wireguard Interfaces</h1>
                 <v-create @created="getWgs"></v-create>
@@ -36,6 +48,13 @@
                     </v-list-item>
                 </v-list>
             </v-menu>
+        </template>
+        <template v-slot:bottom>
+            <v-pagination
+                v-model="search.page"
+                :length="search.total_pages"
+                :total-visible="7"
+            ></v-pagination>
         </template>
     </v-data-table>
 </template>
@@ -104,7 +123,13 @@ export default {
                     key: "actions",
                 },
             ],
+            search: {
+                page: 1,
+                per_page: 50,
+                total_pages: 0,
+            },
             interfaces: [],
+            params: [],
         };
     },
 
@@ -113,12 +138,20 @@ export default {
     },
 
     methods: {
+        searcher(event) {
+            this.params = event;
+            this.getWgs();
+        },
+
         async getWgs() {
             try {
-                const res = await this.$api.get("/api/wgs");
+                const res = await this.$api.get("/api/wgs", {
+                    params: this.params,
+                });
 
                 if (res.status == 200) {
                     this.interfaces = res.data.data;
+                    this.search = res.data.meta;
                 }
             } catch (err) {}
         },

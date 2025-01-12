@@ -1,74 +1,97 @@
 <template>
-    <div class="flex flex-col h-screen justify-between bg-slate-100">
-        <nav class="flex align-middle justify-between px-2 py-1">
-            <ul class="inline">
-                <li
-                    class="text-2xl text-gray-500 font-semibold"
-                    v-text="app_name"
-                ></li>
-            </ul>
-            <ul class="me-2 my-2 inline">
-                <li>
-                    <v-btn
-                        @click="redirect"
-                        variant="tonal"
-                        color="pink-lighten-1"
-                        rounded
-                        :append-icon="$utils.toKebabCase('mdiLogin')"
-                    >
-                        Sign In
-                    </v-btn>
-                </li>
-            </ul>
-        </nav>
-        <div class="h-auto text-center">
-            <p class="text-3xl text-gray-400" v-text="app_title"></p>
-        </div>
-        <div class="py-4 text-center text-gray-400" v-text="app_footer"></div>
+    <div
+        class="flex flex-col min-h-screen justify-between bg-gradient-to-br from-blue-50 to-blue-200"
+    >
+        <!-- Header -->
+        <header
+            class="flex items-center justify-between px-6 py-4 shadow-md bg-blue-400"
+        >
+            <h1 class="text-2xl font-bold text-blue-600" v-text="app_name"></h1>
+            <v-btn
+                color="light-blue-darken-2"
+                @click="redirect"
+                elevation="2"
+                rounded
+                :append-icon="$utils.toKebabCase('mdiLogin')"
+            >
+                Sign In
+            </v-btn>
+        </header>
+
+        <!-- Main Content -->
+        <main
+            class="flex-1 flex flex-col items-center justify-center px-4 text-center"
+        >
+            <h2
+                class="text-4xl font-extrabold text-blue-700"
+                v-text="app_title"
+            ></h2>
+            <p class="mt-4 text-lg text-blue-600">
+                Welcome to our platform! Manage your services efficiently with
+                our streamlined dashboard.
+            </p>
+            <v-btn
+                large
+                elevation="3"
+                rounded
+                color="light-blue-darken-2"
+                @click="explore"
+            >
+                Explore Now
+            </v-btn>
+        </main>
+
+        <!-- Footer -->
+        <footer class="py-4 bg-blue-700 text-center text-white">
+            <p class="text-sm" v-text="app_footer"></p>
+        </footer>
     </div>
 </template>
 
 <script>
-import { computed } from "vue";
-
 export default {
     inject: ["$user"],
 
     data() {
         return {
-            setting: [],
             app_name: "",
+            app_title: "",
             app_footer: "",
         };
     },
 
-    created() {
-        this.getSetting();
-    },
-
     mounted() {
-        this.app_name = computed(() => this.item("app.name"));
-        this.app_title = computed(() => this.item("app.title"));
-        this.app_footer = computed(() => this.item("app.footer"));
+        this.getKey();
     },
 
     methods: {
-        async getSetting() {
-            try {
-                const res = await this.$api.get("/api/settings");
-                if (res.status == 200) {
-                    this.setting = res.data;
-                }
-            } catch (err) {
-                console.log(err);
-            }
+        /**
+         * Fetch application keys
+         */
+        async getKey() {
+            this.app_name = await this.getSetting("app.name");
+            this.app_title = await this.getSetting("app.title");
+            this.app_footer = await this.getSetting("app.footer");
         },
 
-        item(key) {
+        /**
+         * Fetch a specific setting by key
+         * @param key
+         * @returns {Promise<string>}
+         */
+        async getSetting(key) {
             try {
-                const data = this.setting.find((item) => item.key == key);
-                return data.value;
-            } catch (error) {}
+                const res = await this.$api.get("/api/settings", {
+                    params: {
+                        key: key,
+                    },
+                });
+                if (res.status === 200) {
+                    return res.data.data[0].value;
+                }
+            } catch (err) {
+                console.error(err);
+            }
         },
 
         redirect() {
@@ -81,6 +104,31 @@ export default {
                     window.location.href = "/redirect";
                 });
         },
+
+        explore() {
+            this.$router.push({ name: "explore" });
+        },
     },
 };
 </script>
+
+<style scoped lang="css">
+html {
+    font-family: "Inter", sans-serif;
+}
+
+h1,
+h2 {
+    letter-spacing: -0.5px;
+}
+
+main p {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+button:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out;
+}
+</style>

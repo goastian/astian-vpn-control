@@ -3,8 +3,8 @@
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
-                variant="text"
-                color="red-lighten-1"
+                variant="flat"
+                color="cyan-darken-4"
                 icon
             >
                 <v-icon>
