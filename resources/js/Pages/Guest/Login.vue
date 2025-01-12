@@ -2,27 +2,6 @@
     <div
         class="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 to-blue-200"
     >
-        <!-- Header -->
-        <header
-            class="flex items-center justify-between px-6 py-4 shadow-lg bg-blue-500"
-        >
-            <h1
-                class="text-2xl font-bold text-white tracking-wider"
-                v-text="app_name"
-            ></h1>
-            <v-btn
-                color="light-blue-darken-2"
-                class="bg-blue-600 text-white hover:bg-blue-700"
-                @click="redirect"
-                elevation="2"
-                rounded
-                :append-icon="$utils.toKebabCase('mdiLogin')"
-            >
-                Sign In
-            </v-btn>
-        </header>
-
-        <!-- Main Content -->
         <main
             class="flex-1 flex flex-col items-center justify-center text-center space-y-6 px-4"
         >
@@ -38,11 +17,6 @@
                 Explore Now
             </v-btn>
         </main>
-
-        <!-- Footer -->
-        <footer class="py-6 bg-blue-600 text-center text-white">
-            <p class="text-sm" v-text="app_footer"></p>
-        </footer>
     </div>
 </template>
 
@@ -67,9 +41,7 @@ export default {
          * Fetch application keys
          */
         async getKey() {
-            this.app_name = await this.getSetting("app.name");
             this.app_title = await this.getSetting("app.title");
-            this.app_footer = await this.getSetting("app.footer");
         },
 
         /**
@@ -92,19 +64,8 @@ export default {
             }
         },
 
-        redirect() {
-            this.$server
-                .get("/api/gateway/user")
-                .then(() => {
-                    this.$router.push({ name: "home" });
-                })
-                .catch(() => {
-                    window.location.href = "/redirect";
-                });
-        },
-
         explore() {
-            this.$router.push({ name: "explore" });
+            this.$router.push({ name: "about" });
         },
     },
 };

@@ -31,13 +31,24 @@ const routes = [
     },
 
     {
-        path: "/welcome",
+        path: "/",
         component: GuestLayout,
         children: [
             {
-                path: "",
+                path: "welcome",
                 name: "welcome",
-                component: () => import("../Pages/Welcome/Login.vue"),
+                component: () => import("../Pages/Guest/Login.vue"),
+                meta: {
+                    auth: false,
+                },
+            },
+            {
+                path: "about",
+                name: "about",
+                component: () => import("../Pages/Guest/About.vue"),
+                meta: {
+                    auth: false,
+                },
             },
         ],
     },

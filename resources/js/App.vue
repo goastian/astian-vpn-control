@@ -36,7 +36,12 @@ export default {
             } catch (error) {
                 if (error.response.status == 401) {
                     this.user = {};
-                    this.$router.push({ name: "welcome" });
+
+                    let meta = this.$route.meta;
+
+                    if (meta && meta.auth) {
+                        this.$router.push({ name: "welcome" });
+                    }
                 }
                 if (error.response.status == 404) {
                     this.$notification.error(error.response.data.message);
