@@ -2,14 +2,14 @@
     <v-dialog v-model="dialog" max-width="900" with="100">
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
-                class="text-none font-weight-regular mx-4"
-                icon
+                class="text-none mx-4"
                 variant="tonal"
                 v-bind="activatorProps"
                 @click="showForm"
                 color="blue-lighten-1"
+                :prepend-icon="$utils.toKebabCase('mdiKeyPlus')"
             >
-                <v-icon :icon="$utils.toKebabCase('mdiKeyPlus')"> </v-icon>
+                Add new device
             </v-btn>
         </template>
 

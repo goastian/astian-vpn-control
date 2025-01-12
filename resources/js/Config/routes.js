@@ -23,11 +23,6 @@ const routes = [
                 component: () => import("../Pages/Auth/Wg/Wg.vue"),
             },
             {
-                path: "/peers",
-                name: "peers",
-                component: () => import("../Pages/Auth/Peer/Peer.vue"),
-            },
-            {
                 path: "/settings",
                 name: "settings",
                 component: () => import("../Pages/Auth/Setting/Index.vue"),

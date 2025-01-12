@@ -10,7 +10,7 @@
                 indeterminate
             ></v-progress-circular>
         </div>
-        <v-layout v-if="$user.id" class="h-screen w-screen">
+        <v-layout v-if="$user.id" class="min-h-100">
             <!--navbar-->
             <v-app-bar :elevation="0" color="#00b9b5">
                 <template v-slot:prepend>
@@ -100,12 +100,6 @@ export default {
                     route: "wireguard",
                     active: true,
                     group: "admin",
-                },
-                {
-                    name: "Peers",
-                    icon: "mdiVpn",
-                    route: "peers",
-                    active: true,
                 },
             ],
         };

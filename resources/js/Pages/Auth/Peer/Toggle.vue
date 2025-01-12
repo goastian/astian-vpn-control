@@ -3,14 +3,12 @@
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
-                variant="tonal"
-                color="red-lighten-1"
+                variant="flat"
+                :color="!peer.active ? 'red-accent-4' : 'green-accent-4'"
                 icon
             >
-                <v-icon
-                    :color="!peer.active ? 'red-accent-4' : 'green-accent-4'"
-                >
-                    {{ $utils.toKebabCase("mdiCheckboxBlankCircle") }}
+                <v-icon color="grey-lighten-5">
+                    {{ $utils.toKebabCase("mdiPowerStandby") }}
                 </v-icon>
             </v-btn>
         </template>
