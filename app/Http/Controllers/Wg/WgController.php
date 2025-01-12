@@ -198,29 +198,33 @@ class WgController extends Controller
     public function toggle(Wg $wg, Peer $peer)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getUpdateHeader());
+        $this->checkContentType($this->getJsonHeader());
 
-        DB::transaction(function () use ($wg, $peer) {
-            if ($wg->active) {
-                $core = new Core($wg->server->url, $wg->server->port);
+        //open connection
+        $core = new Core($wg->server->url, $wg->server->port);
+
+        DB::transaction(function () use ($wg, $peer, $core) {
+
+            $peers = $peer->query();
+            $peers = $peers->where('wg_id', $wg->id);
+
+
+            if ($wg->active) {//shutdown interface
                 $core->shutdownInterface($wg->slug);
                 $wg->active = !$wg->active;
                 $status = $wg->push();
 
                 if ($status) {
-                    $peers = $peer->query();
-                    $peers = $peers->where('wg_id', $wg->id);
-                    $peers->update(['active' => 0]);
+                    $peers = $peers->where('active', 1);
+                    $peers->update(['active' => 0, 'stand_by' => 1]);
                 }
-            } else {
-                $core = new Core($wg->server->url, $wg->server->port);
+            } else {//start interface
                 $core->startInterface($wg->slug);
                 $wg->active = !$wg->active;
                 $status = $wg->push();
                 if ($status) {
-                    $peers = $peer->query();
-                    $peers = $peers->where('wg_id', $wg->id);
-                    $peers->update(['active' => 1]);
+                    $peers = $peers->where('stand_by', 1);
+                    $peers->update(['active' => 1, 'stand_by' => 0]);
                 }
             }
         });
@@ -235,13 +239,12 @@ class WgController extends Controller
      */
     public function reload(Wg $wg)
     {
-        $this->checkMethod('post');
-        $this->checkContentType($this->getPostHeader());
+        $this->checkMethod('put');
+        $this->checkContentType($this->getJsonHeader());
 
         DB::transaction(function () use ($wg) {
             $core = new Core($wg->server->url, $wg->server->port);
             $core->reloadNetwork($wg->slug);
-
             $wg->active = true;
             $wg->push();
         });
