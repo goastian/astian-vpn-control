@@ -25,15 +25,12 @@ class PeerController extends Controller
     public function index(Peer $peer)
     {
         $this->checkMethod('get');
-        $this->checkContentType(null);
 
         $params = $this->filter_transform($peer->transformer);
         $data = $peer->query();
         $data = $data->where('user_id', $this->user()->id);
 
-        foreach ($params as $key => $value) {
-            $data = $data->where($key, 'LIKE', "%" . $value . "%");
-        }
+        $this->search($data, $params);
 
         $data = $data->get();
 

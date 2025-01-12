@@ -32,10 +32,6 @@ class PeerTransformer extends TransformerAbstract
      */
     public function transform($data)
     {
-        if (!($data instanceof Peer)) {
-            $data = Peer::findOrFail($data->id);
-        }
-
         return [
             'id' => $data->id,
             'name' => $data->name,

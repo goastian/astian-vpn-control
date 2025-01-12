@@ -30,11 +30,7 @@ class WgController extends Controller
         $params = $this->filter_transform($wg->transformer);
         $data = $wg->query();
 
-        if (count($params) > 0) {
-            foreach ($params as $key => $value) {
-                $data = $data->where($key, 'like', "%" . $value . "%");
-            }
-        }
+        $this->search($data, $params);
 
         $data = $data->get();
 
