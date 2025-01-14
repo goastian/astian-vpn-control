@@ -6,7 +6,7 @@ import { utils } from "./Config/utils";
 import { $host, $server } from "./Config/axios";
 import { router } from "./Config/routes";
 import { notyf } from "./Config/notification";
-import matamoto from "./Config/matomo.js";
+import matomo from "./Config/matomo.js";
 
 // Vuetify
 import "@mdi/font/css/materialdesignicons.css";
