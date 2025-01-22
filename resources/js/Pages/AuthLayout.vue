@@ -11,24 +11,6 @@
             ></v-progress-circular>
         </div>
         <v-layout v-if="$user.id" class="h-screen w-screen">
-            <!--navbar-->
-            <v-app-bar :elevation="0" color="#00b9b5">
-                <template v-slot:prepend>
-                    <v-app-bar-nav-icon
-                        :icon="$utils.toKebabCase('mdiViewGrid')"
-                        variant="text"
-                        @click="drawer = !drawer"
-                    >
-                    </v-app-bar-nav-icon>
-                </template>
-
-                <v-toolbar-title> {{ $appName }}</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-menu-grid></v-menu-grid>
-                <v-logout></v-logout>
-            </v-app-bar>
-            <!--end navbar-->
-
             <!--leftbar-->
             <v-navigation-drawer v-model="drawer" width="200">
                 <v-list density="compact" nav>
@@ -51,7 +33,25 @@
                     </v-list-item>
                 </v-list>
             </v-navigation-drawer>
-            <!--righbar-->
+            <!--leftbar-->
+
+            <!--navbar-->
+            <v-app-bar :elevation="0" color="#00b9b5">
+                <template v-slot:prepend>
+                    <v-app-bar-nav-icon
+                        :icon="$utils.toKebabCase('mdiViewGrid')"
+                        variant="text"
+                        @click="drawer = !drawer"
+                    >
+                    </v-app-bar-nav-icon>
+                </template>
+
+                <v-toolbar-title>{{ $appName }}</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-menu-grid></v-menu-grid>
+                <v-logout></v-logout>
+            </v-app-bar>
+            <!--end navbar-->
 
             <!--main content-->
             <v-main>
@@ -59,6 +59,7 @@
                     <router-view></router-view>
                 </v-container>
             </v-main>
+            <!--end content-->
         </v-layout>
     </div>
 </template>
@@ -149,3 +150,6 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+</style>
