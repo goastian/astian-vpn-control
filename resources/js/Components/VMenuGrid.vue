@@ -1,13 +1,10 @@
 <template>
-    <v-btn :prepend-icon="$utils.toKebabCase('mdiViewGrid')">
-        <template v-slot:prepend>
-            <v-icon
-                color="light-blue-darken-1"
-                :icon="$utils.toKebabCase('mdiViewGrid')"
-                size="25"
-            ></v-icon>
-        </template>
-        <v-menu activator="parent">
+    <v-icon
+        color="grey-darken-1"
+        :icon="$utils.toKebabCase('mdiViewGrid')"
+    >
+    </v-icon>
+    <v-menu activator="parent" location="end">
             <v-list class="MenuGrid" rounded>
                 <v-list-item
                     class="MGitem"
@@ -29,7 +26,10 @@
                 </v-list-item>
             </v-list>
         </v-menu>
-    </v-btn>
+    <v-menu
+        activator="parent"
+    >
+    </v-menu>
 </template>
 <script>
 export default {
@@ -82,13 +82,16 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+.v-icon {
+    cursor: pointer;
+}
 .MenuGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    width: 400px;
+    width: 300px;
     min-width: 200px;
-    max-width: 400px;
+    max-width: 300px;
     height: auto;
     padding: 1em;
     overflow-y: scroll;
