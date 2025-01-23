@@ -76,7 +76,7 @@
                                 color="grey-darken-2"
                                 :icon="$utils.toKebabCase(menu.icon)"
                                 @click="openLink(menu.route)"
-                            v-show="hasGroup(menu.group)"
+                                v-show="hasGroup(menu.group)"
                             />
                             <v-tooltip
                                 activator="parent"
@@ -92,7 +92,8 @@
             <!--navbar-->
             <v-app-bar :elevation="0">
                 <v-toolbar-title>{{ $appName }}</v-toolbar-title>
-                <v-spacer></v-spacer>
+                <v-geo />
+                <v-spacer />
                 <v-logout></v-logout>
             </v-app-bar>
             <!--end navbar-->
@@ -203,6 +204,10 @@ export default {
 
 .v-navigation-drawer {
     width: 200px;
+}
+
+.v-toolbar-title {
+    font-size: 1.1rem;
 }
 
 </style>
