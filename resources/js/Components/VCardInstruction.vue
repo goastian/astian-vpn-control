@@ -4,7 +4,7 @@
         <div>
             <img :src="image" width="200px">
         </div>
-        <div class="flex flex-column items-center ga-4">
+        <div class="flex flex-column items-center ga-3">
             <h4><strong>{{ title }}</strong></h4>
             <span>{{ description }}</span>
         </div>
@@ -40,10 +40,10 @@ export default {
 
 .card {
     position: relative;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 1rem;
     gap: 2rem;
-    min-height: 220px;
+    min-height: 200px;
 }
 
 .number {
