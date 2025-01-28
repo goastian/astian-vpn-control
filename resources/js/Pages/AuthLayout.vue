@@ -100,7 +100,7 @@
 
             <!--main content-->
             <v-main>
-                <v-container class="spacing-playground" fluid>
+                <v-container class="spacing-playground pl-10 pr-10" fluid>
                     <router-view></router-view>
                 </v-container>
             </v-main>
@@ -208,6 +208,10 @@ export default {
 
 .v-toolbar-title {
     font-size: 1.1rem;
+}
+
+.v-main {
+    overflow: auto;
 }
 
 </style>
