@@ -146,6 +146,12 @@ export default {
                     route: "peers",
                     active: true,
                 },
+                {
+                    name: "Instructions",
+                    icon: "mdiInformationOutline",
+                    route: "instructions",
+                    active: true
+                }
             ],
             menu: {
                     name: "Settings",
