@@ -54,4 +54,14 @@ export default {
     border-radius: 40%;
 }
 
+@media (max-width: 480px) {
+    .card {
+        flex-direction: column;
+    }
+
+    img {
+        width: 100px;
+    }
+}
+
 </style>

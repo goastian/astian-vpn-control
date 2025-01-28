@@ -88,8 +88,8 @@
                     </span>
                 </div>
             </v-col>
-            <v-col cols="12 flex">
-                <v-col cols="4"
+            <v-col cols="12" class="d-flex flex-column flex-md-row">
+                <v-col
                     v-for="(item, index) in instructions"
                 >
                     <v-card-instruction
