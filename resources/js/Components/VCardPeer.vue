@@ -5,6 +5,7 @@
         <div>
             <div class="btn" :class="{'bg-red-accent-2' : !state, 'bg-teal-accent-4' : state}">
                 <v-btn
+                    @click="toggle(peer)"
                     icon="mdi-power"
                 >
                 </v-btn>
@@ -46,8 +47,47 @@ export default {
         state: {
             type: Boolean,
             required: true
+        },
+        peer: {
+            type: Object,
+            required: true
         }
-    }
+    },
+
+    methods: {
+        /**
+         * Delete Server
+         */
+        async toggle(item) {
+            try {
+                const res = await this.$api.put(item.links.toggle, {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                });
+                if (res.status == 201) {
+                    this.$emit("updated", res.data);
+                    this.dialog = false;
+                }
+            } catch (err) {
+                if (err.response.status == 403) {
+                    this.$notification.error(err.response.data.message);
+                }
+                if (err.response.status == 500) {
+                    this.$notification.error(err.response.data.message);
+                }
+
+                if (err.response.status == 404) {
+                    this.$notification.error(err.response.data.message);
+                }
+
+                if (err.response.status == 422) {
+                    this.$notification.error(err.response.data.message);
+                }
+                this.dialog = false;
+            }
+        },
+    },
 }
 </script>
 

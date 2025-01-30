@@ -70,6 +70,7 @@
                             :network="item.network.name"
                             :port="item.network.listen_port"
                             :state="item.active"
+                            :peer="item"
                             class="elevation-2"
                         />
                     </div>
@@ -152,7 +153,7 @@ export default {
                 if (res.status == 200) {
                     this.count = res.data.data.length;
                     if (res.data.data.length != 0){
-                        for(let i = 0; i < 3; i++) {
+                        for(let i = 0; i < count; i++) {
                             this.peers.push(res.data.data[i]);
                         }
                     }
