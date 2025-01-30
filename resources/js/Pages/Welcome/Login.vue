@@ -1,31 +1,62 @@
 <template>
-    <div class="flex flex-col h-screen justify-between bg-slate-100">
-        <nav class="flex align-middle justify-between px-2 py-1">
-            <ul class="inline">
-                <li
-                    class="text-2xl text-gray-500 font-semibold"
-                    v-text="app_name"
-                ></li>
-            </ul>
-            <ul class="me-2 my-2 inline">
-                <li>
-                    <v-btn
-                        @click="redirect"
-                        variant="tonal"
-                        color="pink-lighten-1"
-                        rounded
-                        :append-icon="$utils.toKebabCase('mdiLogin')"
-                    >
-                        Sign In
-                    </v-btn>
-                </li>
-            </ul>
-        </nav>
-        <div class="h-auto text-center">
-            <p class="text-3xl text-gray-400" v-text="app_title"></p>
-        </div>
-        <div class="py-4 text-center text-gray-400" v-text="app_footer"></div>
-    </div>
+    <v-app class="bg-slate-100">
+        <v-app-bar app elevation="0" class=" pl-4">
+            <v-icon icon>
+                <img src="/img/icon.webp" class="icon" >
+            </v-icon>
+            <v-toolbar-title>
+                <span class="text-1xl text-gray-500 font-semibold" v-text="app_name"></span>
+            </v-toolbar-title>
+        </v-app-bar>
+        <v-main class="flex align-center">
+            <v-container class="bg-white content-container flex flex-column align-center ga-5">
+                <div class="flex flex-column align-center ga-2">
+                    <h2 class="title" v-text="app_title"></h2>
+                    <div class="content">
+                        <span>Our VPN offers you the freedom to explore the digital world from anywhere, with advanced protection and access to servers in multiple countries.</span>
+                    </div>
+                </div>
+                <div>
+                    <ul class="flex ga-10">
+                        <li>
+                            <v-btn
+                                @click="redirect"
+                                variant="tonal"
+                                color="pink-lighten-1"
+                                rounded
+                                :append-icon="$utils.toKebabCase('mdiLogin')"
+                            >
+                                Sign In
+                            </v-btn>
+                        </li>
+                        <li>
+                            <v-btn
+                                href="https://astian.org/astian-vpn/"
+                                target="_blank"
+                                color="pink"
+                                variant="outlined"
+                                rounded
+                                :append-icon="$utils.toKebabCase('mdiListBox')"
+                            >
+                                Plans
+                            </v-btn>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <img src="/img/World.png" />
+                </div>
+            </v-container>
+        </v-main>
+        <v-footer app>
+            <v-row>
+                <v-col
+                    class="text-center" cols="12"
+                    v-text="app_footer"
+                />
+            </v-row>
+        </v-footer>
+    </v-app>
 </template>
 
 <script>
@@ -84,3 +115,32 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.title {
+    width: 100%;
+    min-width: 100px;
+    max-width: 660px;
+    font-size: 2.4rem;
+    text-align: center;
+}
+
+.content {
+    width: 100%;
+    min-width: 100px;
+    max-width: 660px;
+    text-align: center;
+}
+
+img {
+    width: 900px;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.2rem;
+    }
+}
+</style>
