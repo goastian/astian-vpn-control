@@ -153,6 +153,7 @@ export default {
                 if (res.status == 200) {
                     this.count = res.data.data.length;
                     if (res.data.data.length != 0){
+                        let count = res.data.data.length < 3 ? res.data.data.length : 3;
                         for(let i = 0; i < count; i++) {
                             this.peers.push(res.data.data[i]);
                         }
