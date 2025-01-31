@@ -22,10 +22,15 @@ class SettingController extends Controller
      */
     public function index(Setting $setting)
     {
+        $params = $this->filter_transform($setting->transformer);
+
         $data = $setting->query();
+
+        $this->search($data, $params);
+
         $data = $data->get();
 
-        return $this->showAll($data, null, 200, false);
+        return $this->showAll($data, $setting->transformer);
     }
 
 

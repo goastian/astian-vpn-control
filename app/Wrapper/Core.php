@@ -58,16 +58,11 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('Unable to connect with the server'), 500);
-
-        } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
             }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
-        } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 
@@ -89,16 +84,11 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('Unable to connect with the server'), 500);
-
-        } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
             }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
-        } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 
@@ -116,15 +106,11 @@ final class Core
                 return response(null, 200);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('Unable to connect with the server'), 500);
-        } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
             }
-            throw new ReportError(__('T'), $th->getCode());
-        } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 
@@ -142,15 +128,11 @@ final class Core
                 return response(null, 200);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('Unable to connect with the server'), 500);
-        } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
             }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
-        } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 
@@ -183,14 +165,11 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
-
-        } catch (ClientException $th) {
-            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), $th->getCode());
-
-        } catch (ServerException $th) {
-            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
+            }
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 
@@ -214,14 +193,11 @@ final class Core
                 return response(null, 201);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
-
-        } catch (ClientException $th) {
-            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), $th->getCode());
-
-        } catch (ServerException $th) {
-            throw new ReportError(__('An error occurred while processing your request. This is an uncommon issue, and we apologize for the inconvenience caused. Our team is working diligently to ensure seamless operations for all users'), 500);
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
+            }
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 
@@ -239,16 +215,11 @@ final class Core
                 return response()->json($data, 200);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
-
-        } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
             }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
-        } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 
@@ -275,15 +246,11 @@ final class Core
                 return response()->json(__("Wireguard Network Interface started successfully"), 200);
             }
 
-        } catch (ConnectException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
-        } catch (ClientException $th) {
-            if ($th->getCode() === 404) {
-                throw new ReportError(__("Cannot find the interface on the server"), $th->getCode());
+        } catch (\Throwable $th) {
+            if (app()->environment(['local', 'dev'])) {
+                throw new ReportError($th->getMessage(), $th->getCode());
             }
-            throw new ReportError($th->getResponse()->getReasonPhrase(), $th->getCode());
-        } catch (ServerException $th) {
-            throw new ReportError(__('Connection to the server failed'), 500);
+            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
         }
     }
 }

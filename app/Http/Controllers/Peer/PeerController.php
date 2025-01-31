@@ -30,9 +30,7 @@ class PeerController extends Controller
         $data = $peer->query();
         $data = $data->where('user_id', $this->user()->id);
 
-        foreach ($params as $key => $value) {
-            $data = $data->where($key, 'LIKE', "%" . $value . "%");
-        }
+        $this->search($data, $params);
 
         $data = $data->get();
 
@@ -160,9 +158,9 @@ class PeerController extends Controller
      */
     public function toggle(Peer $peer)
     {
-        $this->checkMethod('put'); 
-        $this->checkContentType($this->getUpdateHeader());
-        
+        $this->checkMethod('put');
+        $this->checkContentType($this->getJsonHeader());
+
         $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
         if ($peer->active) {

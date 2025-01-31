@@ -512,16 +512,16 @@
         },
         {
             "name": "elyerr/api-response",
-            "version": "v1.0.14",
+            "version": "v1.0.15",
             "source": {
                 "type": "git",
                 "url": "https://gitlab.com/elyerr/api-response.git",
-                "reference": "5427709c80e6ad09fbf69a7eecd194effd399c0c"
+                "reference": "43585f1b3d6c97b4800b5acf1c942ded3d32e2ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/elyerr%2Fapi-response/repository/archive.zip?sha=5427709c80e6ad09fbf69a7eecd194effd399c0c",
-                "reference": "5427709c80e6ad09fbf69a7eecd194effd399c0c",
+                "url": "https://gitlab.com/api/v4/projects/elyerr%2Fapi-response/repository/archive.zip?sha=43585f1b3d6c97b4800b5acf1c942ded3d32e2ce",
+                "reference": "43585f1b3d6c97b4800b5acf1c942ded3d32e2ce",
                 "shasum": ""
             },
             "require": {
@@ -558,9 +558,9 @@
             "description": "Add news functionalities into the Laravel Framework",
             "support": {
                 "issues": "https://gitlab.com/elyerr/api-response/-/issues",
-                "source": "https://gitlab.com/elyerr/api-response/-/tree/v1.0.14"
+                "source": "https://gitlab.com/elyerr/api-response/-/tree/v1.0.15"
             },
-            "time": "2025-01-07T22:00:58+00:00"
+            "time": "2025-01-11T12:40:23+00:00"
         },
         {
             "name": "elyerr/passport-connect",
@@ -2286,12 +2286,12 @@
             "version": "3.8.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/briannesbitt/Carbon.git",
+                "url": "https://github.com/CarbonPHP/carbon.git",
                 "reference": "129700ed449b1f02d70272d2ac802357c8c30c58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/129700ed449b1f02d70272d2ac802357c8c30c58",
+                "url": "https://api.github.com/repos/CarbonPHP/carbon/zipball/129700ed449b1f02d70272d2ac802357c8c30c58",
                 "reference": "129700ed449b1f02d70272d2ac802357c8c30c58",
                 "shasum": ""
             },

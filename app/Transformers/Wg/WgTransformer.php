@@ -33,10 +33,6 @@ class WgTransformer extends TransformerAbstract
      */
     public function transform($data)
     {
-        if (!($data instanceof Wg)) {
-            $data = Wg::findOrFail($data->id);
-        }
-
         return [
             'id' => $data->id,
             'name' => $data->name,
@@ -71,6 +67,8 @@ class WgTransformer extends TransformerAbstract
     public static function getOriginalAttributes($index)
     {
         $attributes = [
+            'name' => 'name',
+            'subnet' => 'subnet',
             'private_key' => 'private_key',
             'listen_port' => 'listen_port',
             'gateway' => 'gateway',

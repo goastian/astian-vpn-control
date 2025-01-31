@@ -30,7 +30,7 @@ class SettingCommand extends Command
         $data = Setting::defaultSetting();
 
         foreach ($data as $value) {
-            Setting::updateOrCreate(
+            Setting::firstOrCreate(
                 [
                     'key' => $value->key
                 ],

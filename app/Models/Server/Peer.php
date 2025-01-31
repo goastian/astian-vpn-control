@@ -25,6 +25,7 @@ class Peer extends Master
         'active',
         'user_id',
         'wg_id',
+        'stand_by'
     ];
 
     /**

@@ -102,8 +102,13 @@ class ServerController extends GlobalController
                 $server->url = $request->url;
             }
 
+            if ($this->is_different($server->port, $request->port)) {
+                $updated = true;
+                $server->port = $request->port;
+            }
+
             if ($updated) {
-                $server->save();
+                $server->push();
             }
         });
 
@@ -133,7 +138,7 @@ class ServerController extends GlobalController
     public function toggle(Server $server)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getUpdateHeader());
+        $this->checkContentType($this->getJsonHeader());
 
         $server->active = !$server->active ? now() : null;
         $server->push();

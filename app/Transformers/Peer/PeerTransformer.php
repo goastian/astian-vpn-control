@@ -32,14 +32,11 @@ class PeerTransformer extends TransformerAbstract
      */
     public function transform($data)
     {
-        if (!($data instanceof Peer)) {
-            $data = Peer::findOrFail($data->id);
-        }
-
         return [
             'id' => $data->id,
             'name' => $data->name,
             'active' => $data->active,
+            'stand_by' => $data->stand_by,
             'created' => $data->created_at,
             'updated' => $data->updated_at,
             'config' => $data->config ?: null,
@@ -60,9 +57,8 @@ class PeerTransformer extends TransformerAbstract
 
     /**
      * Retrieve Original Attributes to filter data
-     *
-     * @param string $index
-     * @return Array
+     * @param mixed $index
+     * @return string|null
      */
     public static function getOriginalAttributes($index)
     {

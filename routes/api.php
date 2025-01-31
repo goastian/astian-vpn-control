@@ -13,7 +13,7 @@ Route::resource('servers', ServerController::class)->except('edit', 'create');
 Route::get('/interfaces/{id}', [ServerController::class, 'interfaces']);
 
 Route::put('wgs/{wg}/toggle', [WgController::class, 'toggle'])->name('wgs.toggle');
-Route::post('wg/{wg}/reload', [WgController::class, 'reload'])->name('wgs.reload');
+Route::put('wg/{wg}/reload', [WgController::class, 'reload'])->name('wgs.reload');
 Route::resource('wgs', WgController::class)->except('edit', 'create');
 
 Route::put('peers/{peer}/toggle', [PeerController::class, 'toggle'])->name('peers.toggle');
