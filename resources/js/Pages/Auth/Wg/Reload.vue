@@ -42,9 +42,9 @@ export default {
          */
         async reload(item) {
             try {
-                const res = await this.$api.post(item.links.reload, {
+                const res = await this.$api.put(item.links.reload, {
                     headers: {
-                        "Content-Type": "multipart/form-data",
+                        "Content-Type": "application/x-www-form-urlencoded",
                     },
                 });
                 if (res.status == 201) {
