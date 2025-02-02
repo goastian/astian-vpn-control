@@ -92,7 +92,7 @@
             <!--navbar-->
             <v-app-bar :elevation="0">
                 <v-toolbar-title>{{ $appName }}</v-toolbar-title>
-                <v-geo />
+                <!--<v-geo />-->
                 <v-spacer />
                 <v-logout></v-logout>
             </v-app-bar>
