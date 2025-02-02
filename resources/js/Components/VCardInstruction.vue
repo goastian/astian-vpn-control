@@ -8,6 +8,12 @@
             <h4><strong>{{ title }}</strong></h4>
             <span>{{ description }}</span>
         </div>
+        <a
+            v-if="btnTitle"
+            :href="btnUrl"
+            target="_blank"
+            class="bg-blue text-center"
+        >{{ btnTitle }}</a>
     </div>
 </template>
 
@@ -30,6 +36,12 @@ export default {
         image: {
             type: String,
             required: true
+        },
+        btnTitle: {
+            type: String,
+        },
+        btnUrl: {
+            type: String
         }
     }
 }
@@ -43,7 +55,8 @@ export default {
     padding: 1.5rem;
     border-radius: 1rem;
     gap: 2rem;
-    min-height: 200px;
+    min-height: 260px;
+    overflow: hidden;
 }
 
 .number {
@@ -52,6 +65,14 @@ export default {
     left: 0;
     top: 0;
     border-radius: 40%;
+}
+
+a {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    padding: .4rem;
 }
 
 @media (max-width: 480px) {

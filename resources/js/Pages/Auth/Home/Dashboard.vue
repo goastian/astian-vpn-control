@@ -99,6 +99,8 @@
                         :description="item.description"
                         :number="item.number"
                         :image="item.image"
+                        :btnTitle="item.btnTitle"
+                        :btnUrl="item.btnUrl"
                     >
                     </v-card-instruction>
                 </v-col>
@@ -125,7 +127,9 @@ export default {
                     title: 'Download WireGuard',
                     description: 'Go to the official WireGuard website and download the appropriate application for your device (Windows, macOS, Android, iOS, or Linux). Install the application following the instructions.',
                     image: 'img/WireGuard.png',
-                    number: 2
+                    number: 2,
+                    btnTitle: 'Download WireGuard',
+                    btnUrl: 'https://www.wireguard.com/install/',
                 },
                 {
                     title: 'Scan QR code.',
