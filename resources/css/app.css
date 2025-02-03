@@ -4,7 +4,7 @@
 
 /* hidden scroll */
 html {
-    overflow:  hidden !important;
+    overflow-y: auto !important;
 }
 
 body {
