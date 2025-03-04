@@ -1,4 +1,4 @@
-const mix = require('laravel-mix');
+const mix = require("laravel-mix");
 
 /*
  |--------------------------------------------------------------------------
@@ -11,9 +11,16 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js').version()
-    .vue().version()
-    .sass('resources/scss/app.scss', 'public/css').version()
-    .postCss('resources/css/app.css', 'public/css', [
-        require("tailwindcss")
-    ]).version();
+/*
+mix.webpackConfig({
+    stats: {
+        children: true,
+    },
+});*/
+mix.js("resources/js/app.js", "js")
+    .vue()
+    .sass("resources/scss/app.scss", "css/app.css")
+    .postCss("resources/css/app.css", "css/tailwind.css", [
+        require("@tailwindcss/postcss"),
+    ])
+    .version();

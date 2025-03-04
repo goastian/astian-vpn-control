@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../views";
 
 /* hidden scroll */
 html {
@@ -22,4 +21,3 @@ body {
         font-size: 13px;
     }
 }
- 
