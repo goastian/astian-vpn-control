@@ -11,21 +11,33 @@ const routes = [
                 path: "",
                 name: "home",
                 component: () => import("../Pages/Auth/Home/Dashboard.vue"),
+                meta: {
+                    auth: true,
+                },
             },
             {
                 path: "/server",
                 name: "servers",
                 component: () => import("../Pages/Auth/Server/Server.vue"),
+                meta: {
+                    auth: true,
+                },
             },
             {
                 path: "/wireguard",
                 name: "wireguard",
                 component: () => import("../Pages/Auth/Wg/Wg.vue"),
+                meta: {
+                    auth: true,
+                },
             },
             {
                 path: "/settings",
                 name: "settings",
                 component: () => import("../Pages/Auth/Setting/Index.vue"),
+                meta: {
+                    auth: true,
+                },
             },
         ],
     },
