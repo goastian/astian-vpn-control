@@ -10,58 +10,101 @@
                 indeterminate
             ></v-progress-circular>
         </div>
-        <v-layout v-if="$user.id" class="min-h-100">
-            <!--navbar-->
-            <v-app-bar :elevation="0" color="#00b9b5">
+        <v-layout v-if="$user.id" class="h-screen w-screen">
+            <!--leftbar-->
+            <v-navigation-drawer permanent rail>
                 <template v-slot:prepend>
-                    <v-app-bar-nav-icon
-                        :icon="$utils.toKebabCase('mdiViewGrid')"
-                        variant="text"
-                        @click="drawer = !drawer"
+                    <v-list-item
                     >
-                    </v-app-bar-nav-icon>
+                        <v-avatar
+                            rounded="0"
+                            size="22px"
+                            class="mt-4 mb-4"
+                        >
+                            <v-img
+                                alt="John"
+                                src="/img/icon.webp"
+                                width="20"
+                            ></v-img>
+                        </v-avatar>
+                    </v-list-item>
                 </template>
 
-                <v-toolbar-title>
-                    <span class="text-white">
-                        {{ $appName }}
-                    </span>
-                </v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-menu-grid></v-menu-grid>
-                <v-logout></v-logout>
-            </v-app-bar>
-            <!--end navbar-->
-
-            <!--leftbar-->
-            <v-navigation-drawer v-model="drawer" width="200">
-                <v-list density="compact" nav>
+                <v-list density="compact" nav class="flex flex-column ga-4">
                     <v-list-item
                         density="compact"
                         v-for="(item, index) in menus"
                         :key="index"
-                        :value="item.name"
-                        :subtitle="item.name"
                         @click="openLink(item.route)"
-                        class="mb-5"
+                        v-show="hasGroup(item.group)"
+                        class=""
                     >
                         <template v-slot:prepend>
                             <v-icon
-                                color="light-blue-darken-1"
+                                color="grey-darken-3"
                                 :icon="$utils.toKebabCase(item.icon)"
                             ></v-icon>
+
                         </template>
+                        <v-tooltip
+                            activator="parent"
+                            location="end"
+                        >{{ item.name }}</v-tooltip>
                     </v-list-item>
                 </v-list>
+
+                <v-divider></v-divider>
+
+                <v-list density="compact" nav>
+                    <v-list-item density="compact">
+                        <v-menu-grid>
+
+                        </v-menu-grid>
+                        <v-tooltip
+                                activator="parent"
+                                location="end"
+                            >
+                                Apps
+                            </v-tooltip>
+                    </v-list-item>
+                </v-list>
+
+                <template v-slot:append>
+                    <v-list density="compact">
+                        <v-list-item density="compact">
+                            <v-icon
+                                color="grey-darken-2"
+                                :icon="$utils.toKebabCase(menu.icon)"
+                                @click="openLink(menu.route)"
+                                v-show="hasGroup(menu.group)"
+                            />
+                            <v-tooltip
+                                activator="parent"
+                                location="end"
+                            >{{ menu.name }}
+                            </v-tooltip>
+                        </v-list-item>
+                    </v-list>
+                </template>
             </v-navigation-drawer>
-            <!--righbar-->
+            <!--leftbar-->
+ 
+            <!--navbar-->
+            <v-app-bar :elevation="0">
+                <v-toolbar-title>{{ $appName }}</v-toolbar-title>
+                <!--<v-geo />-->
+                <v-spacer />
+                <v-logout></v-logout>
+            </v-app-bar>
+            <!--end navbar-->
 
             <!--main content-->
             <v-main>
-                <v-container class="spacing-playground" fluid>
+                <v-container class="spacing-playground pl-10 pr-10" fluid>
                     <router-view></router-view>
                 </v-container>
             </v-main>
+            <!--end content-->
         </v-layout>
     </div>
 </template>
@@ -84,12 +127,6 @@ export default {
                     //visible: true,
                 },
                 {
-                    name: "Settings",
-                    icon: "mdiCog",
-                    route: "settings",
-                    //visible: this.hasGroup("administrator"),
-                },
-                {
                     name: "Servers",
                     icon: "mdiServerSecurity",
                     route: "servers",
@@ -99,9 +136,29 @@ export default {
                     name: "Wireguard",
                     icon: "mdiTools",
                     route: "wireguard",
-                    //visible: this.hasGroup("administrator"),
+                    active: true,
+                    group: "admin",
                 },
+                {
+                    name: "Peers",
+                    icon: "mdiVpn",
+                    route: "peers",
+                    active: true,
+                },
+                {
+                    name: "Instructions",
+                    icon: "mdiInformationOutline",
+                    route: "instructions",
+                    active: true
+                }
             ],
+            menu: {
+                    name: "Settings",
+                    icon: "mdiCog",
+                    route: "settings",
+                    active: true,
+                    group: "admin",
+            },
         };
     },
 
@@ -122,3 +179,23 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+
+.v-divider {
+    opacity: inherit;
+}
+
+.v-navigation-drawer {
+    width: 200px;
+}
+
+.v-toolbar-title {
+    font-size: 1.1rem;
+}
+
+.v-main {
+    overflow: auto;
+}
+
+</style>

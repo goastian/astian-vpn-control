@@ -1,10 +1,11 @@
 <template>
-    <v-menu v-model="menu" :close-on-content-click="false" location="end">
+    <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
         <template v-slot:activator="{ props }">
             <v-btn color="indigo" v-bind="props" icon>
                 <v-icon
-                    :icon="$utils.toKebabCase('mdiAccountConvert')"
+                    :icon="$utils.toKebabCase('mdi-account-circle')"
                     color="indigo-accent-2"
+                    size="30"
                 ></v-icon>
             </v-btn>
         </template>
@@ -17,7 +18,7 @@
                 >
                 </v-list-item>
             </v-list>
-
+ 
             <v-list>
                 <v-list-item
                     :prepend-icon="$utils.toKebabCase('mdiAccountKey')"

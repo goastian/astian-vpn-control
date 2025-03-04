@@ -12,7 +12,7 @@
                 </v-icon>
             </v-btn>
         </template>
-
+ 
         <v-card
             prepend-icon="mdi-map-marker"
             text="Are you sure you want to delete this network interface? This action cannot be undone."

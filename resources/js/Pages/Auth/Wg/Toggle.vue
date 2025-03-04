@@ -11,7 +11,7 @@
                     {{ $utils.toKebabCase("mdiCheckboxBlankCircle") }}
                 </v-icon>
             </v-btn>
-        </template>
+        </template> 
 
         <v-card
             prepend-icon="mdi-map-marker"

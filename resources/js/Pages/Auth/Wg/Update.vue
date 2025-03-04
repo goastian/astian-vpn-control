@@ -9,7 +9,7 @@
             >
                 <v-icon>
                     {{ $utils.toKebabCase("mdiFileEdit") }}
-                </v-icon>
+                </v-icon> 
             </v-btn>
         </template>
 

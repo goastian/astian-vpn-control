@@ -1,128 +1,144 @@
 <template>
-    <v-row class="pa-3">
-        <v-col cols="12">
-            <v-filter :params="['name']" @change="searcher"></v-filter>
-        </v-col>
+    <div class="flex flex-column ga-12">
+        <div>
+            <v-row>
+                <v-col cols="12">
+                    <h2 class="">Dashboard</h2>
+                </v-col>
+            </v-row>
 
-        <v-col cols="12" class="d-flex justify-between">
-            <h1 class="text-gray-600 font-bold">Dashboard</h1>
-            <v-create @created="getPeers"></v-create>
-        </v-col>
-
-        <v-col cols="12" class="text-center">
-            <a
-                class="mt-8 text-blue-600 text-lg font-semibold hover:text-blue-800 underline transition duration-200 ease-in-out transform hover:scale-105"
-                href="https://www.wireguard.com/install/"
-                target="_blank"
+            <v-row
+                class="row-info flex"
             >
-                Download the client to your device
-            </a>
-
-            <p class="mt-4 text-gray-500 text-sm">
-                Once you have the client installed, you'll be able to connect
-                securely to our private network. If you need assistance, feel
-                free to reach out to our support team.
-            </p>
-        </v-col>
-
-        <v-col cols="12" md="6" v-for="(item, index) in peers" :key="index">
-            <v-card>
-                <v-card-subtitle class="pt-2">
-                    <div class="flex justify-between">
-                        <span class="capitalize">
-                            {{ item.name }}
-                        </span>
-                        <div>
-                            {{ item.network.name }}
-                            <span class="font-bold text-2xl">
-                                <v-tooltip
-                                    text="The server is under maintenance, we
-                                            will be back online soon"
-                                >
-                                    <template v-slot:activator="{ props }">
-                                        <v-icon
-                                            v-bind="props"
-                                            v-if="item.stand_by"
-                                            icon="mdi-traffic-light"
-                                            color="yellow-accent-4"
-                                        ></v-icon>
-                                    </template>
-                                </v-tooltip>
-                            </span>
+                <v-col cols="12" md="7" class="flex rounded-xl border-thin justify-center items-center elevation-1" border="opacity-50 sm">
+                    <v-col cols="12" class="info-content flex items-start justify-between">
+                        <div class="flex flex-column items-start">
+                            <div>
+                                <h2 class="title">Hi, {{ `${$user.name}` }}</h2>
+                                <p class="text-grey-darken-1">What are you doing today?</p>
+                            </div>
+                            <v-btn color="blue-darken-1" @click="goToPeers">
+                                Add new device
+                                <v-icon icon="mdi-key"></v-icon>
+                            </v-btn>
                         </div>
+                        <div class="text-grey-darken-3 flex ga-4 align-center">
+                            <div class="flex align-center ga-2">
+                                <span>
+                                    <v-icon icon="mdi-remote-desktop" />
+                                    Peers
+                                </span>
+                                <div>
+                                    <span>{{ count }}</span>
+                                    <span>/</span>
+                                    <span v-if="$user.roles[0].name == 'client'">2</span>
+                                    <span v-if="$user.roles[0].name == 'admin'">10</span>
+                                </div>
+                            </div>
+                            <div class="tag-access">
+                                <span>Free Access</span>
+                            </div>
+                        </div>
+                    </v-col>
+                </v-col>
+                <v-col class="flex flex-column ga-4">
+                    <div class="flex justify-between text-grey-darken-3">
+                        <h3>
+                            <v-icon icon="mdi-remote-desktop" />
+                            Peers
+                        </h3>
+                        <span class="text-light-blue-darken-3 hover-underline">
+                            <router-link :to="{ name: 'peers' }">See All</router-link>
+                        </span>
                     </div>
-                </v-card-subtitle>
-
-                <v-card-text class="text-center">
-                    <span class="text-4xl">
-                        <v-icon
-                            color="blue-accent-2"
-                            icon="mdi-security-network"
-                        >
-                        </v-icon>
+                    <div v-if="peers.length == 0">
+                        <p class="text-grey-darken-2">
+                            No VPN devices connected yet! 🌐 Stay private and secure—click
+                            <router-link
+                                class="text-link text-blue-600"
+                                :to="{ name: 'peers' }"
+                            >here</router-link>
+                            to add your first device and unlock your private network!
+                        </p>
+                    </div>
+                    <div class="flex flex-column ga-2">
+                        <v-card-peer
+                            v-for="(item, index) in peers"
+                            :key="index"
+                            :title="item.name"
+                            :server="item.network.server_name"
+                            :network="item.network.name"
+                            :port="item.network.listen_port"
+                            :state="item.active"
+                            :peer="item"
+                            class="elevation-2"
+                        />
+                    </div>
+                </v-col>
+            </v-row>
+        </div>
+        <v-row>
+            <v-col cols="12">
+                <div class="flex justify-between text-grey-darken-3">
+                    <h3>
+                        <v-icon icon="mdi-information-variant" />
+                        Instructions
+                    </h3>
+                    <span class="text-light-blue-darken-3 hover-underline">
+                        <router-link :to="{ name: 'instructions' }">See All</router-link>
                     </span>
-                </v-card-text>
-
-                <v-card-actions class="flex justify-between">
-                    <v-toggle @updated="getPeers" :peer="item"></v-toggle>
-
-                    <v-delete @deleted="getPeers" :peer="item"></v-delete>
-                </v-card-actions>
-            </v-card>
-        </v-col>
-
-        <v-col
-            v-if="peers.length == 0"
-            cols="12"
-            class="py-4 text-center min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-50 via-blue-100 to-blue-200 rounded-lg shadow-xl"
-        >
-            <p
-                class="text-gray-800 text-xl md:text-1xl font-medium leading-relaxed py-1 max-w-xl mx-auto"
-            >
-                No VPN devices connected yet! 🌐 Stay private and secure—click
-                below to add your first device and unlock your private network.
-                It's quick, easy, and ensures your internet activity stays
-                private.
-            </p>
-
-            <v-create @created="getPeers"></v-create>
-        </v-col>
-
-        <v-col cols="12">
-            <v-pagination
-                v-model="search.page"
-                :length="search.total_pages"
-                :total-visible="7"
-            ></v-pagination>
-        </v-col>
-    </v-row>
+                </div>
+            </v-col>
+            <v-col cols="12" class="d-flex flex-column flex-md-row">
+                <v-col
+                    v-for="(item, index) in instructions"
+                >
+                    <v-card-instruction
+                        :key="index"
+                        :title="item.title"
+                        :description="item.description"
+                        :number="item.number"
+                        :image="item.image"
+                        :btnTitle="item.btnTitle"
+                        :btnUrl="item.btnUrl"
+                    >
+                    </v-card-instruction>
+                </v-col>
+            </v-col>
+        </v-row>
+    </div>
 </template>
-
 <script>
-import VCreate from "../Peer/Create.vue";
-import VToggle from "../Peer/Toggle.vue";
-import VDelete from "../Peer/Delete.vue";
-
 export default {
     inject: ["$user"],
-
-    components: {
-        VCreate,
-        VToggle,
-        VDelete,
-    },
 
     data() {
         return {
             peers: [],
-            search: {
-                page: 1,
-                per_page: 50,
-                total_pages: 0,
-            },
-
-            params: {},
-        };
+            count: 0,
+            instructions: [
+                {
+                    title: 'create a Peer',
+                    description: 'Go to the "Peers" section. Click on "Create New Peer," fill in the required information, and save the configuration.',
+                    image: 'img/key.png',
+                    number: 1,
+                },
+                {
+                    title: 'Download WireGuard',
+                    description: 'Go to the official WireGuard website and download the appropriate application for your device (Windows, macOS, Android, iOS, or Linux). Install the application following the instructions.',
+                    image: 'img/WireGuard.png',
+                    number: 2,
+                    btnTitle: 'Download WireGuard',
+                    btnUrl: 'https://www.wireguard.com/install/',
+                },
+                {
+                    title: 'Scan QR code.',
+                    description: 'Once the peer is created, download the configuration file or scan the provided QR code to easily set it up in WireGuard.',
+                    image: 'img/QR.png',
+                    number: 3
+                }
+            ]
+        }; 
     },
 
     mounted() {
@@ -130,24 +146,91 @@ export default {
     },
 
     methods: {
-        searcher(event) {
-            this.params = event;
-
-            this.getPeers();
+        goToPeers() {
+            this.$router.push({ name: "peers" });
         },
 
         async getPeers() {
             try {
-                const res = await this.$api.get("/api/peers", {
-                    params: this.params,
-                });
+                const res = await this.$api.get("/api/peers");
 
-                if (res.status === 200) {
-                    this.peers = res.data.data;
-                    this.search = res.data.meta;
+                if (res.status == 200) {
+                    this.count = res.data.data.length;
+                    if (res.data.data.length != 0){
+                        let count = res.data.data.length < 3 ? res.data.data.length : 3;
+                        for(let i = 0; i < count; i++) {
+                            this.peers.push(res.data.data[i]);
+                        }
+                    }
+                    //this.peers = res.data.data;
                 }
             } catch (err) {}
         },
     },
 };
 </script>
+
+<style scoped>
+
+.row-info {
+    min-height: 250px;
+    gap: 5rem;
+}
+
+.info-content {
+    width: 100%;
+    min-width: 100px;
+    max-width: 600px;
+}
+
+.info-content > div:first-child {
+    gap: 2rem;
+}
+
+.title {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.tag-access {
+    background-color: #65EBBA;
+    padding: .2rem .5rem;
+    border-radius: .4rem;
+}
+
+.hover-underline:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 960px) {
+    .row-info {
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .title {
+        font-size: 2rem;
+    }
+
+    .row-info {
+        gap: 1rem;
+    }
+
+    .info-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .info-content > div:first-child {
+        gap: 1rem;
+    }
+
+    .info-content div:last-child {
+        align-self: end;
+    }
+}
+
+</style>

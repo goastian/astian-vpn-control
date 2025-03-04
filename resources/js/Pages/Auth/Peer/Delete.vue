@@ -3,10 +3,10 @@
         <template v-slot:activator="{ props: activatorProps }">
             <v-btn
                 v-bind="activatorProps"
-                variant="flat"
-                color="cyan-darken-4"
+                variant="text"
+                color="red-lighten-1"
                 icon
-            >
+            > 
                 <v-icon>
                     {{ $utils.toKebabCase("mdiDeleteEmpty") }}
                 </v-icon>

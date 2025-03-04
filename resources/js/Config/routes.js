@@ -32,6 +32,16 @@ const routes = [
                 },
             },
             {
+                path: "/peers",
+                name: "peers",
+                component: () => import("../Pages/Auth/Peer/Peer.vue"),
+            },
+            {
+                path: "/instructions",
+                name: "instructions",
+                component: () => import("../Pages/Auth/Instructions/Index.vue"),
+            },
+            {
                 path: "/settings",
                 name: "settings",
                 component: () => import("../Pages/Auth/Setting/Index.vue"),
