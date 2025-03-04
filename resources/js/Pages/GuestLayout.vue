@@ -49,8 +49,8 @@ export default {
         },
 
         redirect() {
-            this.$server
-                .get("/api/gateway/user")
+            this.$api
+                .get("/user")
                 .then(() => {
                     this.$router.push({ name: "home" });
                 })

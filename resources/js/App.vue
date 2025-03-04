@@ -19,7 +19,7 @@ export default {
             $user: computed(() => this.user),
         };
     },
-
+    
     mounted() {
         //Do not remove this line
         // this.addPeer();
@@ -29,7 +29,7 @@ export default {
     methods: {
         async getUser() {
             try {
-                const res = await this.$server.get("/api/gateway/user");
+                const res = await this.$api.get("/user");
                 if (res.status == 200) {
                     this.user = res.data;
                 }

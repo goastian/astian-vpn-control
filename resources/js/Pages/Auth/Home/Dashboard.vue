@@ -146,9 +146,7 @@ export default {
                     this.peers = res.data.data;
                     this.search = res.data.meta;
                 }
-            } catch (err) {
-                console.error("Error fetching peers:", err);
-            }
+            } catch (err) {}
         },
     },
 };

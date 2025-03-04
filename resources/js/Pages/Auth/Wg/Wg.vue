@@ -1,5 +1,5 @@
 <template>
-    <v-data-table :headers="headers" :items="interfaces" v-if="isAdmin()">
+    <v-data-table :headers="headers" :items="interfaces">
         <template #top>
             <v-filter
                 :params="[
@@ -67,8 +67,6 @@ import VToggle from "./Toggle.vue";
 import VReload from "./Reload.vue";
 
 export default {
-    inject: ["$user"],
-
     components: {
         VCreate,
         VUpdate,
@@ -154,11 +152,6 @@ export default {
                     this.search = res.data.meta;
                 }
             } catch (err) {}
-        },
-
-        isAdmin() {
-            const group = this.$user.roles.find((item) => item.name == "admin");
-            return group ? true : false;
         },
     },
 };

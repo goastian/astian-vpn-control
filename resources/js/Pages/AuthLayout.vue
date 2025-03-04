@@ -44,7 +44,6 @@
                         :subtitle="item.name"
                         @click="openLink(item.route)"
                         class="mb-5"
-                        v-show="hasGroup(item.group)"
                     >
                         <template v-slot:prepend>
                             <v-icon
@@ -82,28 +81,25 @@ export default {
                     name: "Home",
                     icon: "mdiHomeAutomation",
                     route: "home",
-                    active: true,
+                    //visible: true,
                 },
                 {
                     name: "Settings",
                     icon: "mdiCog",
                     route: "settings",
-                    active: true,
-                    group: "admin",
+                    //visible: this.hasGroup("administrator"),
                 },
                 {
                     name: "Servers",
                     icon: "mdiServerSecurity",
                     route: "servers",
-                    active: true,
-                    group: "admin",
+                    //visible: this.hasGroup("administrator"),
                 },
                 {
                     name: "Wireguard",
                     icon: "mdiTools",
                     route: "wireguard",
-                    active: true,
-                    group: "admin",
+                    //visible: this.hasGroup("administrator"),
                 },
             ],
         };
@@ -118,31 +114,10 @@ export default {
             }
         },
 
-        hasGroup(groupName) {
-            if (this.isAdmin()) {
-                return true;
-            }
-
-            if (!groupName && this.isClient()) {
-                return true;
-            }
-
-            const group = this.$user.roles.find(
-                (item) => item.name == groupName
+        hasGroup(name) {
+            return this.$user.groups.some(
+                (item) => (item.slug = name || item.slug == "administrator")
             );
-            return group ? true : false;
-        },
-
-        isAdmin() {
-            const group = this.$user.roles.find((item) => item.name == "admin");
-            return group ? true : false;
-        },
-
-        isClient() {
-            const group = this.$user.roles.find(
-                (item) => item.name == "client"
-            );
-            return group ? true : false;
         },
     },
 };

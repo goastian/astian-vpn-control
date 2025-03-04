@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-data-table :headers="headers" :items="servers" v-if="isAdmin()">
+        <v-data-table :headers="headers" :items="servers">
             <template #top>
                 <v-filter
                     :params="['country', 'url', 'port', 'uri', 'active']"
@@ -73,8 +73,6 @@ import VUpdate from "./Update.vue";
 import VDelete from "./Delete.vue";
 
 export default {
-    inject: ["$user"],
-
     components: {
         VCreate,
         VUpdate,
@@ -159,11 +157,6 @@ export default {
                     this.search = res.data.meta;
                 }
             } catch (err) {}
-        },
-
-        isAdmin() {
-            const group = this.$user.roles.find((item) => item.name == "admin");
-            return group ? true : false;
         },
     },
 };

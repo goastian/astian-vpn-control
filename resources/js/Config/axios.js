@@ -1,6 +1,5 @@
 import axios from "axios";
 import https from "stream-http";
-import Cookies from "js-cookie";
 
 export const $server = axios.create({
     baseURL: process.env.MIX_APP_SERVER,
@@ -9,7 +8,6 @@ export const $server = axios.create({
     httpsAgent: new https.Agent({ keepAlive: true }),
     headers: {
         Accept: "application/json",
-        Authorization: "Bearer " + Cookies.get(process.env.MIX_APP_TOKEN),
         "X-LOCALTIME": Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
 });
@@ -21,7 +19,6 @@ export const $host = axios.create({
     httpsAgent: new https.Agent({ keepAlive: true }),
     headers: {
         Accept: "application/json",
-        Authorization: "Bearer " + Cookies.get(process.env.MIX_APP_TOKEN),
         "X-LOCALTIME": Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
 });
@@ -33,7 +30,7 @@ $server.interceptors.response.use(
     function (error) {
         if (
             error.response.status === 401 &&
-            error.response.request.responseURL.includes("/api/gateway/user")
+            error.response.request.responseURL.includes("/user")
         ) {
             return Promise.reject(error);
         }
@@ -61,5 +58,5 @@ $host.interceptors.response.use(
  * Redirect if the user is no authenticated
  */
 function redirectTo() {
-    window.location.href = process.env.MIX_APP_REDIRECT_TO;
+   // window.location.href = process.env.MIX_APP_REDIRECT_TO;
 }
