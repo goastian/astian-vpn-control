@@ -14,7 +14,7 @@ class PeerController extends Controller
 {
     public function __construct()
     {
-        parent::__construct();
+        $this->middleware('server');
     }
 
     /**
@@ -30,11 +30,10 @@ class PeerController extends Controller
         $data = $peer->query();
         $data = $data->where('user_id', $this->user()->id);
 
-        $this->search($data, $params);
+        $data = $this->searchByBuilder($data, $params);
+        $data = $this->orderByBuilder($data, $peer->transformer);
 
-        $data = $data->get();
-
-        return $this->showAll($data, $peer->transformer);
+        return $this->showAllByBuilder($data, $peer->transformer);
     }
 
     /**

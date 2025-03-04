@@ -28,11 +28,11 @@ class ServerController extends GlobalController
 
         $data = $server->query();
 
-        $this->search($data, $params);
+        $data = $this->searchByBuilder($data, $params);
 
-        $data = $data->get();
+        $data = $this->orderByBuilder($data, $server->transformer);
 
-        return $this->showAll($data, $server->transformer);
+        return $this->showAllByBuilder($data, $server->transformer);
     }
 
     /**

@@ -30,11 +30,9 @@ class WgController extends Controller
         $params = $this->filter_transform($wg->transformer);
         $data = $wg->query();
 
-        $this->search($data, $params);
+        $data = $this->searchByBuilder($data, $params);
 
-        $data = $data->get();
-
-        return $this->showAll($data, $wg->transformer);
+        return $this->showAllByBuilder($data, $wg->transformer);
     }
 
     /**

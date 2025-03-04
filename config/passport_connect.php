@@ -31,7 +31,7 @@ return [
      * When you add these names, the app will behave as a module rather than a 
      * third-party application.
      */
-    'server_cookie_names' => explode(',', env('PASSPORT_MODULE_COOKIES_NAMES')),
+    'server_cookie_names' => array_map('trim', explode(',', env('PASSPORT_MODULE_COOKIES_NAMES'))),
 
     /**
      * Redirect page after login
@@ -68,7 +68,7 @@ return [
     /**
      * Name of cookies to save token jwt and refresh token
      */
-    'jwt_token' => env('PASSPORT_TOKEN', Str::slug(env('APP_NAME', 'passport'), '_') . '_oauth_server'),
+    'jwt_token' => trim(env('PASSPORT_TOKEN', Str::slug(env('APP_NAME', 'passport'), '_') . '_oauth_server')),
 
     /**
      * Set config for cookies to OAUTH2 Server

@@ -26,11 +26,9 @@ class SettingController extends Controller
 
         $data = $setting->query();
 
-        $this->search($data, $params);
+        $this->searchByBuilder($data, $params);
 
-        $data = $data->get();
-
-        return $this->showAll($data, $setting->transformer);
+        return $this->showAllByBuilder($data, $setting->transformer);
     }
 
 
