@@ -6,7 +6,7 @@
                 variant="text"
                 color="red-lighten-1"
                 icon
-            >
+            > 
                 <v-icon>
                     {{ $utils.toKebabCase("mdiDeleteEmpty") }}
                 </v-icon>

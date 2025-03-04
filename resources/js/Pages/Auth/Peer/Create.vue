@@ -228,7 +228,7 @@ export default {
                     this.interfaces = res.data.data;
                 }
             } catch (err) {}
-        },
+        }, 
 
         /**
          * Download peer

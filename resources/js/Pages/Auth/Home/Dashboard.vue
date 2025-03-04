@@ -138,7 +138,7 @@ export default {
                     number: 3
                 }
             ]
-        };
+        }; 
     },
 
     mounted() {

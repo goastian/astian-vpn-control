@@ -16,7 +16,7 @@
         <v-card
             :prepend-icon="$utils.toKebabCase('mdiVpn')"
             title="Add new wireguard Interface"
-        >
+        > 
             <v-card-text>
                 <v-row dense>
                     <v-col cols="12" md="6">

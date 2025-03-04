@@ -7,7 +7,7 @@
                 variant="text"
                 color="blue-lighten-1"
                 v-bind="activatorProps"
-            >
+            > 
                 <v-icon>
                     {{ $utils.toKebabCase("mdiServerNetworkOutline") }}
                 </v-icon>

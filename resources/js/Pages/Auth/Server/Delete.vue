@@ -13,7 +13,7 @@
             </v-btn>
         </template>
 
-        <v-card
+        <v-card 
             prepend-icon="mdi-map-marker"
             text="Are you sure you want to delete the server?. This action cannot be undone."
             title="Confirm Deletion"

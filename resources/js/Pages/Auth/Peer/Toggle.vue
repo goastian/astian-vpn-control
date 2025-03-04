@@ -5,7 +5,7 @@
                 v-bind="activatorProps"
                 variant="tonal"
                 color="red-lighten-1"
-                icon
+                icon 
             >
                 <v-icon
                     :color="!peer.active ? 'red-accent-4' : 'green-accent-4'"

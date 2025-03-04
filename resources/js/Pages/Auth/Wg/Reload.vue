@@ -7,7 +7,7 @@
                 color="red-lighten-1"
             >
                 Force Reload
-            </v-btn>
+            </v-btn> 
         </template>
 
         <v-card prepend-icon="mdi-map-marker" :text="title" :title="message">

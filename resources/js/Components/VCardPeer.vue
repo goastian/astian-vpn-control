@@ -21,7 +21,7 @@
                 <span><Strong> - Listen Port</Strong> {{ port }}</span>
             </div>
         </div>
-    </div>
+    </div> 
 </template>
 
 <script>

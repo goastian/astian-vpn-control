@@ -88,7 +88,7 @@
                 </template>
             </v-navigation-drawer>
             <!--leftbar-->
-
+ 
             <!--navbar-->
             <v-app-bar :elevation="0">
                 <v-toolbar-title>{{ $appName }}</v-toolbar-title>

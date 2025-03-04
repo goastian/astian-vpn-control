@@ -9,7 +9,7 @@
         <v-row cols="12">
             <v-col cols="12" md="4"
                 v-for="(item, index) in instructions"
-            >
+            > 
                 <v-card-instruction
                     :key="index"
                     :title="item.title"

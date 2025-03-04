@@ -23,7 +23,7 @@ export default {
     mounted() {
         //Do not remove this line
         // this.addPeer();
-        this.getUser();
+        this.getUser(); 
     },
 
     methods: {

@@ -4,7 +4,7 @@
             <div class="row d-flex justify-between py-4 px-4">
                 <h1 class="text-subtitle-1 underline">List of Peers</h1>
                 <v-create @created="getPeers"></v-create>
-            </div>
+            </div> 
         </template>
         <template #item.active="{ item }">
             <v-toggle @updated="getPeers" :peer="item"></v-toggle>

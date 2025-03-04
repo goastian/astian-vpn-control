@@ -14,7 +14,7 @@
                     <h2 class="title" v-text="app_title"></h2>
                     <div class="content">
                         <span>Our VPN offers you the freedom to explore the digital world from anywhere, with advanced protection and access to servers in multiple countries.</span>
-                    </div>
+                    </div> 
                 </div>
                 <div>
                     <ul class="flex ga-10">

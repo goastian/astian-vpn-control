@@ -112,7 +112,7 @@ export default {
     methods: {
         /**
          * Retrieve the servers
-         */
+         */ 
         async getServers() {
             try {
                 const res = await this.$api.get("/api/servers");
