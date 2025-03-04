@@ -14,13 +14,8 @@
             <!--leftbar-->
             <v-navigation-drawer permanent rail>
                 <template v-slot:prepend>
-                    <v-list-item
-                    >
-                        <v-avatar
-                            rounded="0"
-                            size="22px"
-                            class="mt-4 mb-4"
-                        >
+                    <v-list-item>
+                        <v-avatar rounded="0" size="22px" class="mt-4 mb-4">
                             <v-img
                                 alt="John"
                                 src="/img/icon.webp"
@@ -36,7 +31,6 @@
                         v-for="(item, index) in menus"
                         :key="index"
                         @click="openLink(item.route)"
-                        v-show="hasGroup(item.group)"
                         class=""
                     >
                         <template v-slot:prepend>
@@ -44,12 +38,10 @@
                                 color="grey-darken-3"
                                 :icon="$utils.toKebabCase(item.icon)"
                             ></v-icon>
-
                         </template>
-                        <v-tooltip
-                            activator="parent"
-                            location="end"
-                        >{{ item.name }}</v-tooltip>
+                        <v-tooltip activator="parent" location="end">{{
+                            item.name
+                        }}</v-tooltip>
                     </v-list-item>
                 </v-list>
 
@@ -57,15 +49,10 @@
 
                 <v-list density="compact" nav>
                     <v-list-item density="compact">
-                        <v-menu-grid>
-
-                        </v-menu-grid>
-                        <v-tooltip
-                                activator="parent"
-                                location="end"
-                            >
-                                Apps
-                            </v-tooltip>
+                        <v-menu-grid> </v-menu-grid>
+                        <v-tooltip activator="parent" location="end">
+                            Apps
+                        </v-tooltip>
                     </v-list-item>
                 </v-list>
 
@@ -76,19 +63,16 @@
                                 color="grey-darken-2"
                                 :icon="$utils.toKebabCase(menu.icon)"
                                 @click="openLink(menu.route)"
-                                v-show="hasGroup(menu.group)"
                             />
-                            <v-tooltip
-                                activator="parent"
-                                location="end"
-                            >{{ menu.name }}
+                            <v-tooltip activator="parent" location="end"
+                                >{{ menu.name }}
                             </v-tooltip>
                         </v-list-item>
                     </v-list>
                 </template>
             </v-navigation-drawer>
             <!--leftbar-->
- 
+
             <!--navbar-->
             <v-app-bar :elevation="0">
                 <v-toolbar-title>{{ $appName }}</v-toolbar-title>
@@ -124,40 +108,32 @@ export default {
                     name: "Home",
                     icon: "mdiHomeAutomation",
                     route: "home",
-                    //visible: true,
                 },
                 {
                     name: "Servers",
                     icon: "mdiServerSecurity",
                     route: "servers",
-                    //visible: this.hasGroup("administrator"),
                 },
                 {
                     name: "Wireguard",
                     icon: "mdiTools",
                     route: "wireguard",
-                    active: true,
-                    group: "admin",
                 },
                 {
                     name: "Peers",
                     icon: "mdiVpn",
                     route: "peers",
-                    active: true,
                 },
                 {
                     name: "Instructions",
                     icon: "mdiInformationOutline",
                     route: "instructions",
-                    active: true
-                }
+                },
             ],
             menu: {
-                    name: "Settings",
-                    icon: "mdiCog",
-                    route: "settings",
-                    active: true,
-                    group: "admin",
+                name: "Settings",
+                icon: "mdiCog",
+                route: "settings", 
             },
         };
     },
@@ -170,18 +146,11 @@ export default {
                 window.open(uri, "_self");
             }
         },
-
-        hasGroup(name) {
-            return this.$user.groups.some(
-                (item) => (item.slug = name || item.slug == "administrator")
-            );
-        },
     },
 };
 </script>
 
 <style scoped>
-
 .v-divider {
     opacity: inherit;
 }
@@ -197,5 +166,4 @@ export default {
 .v-main {
     overflow: auto;
 }
-
 </style>

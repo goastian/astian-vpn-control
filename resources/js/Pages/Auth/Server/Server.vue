@@ -1,5 +1,5 @@
 <template>
-    <v-data-table :headers="headers" :items="servers" v-if="isAdmin()">
+    <v-data-table :headers="headers" :items="servers">
         <template #top>
             <div class="row d-flex justify-between py-4 px-4">
                 <h1 class="text-subtitle-1 underline">List of Servers</h1>
@@ -110,7 +110,7 @@ export default {
     methods: {
         /**
          * Retrieve the servers
-         */ 
+         */
         async getServers() {
             try {
                 const res = await this.$api.get("/api/servers");

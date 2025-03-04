@@ -7,15 +7,23 @@
                 </v-col>
             </v-row>
 
-            <v-row
-                class="row-info flex"
-            >
-                <v-col cols="12" md="7" class="flex rounded-xl border-thin justify-center items-center elevation-1" border="opacity-50 sm">
-                    <v-col cols="12" class="info-content flex items-start justify-between">
+            <v-row class="row-info flex">
+                <v-col
+                    cols="12"
+                    md="7"
+                    class="flex rounded-xl border-thin justify-center items-center elevation-1"
+                    border="opacity-50 sm"
+                >
+                    <v-col
+                        cols="12"
+                        class="info-content flex items-start justify-between"
+                    >
                         <div class="flex flex-column items-start">
                             <div>
                                 <h2 class="title">Hi, {{ `${$user.name}` }}</h2>
-                                <p class="text-grey-darken-1">What are you doing today?</p>
+                                <p class="text-grey-darken-1">
+                                    What are you doing today?
+                                </p>
                             </div>
                             <v-btn color="blue-darken-1" @click="goToPeers">
                                 Add new device
@@ -31,8 +39,6 @@
                                 <div>
                                     <span>{{ count }}</span>
                                     <span>/</span>
-                                    <span v-if="$user.roles[0].name == 'client'">2</span>
-                                    <span v-if="$user.roles[0].name == 'admin'">10</span>
                                 </div>
                             </div>
                             <div class="tag-access">
@@ -48,17 +54,22 @@
                             Peers
                         </h3>
                         <span class="text-light-blue-darken-3 hover-underline">
-                            <router-link :to="{ name: 'peers' }">See All</router-link>
+                            <router-link :to="{ name: 'peers' }"
+                                >See All</router-link
+                            >
                         </span>
                     </div>
                     <div v-if="peers.length == 0">
                         <p class="text-grey-darken-2">
-                            No VPN devices connected yet! 🌐 Stay private and secure—click
+                            No VPN devices connected yet! 🌐 Stay private and
+                            secure—click
                             <router-link
                                 class="text-link text-blue-600"
                                 :to="{ name: 'peers' }"
-                            >here</router-link>
-                            to add your first device and unlock your private network!
+                                >here</router-link
+                            >
+                            to add your first device and unlock your private
+                            network!
                         </p>
                     </div>
                     <div class="flex flex-column ga-2">
@@ -85,14 +96,14 @@
                         Instructions
                     </h3>
                     <span class="text-light-blue-darken-3 hover-underline">
-                        <router-link :to="{ name: 'instructions' }">See All</router-link>
+                        <router-link :to="{ name: 'instructions' }"
+                            >See All</router-link
+                        >
                     </span>
                 </div>
             </v-col>
             <v-col cols="12" class="d-flex flex-column flex-md-row">
-                <v-col
-                    v-for="(item, index) in instructions"
-                >
+                <v-col v-for="(item, index) in instructions">
                     <v-card-instruction
                         :key="index"
                         :title="item.title"
@@ -118,27 +129,30 @@ export default {
             count: 0,
             instructions: [
                 {
-                    title: 'create a Peer',
-                    description: 'Go to the "Peers" section. Click on "Create New Peer," fill in the required information, and save the configuration.',
-                    image: 'img/key.png',
+                    title: "create a Peer",
+                    description:
+                        'Go to the "Peers" section. Click on "Create New Peer," fill in the required information, and save the configuration.',
+                    image: "img/key.png",
                     number: 1,
                 },
                 {
-                    title: 'Download WireGuard',
-                    description: 'Go to the official WireGuard website and download the appropriate application for your device (Windows, macOS, Android, iOS, or Linux). Install the application following the instructions.',
-                    image: 'img/WireGuard.png',
+                    title: "Download WireGuard",
+                    description:
+                        "Go to the official WireGuard website and download the appropriate application for your device (Windows, macOS, Android, iOS, or Linux). Install the application following the instructions.",
+                    image: "img/WireGuard.png",
                     number: 2,
-                    btnTitle: 'Download WireGuard',
-                    btnUrl: 'https://www.wireguard.com/install/',
+                    btnTitle: "Download WireGuard",
+                    btnUrl: "https://www.wireguard.com/install/",
                 },
                 {
-                    title: 'Scan QR code.',
-                    description: 'Once the peer is created, download the configuration file or scan the provided QR code to easily set it up in WireGuard.',
-                    image: 'img/QR.png',
-                    number: 3
-                }
-            ]
-        }; 
+                    title: "Scan QR code.",
+                    description:
+                        "Once the peer is created, download the configuration file or scan the provided QR code to easily set it up in WireGuard.",
+                    image: "img/QR.png",
+                    number: 3,
+                },
+            ],
+        };
     },
 
     mounted() {
@@ -156,9 +170,10 @@ export default {
 
                 if (res.status == 200) {
                     this.count = res.data.data.length;
-                    if (res.data.data.length != 0){
-                        let count = res.data.data.length < 3 ? res.data.data.length : 3;
-                        for(let i = 0; i < count; i++) {
+                    if (res.data.data.length != 0) {
+                        let count =
+                            res.data.data.length < 3 ? res.data.data.length : 3;
+                        for (let i = 0; i < count; i++) {
                             this.peers.push(res.data.data[i]);
                         }
                     }
@@ -171,7 +186,6 @@ export default {
 </script>
 
 <style scoped>
-
 .row-info {
     min-height: 250px;
     gap: 5rem;
@@ -193,9 +207,9 @@ export default {
 }
 
 .tag-access {
-    background-color: #65EBBA;
-    padding: .2rem .5rem;
-    border-radius: .4rem;
+    background-color: #65ebba;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.4rem;
 }
 
 .hover-underline:hover {
@@ -209,7 +223,6 @@ export default {
 }
 
 @media (max-width: 480px) {
-
     .title {
         font-size: 2rem;
     }
@@ -232,5 +245,4 @@ export default {
         align-self: end;
     }
 }
-
 </style>
