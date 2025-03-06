@@ -8,6 +8,8 @@ import { router } from "./Config/routes";
 import { notyf } from "./Config/notification";
 import { Quasar, Ripple, ClosePopup, Notify, Dialog, Loading } from "quasar";
 
+import "./Config/matomo"
+
 //icons material dissing https://pictogrammers.com/library/mdi/
 import "@mdi/font/css/materialdesignicons.css";
 
@@ -15,8 +17,6 @@ import "@mdi/font/css/materialdesignicons.css";
 import "quasar/dist/quasar.css";
 import "@quasar/extras/material-icons/material-icons.css";
 import { QComponents } from "./Config/quasar";
-
-const appName = process.env.MIX_APP_NAME || "Laravel";
 
 //---- APP AUTH USERS ---//
 const app = createApp(App);
@@ -42,8 +42,7 @@ QComponents.forEach((item) => {
 });
 
 //Global properties
-app.config.globalProperties.$utils = utils;
-app.config.globalProperties.$appName = appName;
+app.config.globalProperties.$utils = utils; 
 app.config.globalProperties.$server = $server;
 app.config.globalProperties.$api = $api;
 app.config.globalProperties.$notification = notyf;
