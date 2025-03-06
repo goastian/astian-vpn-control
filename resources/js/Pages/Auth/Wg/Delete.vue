@@ -1,33 +1,32 @@
 <template>
-    <v-dialog v-model="dialog" persistent max-width="400">
-        <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                v-bind="activatorProps"
-                variant="text"
-                color="red-lighten-1"
-                icon
-            >
-                <v-icon>
-                    {{ $utils.toKebabCase("mdiDeleteEmpty") }}
-                </v-icon>
-            </v-btn>
-        </template>
- 
-        <v-card
-            prepend-icon="mdi-map-marker"
-            text="Are you sure you want to delete this network interface? This action cannot be undone."
-            title="Confirm Delete Interface"
-        >
-            <template v-slot:actions>
-                <v-spacer></v-spacer>
+    <q-dialog v-model="dialog" persistent>
+        <q-card class="q-pa-md">
+            <q-card-section class="row items-center">
+                <q-icon name="mdi-delete-alert" size="md" color="primary" />
+                <div class="q-ml-sm text-h6">Confirm Delete Interface</div>
+            </q-card-section>
 
-                <v-btn @click="dialog = false"> Disagree </v-btn>
+            <q-card-section>
+                Are you sure you want to delete this network interface? This
+                action cannot be undone.
+            </q-card-section>
 
-                <v-btn @click="deleteWg(wg)"> Agree </v-btn>
-            </template>
-        </v-card>
-    </v-dialog>
+            <q-card-actions align="right">
+                <q-btn flat label="Disagree" v-close-popup />
+                <q-btn flat label="Agree" color="red" @click="deleteWg(wg)" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-btn
+        flat
+        dense
+        color="red"
+        icon="mdi-delete-empty"
+        @click="dialog = true"
+    />
 </template>
+
 <script>
 export default {
     props: ["wg"],
@@ -41,29 +40,20 @@ export default {
     },
 
     methods: {
-        /**
-         * Delete Server
-         */
         async deleteWg(item) {
             try {
                 const res = await this.$api.delete(item.links.delete);
-                if (res.status == 200) {
+                if (res.status === 200) {
                     this.$emit("deleted", res.data);
-                    this.dialog = false
                 }
             } catch (err) {
-                if (err.response.status == 403) {
-                    this.$notification.error(err.response.data.message);
+                if ([403, 404, 500].includes(err.response?.status)) {
+                    this.$q.notify({
+                        type: "negative",
+                        message: err.response.data.message,
+                    });
                 }
-
-                if (err.response.status == 404) {
-                    this.$notification.error(err.response.data.message);
-                }
-
-                if (err.response.status == 500) {
-                    this.$notification.error(err.response.data.message);
-                }
-                
+            } finally {
                 this.dialog = false;
             }
         },

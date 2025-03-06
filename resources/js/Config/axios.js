@@ -1,5 +1,6 @@
 import axios from "axios";
 import https from "stream-http";
+import Cookies from "js-cookie";
 
 export const $server = axios.create({
     baseURL: process.env.MIX_APP_SERVER,
@@ -12,13 +13,14 @@ export const $server = axios.create({
     },
 });
 
-export const $host = axios.create({
-    baseURL: process.env.MIX_APP_URL,
+export const $api = axios.create({
     timeout: 5000,
     withCredentials: true,
+    xsrfHeaderName: "elyerr_vpn_csrf_token",
     httpsAgent: new https.Agent({ keepAlive: true }),
     headers: {
         Accept: "application/json",
+        Authorization: Cookies.get(process.env.MIX_APP_TOKEN),
         "X-LOCALTIME": Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
 });
@@ -42,7 +44,7 @@ $server.interceptors.response.use(
     }
 );
 
-$host.interceptors.response.use(
+$api.interceptors.response.use(
     function (response) {
         return response;
     },
@@ -58,5 +60,5 @@ $host.interceptors.response.use(
  * Redirect if the user is no authenticated
  */
 function redirectTo() {
-   // window.location.href = process.env.MIX_APP_REDIRECT_TO;
+    //  window.location.href = process.env.MIX_APP_REDIRECT_TO;
 }

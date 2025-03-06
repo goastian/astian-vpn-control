@@ -1,89 +1,70 @@
 <template>
-    <v-dialog v-model="dialog" max-width="1000" with="100">
-        <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                icon
-                variant="tonal"
-                v-bind="activatorProps"
-                color="blue-lighten-1"
-            >
-                <v-icon>
-                    {{ $utils.toKebabCase("mdiFileEdit") }}
-                </v-icon> 
-            </v-btn>
-        </template>
-
-        <v-card
-            :prepend-icon="$utils.toKebabCase('mdiVpn')"
-            title="Add new wireguard Interface"
-        >
-            <v-card-text>
-                <v-row dense>
-                    <v-col cols="12" md="6">
-                        <v-text-field label="Name" v-model="wg.name" disabled>
-                        </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-text-field
-                            label="Listen Port"
-                            v-model="wg.listen_port"
-                            disabled
-                        >
-                        </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-text-field label="Server" v-model="wg.url" disabled>
-                            <template #label>
-                                {{ wg.country }}
-                            </template>
-                        </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-text-field label="DNS 1" v-model="wg.dns_1">
-                            <template #details>
-                                <v-error :error="errors.dns_1"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-text-field label="DNS 2" v-model="wg.dns_2">
-                            <template #details>
-                                <v-error :error="errors.dns_2"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
-                </v-row>
-            </v-card-text>
-
-            <v-divider></v-divider>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-
-                <v-btn
-                    text="Close"
-                    variant="plain"
-                    @click="dialog = false"
-                ></v-btn>
-
-                <v-btn
+    <q-dialog v-model="dialog" persistent>
+        <q-card class="q-pa-md" style="max-width: 1000px">
+            <q-card-section class="row items-center">
+                <q-icon
+                    name="mdi-vpn"
                     color="primary"
-                    text="Save"
-                    variant="tonal"
-                    @click="updateWG"
-                ></v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+                    size="md"
+                    class="q-mr-sm"
+                />
+                <div class="text-h6">Add new WireGuard Interface</div>
+            </q-card-section>
+
+            <q-card-section>
+                <q-form @submit.prevent="updateWG">
+                    <q-input label="Name" v-model="wg.name" readonly />
+
+                    <q-input
+                        label="Listen Port"
+                        v-model="wg.listen_port"
+                        readonly
+                    />
+
+                    <q-input label="Server" v-model="wg.url" readonly>
+                        <template #label> {{ wg.country }} </template>
+                    </q-input>
+
+                    <q-input
+                        label="DNS 1"
+                        v-model="wg.dns_1"
+                        :error="!!errors.dns_1"
+                        :error-message="errors.dns_1"
+                    />
+
+                    <q-input
+                        label="DNS 2"
+                        v-model="wg.dns_2"
+                        :error="!!errors.dns_2"
+                        :error-message="errors.dns_2"
+                    />
+                </q-form>
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions align="right">
+                <q-btn
+                    flat
+                    label="Close"
+                    color="grey"
+                    @click="dialog = false"
+                />
+                <q-btn label="Save" color="primary" @click="updateWG" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-btn flat round dense color="blue" @click="dialog = true">
+        <q-icon name="mdi-file-edit" />
+    </q-btn>
 </template>
+
 <script>
 export default {
-    emit: ["updated"],
-
     props: ["wg"],
+
+    emits: ["updated"],
 
     data() {
         return {
@@ -93,9 +74,6 @@ export default {
     },
 
     methods: {
-        /**
-         * Create a new server
-         */
         async updateWG() {
             try {
                 const res = await this.$api.put(this.wg.links.update, this.wg, {
@@ -104,24 +82,20 @@ export default {
                     },
                 });
 
-                if (res.status == 201) {
+                if (res.status === 201) {
                     this.dialog = false;
                     this.errors = {};
-                    this.form = {};
                     this.$emit("updated", res.data.data);
                 }
             } catch (err) {
-                if (err.response && err.response.status == 422) {
+                if (err.response?.status === 422) {
                     this.errors = err.response.data.errors;
-                }
-                if (err.response.status == 404) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 403) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 500) {
-                    this.$notification.error(err.response.data.message);
+                } else {
+                    this.$q.notify({
+                        type: "negative",
+                        message:
+                            err.response?.data?.message || "An error occurred",
+                    });
                 }
                 this.dialog = false;
             }

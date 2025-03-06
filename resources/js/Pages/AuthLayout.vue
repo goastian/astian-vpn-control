@@ -1,140 +1,85 @@
 <template>
-    <div>
-        <div
-            v-if="!$user.id"
-            class="d-flex align-center h-screen w-screen justify-center"
-        >
-            <v-progress-circular
-                :size="150"
-                color="amber"
-                indeterminate
-            ></v-progress-circular>
-        </div>
-        <v-layout v-if="$user.id" class="h-screen w-screen">
-            <!--leftbar-->
-            <v-navigation-drawer permanent rail>
-                <template v-slot:prepend>
-                    <v-list-item>
-                        <v-avatar rounded="0" size="22px" class="mt-4 mb-4">
-                            <v-img
-                                alt="John"
-                                src="/img/icon.webp"
-                                width="20"
-                            ></v-img>
-                        </v-avatar>
-                    </v-list-item>
-                </template>
+    <q-layout view="hHh lpR lFf">
+        <q-header bordered class="bg-primary text-white">
+            <q-toolbar>
+                <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
-                <v-list density="compact" nav class="flex flex-column ga-4">
-                    <v-list-item
-                        density="compact"
-                        v-for="(item, index) in menus"
-                        :key="index"
-                        @click="openLink(item.route)"
-                        class=""
-                    >
-                        <template v-slot:prepend>
-                            <v-icon
-                                color="grey-darken-3"
-                                :icon="$utils.toKebabCase(item.icon)"
-                            ></v-icon>
-                        </template>
-                        <v-tooltip activator="parent" location="end">{{
-                            item.name
-                        }}</v-tooltip>
-                    </v-list-item>
-                </v-list>
+                <q-toolbar-title> {{ $app_name }} </q-toolbar-title>
 
-                <v-divider></v-divider>
+                <q-space></q-space>
 
-                <v-list density="compact" nav>
-                    <v-list-item density="compact">
-                        <v-menu-grid> </v-menu-grid>
-                        <v-tooltip activator="parent" location="end">
-                            Apps
-                        </v-tooltip>
-                    </v-list-item>
-                </v-list>
-
-                <template v-slot:append>
-                    <v-list density="compact">
-                        <v-list-item density="compact">
-                            <v-icon
-                                color="grey-darken-2"
-                                :icon="$utils.toKebabCase(menu.icon)"
-                                @click="openLink(menu.route)"
-                            />
-                            <v-tooltip activator="parent" location="end"
-                                >{{ menu.name }}
-                            </v-tooltip>
-                        </v-list-item>
-                    </v-list>
-                </template>
-            </v-navigation-drawer>
-            <!--leftbar-->
-
-            <!--navbar-->
-            <v-app-bar :elevation="0">
-                <v-toolbar-title>{{ $appName }}</v-toolbar-title>
-                <!--<v-geo />-->
-                <v-spacer />
                 <v-logout></v-logout>
-            </v-app-bar>
-            <!--end navbar-->
+            </q-toolbar>
+        </q-header>
 
-            <!--main content-->
-            <v-main>
-                <v-container class="spacing-playground pl-10 pr-10" fluid>
-                    <router-view></router-view>
-                </v-container>
-            </v-main>
-            <!--end content-->
-        </v-layout>
-    </div>
+        <q-drawer
+            show-if-above
+            v-model="leftDrawerOpen"
+            side="left"
+            behavior="desktop"
+            elevated
+        >
+            <q-list
+                bordered
+                padding
+                class="rounded-borders text-primary"
+                v-for="(item, index) in menus"
+                :key="index"
+            >
+                <q-item clickable v-ripple @click="openLink(item.route)">
+                    <q-item-section avatar>
+                        <span class="text-2xl" :class="item.icon"></span>
+                    </q-item-section>
+
+                    <q-item-section>{{ item.name }}</q-item-section>
+                </q-item>
+            </q-list>
+        </q-drawer>
+
+        <q-page-container>
+            <router-view />
+        </q-page-container>
+    </q-layout>
 </template>
+
 <script>
 export default {
-    inject: ["$user"],
+    inject: ["$user", "$app_name"],
 
     data() {
         return {
             show_config: false,
             settings: null,
             open_link: null,
-            drawer: true,
             user: {},
+            leftDrawerOpen: false,
             menus: [
                 {
                     name: "Home",
-                    icon: "mdiHomeAutomation",
+                    icon: "mdi mdi-home-automation",
                     route: "home",
                 },
                 {
                     name: "Servers",
-                    icon: "mdiServerSecurity",
+                    icon: "mdi mdi-server-security",
                     route: "servers",
                 },
                 {
                     name: "Wireguard",
-                    icon: "mdiTools",
+                    icon: "mdi mdi-tools",
                     route: "wireguard",
                 },
                 {
                     name: "Peers",
-                    icon: "mdiVpn",
+                    icon: "mdi mdi-vpn",
                     route: "peers",
                 },
                 {
                     name: "Instructions",
-                    icon: "mdiInformationOutline",
+                    icon: "mdi mdi-information-outline",
                     route: "instructions",
                 },
             ],
-            menu: {
-                name: "Settings",
-                icon: "mdiCog",
-                route: "settings", 
-            },
         };
     },
 
@@ -146,24 +91,10 @@ export default {
                 window.open(uri, "_self");
             }
         },
+
+        toggleLeftDrawer() {
+            this.leftDrawerOpen = !this.leftDrawerOpen;
+        },
     },
 };
 </script>
-
-<style scoped>
-.v-divider {
-    opacity: inherit;
-}
-
-.v-navigation-drawer {
-    width: 200px;
-}
-
-.v-toolbar-title {
-    font-size: 1.1rem;
-}
-
-.v-main {
-    overflow: auto;
-}
-</style>

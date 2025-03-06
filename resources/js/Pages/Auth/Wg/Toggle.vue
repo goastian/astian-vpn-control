@@ -1,33 +1,46 @@
 <template>
-    <v-dialog v-model="dialog" persistent max-width="400">
-        <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                v-bind="activatorProps"
-                variant="tonal"
-                color="red-lighten-1"
-                icon
-            >
-                <v-icon :color="!wg.active ? 'red-accent-4' : 'green-accent-4'">
-                    {{ $utils.toKebabCase("mdiCheckboxBlankCircle") }}
-                </v-icon>
-            </v-btn>
-        </template> 
+    <q-dialog v-model="dialog" persistent>
+        <q-card class="q-pa-md" style="max-width: 400px">
+            <q-card-section class="row items-center">
+                <div>
+                    <div class="text-h6">
+                        {{ dialogTitle }}
+                        <q-icon
+                            name="mdi-access-point"
+                            color="primary"
+                            size="md"
+                            class="q-mr-sm"
+                        />
+                    </div>
+                    <div class="text-body2">{{ dialogMessage }}</div>
+                </div>
+            </q-card-section>
 
-        <v-card
-            prepend-icon="mdi-map-marker"
-            :text="!wg.active ? active.message : inactive.message"
-            :title="!wg.active ? active.title : inactive.title"
-        >
-            <template v-slot:actions>
-                <v-spacer></v-spacer>
+            <q-card-actions align="right">
+                <q-btn
+                    flat
+                    label="Disagree"
+                    color="grey"
+                    @click="dialog = false"
+                />
+                <q-btn
+                    label="Agree"
+                    color="red"
+                    @click="toggle(wg)"
+                    :disabled="processing"
+                />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 
-                <v-btn @click="dialog = false"> Disagree </v-btn>
-
-                <v-btn @click="toggle(wg)"> Agree </v-btn>
-            </template>
-        </v-card>
-    </v-dialog>
+    <q-btn flat round dense @click="dialog = true">
+        <q-icon
+            :name="wg.active ? 'mdi-access-point' : 'mdi-access-point-remove'"
+            :color="wg.active ? 'green' : 'red'"
+        />
+    </q-btn>
 </template>
+
 <script>
 export default {
     props: ["wg"],
@@ -47,36 +60,35 @@ export default {
                 message:
                     "Are you sure you want to deactivate this network interface? This action will disconnect any active connections and may affect network access.",
             },
+            processing: false,
         };
     },
 
+    computed: {
+        dialogTitle() {
+            return this.wg.active ? this.inactive.title : this.active.title;
+        },
+        dialogMessage() {
+            return this.wg.active ? this.inactive.message : this.active.message;
+        },
+    },
+
     methods: {
-        /**
-         * Delete Server
-         */
         async toggle(item) {
+            this.processing = true;
             try {
-                const res = await this.$api.put(item.links.toggle, {
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                });
-                if (res.status == 201) {
+                const res = await this.$api.put(item.links.toggle);
+
+                if (res.status === 201) {
                     this.$emit("updated", res.data);
-                    this.dialog = false;
                 }
             } catch (err) {
-                if (err.response.status == 403) {
-                    this.$notification.error(err.response.data.message);
-                }
-
-                if (err.response.status == 404) {
-                    this.$notification.error(err.response.data.message);
-                }
-
-                if (err.response.status == 500) {
-                    this.$notification.error(err.response.data.message);
-                }
+                this.$q.notify({
+                    type: "negative",
+                    message: err.response?.data?.message || "An error occurred",
+                });
+            } finally {
+                this.processing = false;
                 this.dialog = false;
             }
         },

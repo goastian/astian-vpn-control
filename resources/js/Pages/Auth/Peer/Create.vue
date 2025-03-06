@@ -1,138 +1,85 @@
 <template>
-    <v-dialog v-model="dialog" max-width="900" with="100">
-        <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                class="text-none font-weight-regular mx-4"
-                icon
-                variant="tonal"
-                v-bind="activatorProps"
-                @click="showForm"
-                color="blue-lighten-1"
-            >
-                <v-icon :icon="$utils.toKebabCase('mdiKeyPlus')"> </v-icon>
-            </v-btn>
-        </template>
+    <q-dialog v-model="dialog" maximized>
+        <q-card>
+            <q-card-section>
+                <div class="text-h6">Add Peer</div>
+            </q-card-section>
 
-        <v-card :prepend-icon="$utils.toKebabCase('mdiLock')" title="Add Peer">
-            <v-card-text>
-                <v-row dense>
-                    <v-col cols="12" md="6" v-show="!peer.id">
-                        <v-text-field label="Device name" v-model="form.name">
-                            <template #details>
-                                <v-error :error="errors.name"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
+            <q-card-section>
+                <q-form @submit.prevent="addPeer">
+                    <q-input
+                        v-model="form.name"
+                        label="Device name"
+                        v-if="!peer.id"
+                        filled
+                        :error="!!errors.name"
+                    >
+                        <template v-slot:error>
+                            <v-error :error="errors.name"></v-error>
+                        </template>
+                    </q-input>
 
-                    <v-col cols="12" v-show="!peer.id">
-                        <v-select
-                            v-model="form.wg_id"
-                            :items="interfaces"
-                            item-value="id"
-                            item-text="name"
-                        >
-                            <template #selection="{ item }">
-                                <v-icon
-                                    :color="
-                                        !item.raw.active
-                                            ? 'red-accent-4'
-                                            : 'green-accent-3'
-                                    "
-                                    :icon="
-                                        $utils.toKebabCase('mdiCircleMedium')
-                                    "
-                                ></v-icon>
-                                <span v-if="!item.raw.id">
-                                    Choose the server
-                                </span>
-                                <span
-                                    v-else="item.raw.id"
-                                    class="text-body custom-selection"
-                                >
-                                    {{ item.raw.name }} -
-                                    {{ item.raw.server_country }}
-                                </span>
-                            </template>
+                    <q-select
+                        v-model="form.wg_id"
+                        :options="interfaces"
+                        option-value="id"
+                        option-label="name"
+                        emit-value
+                        map-options
+                        filled
+                        label="Choose the server"
+                        v-if="!peer.id"
+                    >
+                        <template v-slot:error>
+                            <v-error :error="errors.wg_id"></v-error>
+                        </template>
+                    </q-select>
 
-                            <template v-slot:item="{ props, item }">
-                                <v-list-item
-                                    v-bind="props"
-                                    :title="item.raw.name"
-                                    :subtitle="`${item.raw.server_country} - ${item.raw.server_country}`"
-                                >
-                                    <template v-slot:prepend>
-                                        <v-icon
-                                            :color="
-                                                !item.raw.active
-                                                    ? 'red-accent-4'
-                                                    : 'green-accent-3'
-                                            "
-                                            :icon="
-                                                $utils.toKebabCase(
-                                                    'mdiCircleMedium'
-                                                )
-                                            "
-                                        ></v-icon>
-                                    </template> </v-list-item
-                            ></template>
-                        </v-select>
-                        <v-error :error="errors.wg_id"></v-error>
-                    </v-col>
-                    <v-col cols="12" class="text-center" v-show="peer.id">
-                        <v-row>
-                            <v-col cols="12">
-                                <v-chip
-                                    color="light-blue-darken-1"
-                                    class="mb-4"
-                                >
-                                    The configuration is ready for download and
-                                    will only be available once. Please download
-                                    and save it to your device
-                                </v-chip>
-                            </v-col>
-                            <v-col
-                                cols="12"
-                                md="6"
-                                class="d-flex justify-center align-center"
-                            >
-                                <v-btn
-                                    variant="tonal"
-                                    color="light-blue-accent-3"
-                                    @click="generateConfig"
-                                >
-                                    Download
-                                </v-btn>
-                            </v-col>
-                            <v-col cols="12" md="6">
-                                <img id="qr" class="canvas" />
-                            </v-col>
-                        </v-row>
-                    </v-col>
-                </v-row>
-            </v-card-text>
+                    <q-banner
+                        v-if="peer.id"
+                        class="bg-blue-3 text-white q-mb-md"
+                    >
+                        The configuration is ready for download and will only be
+                        available once. Please download and save it to your
+                        device.
+                    </q-banner>
 
-            <v-divider></v-divider>
-            <v-card-actions>
-                <v-spacer></v-spacer>
+                    <div v-if="peer.id" class="row q-mt-md">
+                        <q-btn
+                            label="Download"
+                            color="blue"
+                            @click="generateConfig"
+                            class="q-mr-md"
+                        />
+                        <q-img :src="qrCode" v-if="qrCode" class="canvas" />
+                    </div>
+                </q-form>
+            </q-card-section>
 
-                <v-btn text="Close" variant="plain" @click="reset"></v-btn>
-
-                <v-btn
+            <q-card-actions align="right">
+                <q-btn flat label="Close" v-close-popup />
+                <q-btn
+                    label="Save"
                     color="primary"
-                    text="Save"
-                    variant="tonal"
                     @click="addPeer"
-                    v-show="!peer.id"
-                ></v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+                    v-if="!peer.id"
+                />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-btn icon="mdi-vpn" color="blue" round @click="loadData">
+        <q-tooltip class="bg-indigo" :offset="[10, 10]">
+            Add a new peer
+        </q-tooltip>
+    </q-btn>
 </template>
+
 <script>
 import QRious from "qrious";
 
 export default {
-    emit: ["created"],
+    emits: ["created"],
 
     data() {
         return {
@@ -144,23 +91,17 @@ export default {
                 wg_id: "",
             },
             errors: {},
+            qrCode: "",
         };
     },
-
-    watch: {},
-
     methods: {
-        /**
-         * Reset keys to create a new peer into the form
-         */
-        showForm() {
-            this.peer = {};
+        loadData() {
+            this.dialog = true;
             this.getWgs();
+            this.qrCode = "";
+            this.peer = {};
         },
 
-        /**
-         * Create a new server
-         */
         async addPeer() {
             try {
                 const res = await this.$api.post("/api/peers", this.form, {
@@ -168,90 +109,57 @@ export default {
                         "Content-Type": "multipart/form-data",
                     },
                 });
-
-                if (res.status == 201) {
+                if (res.status === 201) {
                     this.peer = res.data.data;
-
-                    /**
-                     * Generate QR Code
-                     */
-                    const content = res.data.data.config
-                        .replace(/\n/g, "\n")
-                        .trim();
-
-                    new QRious({
-                        element: document.querySelector("#qr"),
-                        value: content,
-                        size: 200,
-                        level: "H",
-                    });
-
+                    this.generateQRCode(res.data.data.config);
                     this.errors = {};
                     this.form = {};
                     this.$emit("created", res.data.data);
                 }
             } catch (err) {
-                if (err.response && err.response.status == 422) {
+                if (err.response?.status === 422)
                     this.errors = err.response.data.errors;
-                }
-                if (err.response.status == 404) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 403) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 500) {
-                    this.$notification.error(err.response.data.message);
-                }
+                else
+                    this.$q.notify({
+                        type: "negative",
+                        message: err.response?.data?.message || "Error",
+                    });
             }
         },
 
-        reset() {
-            this.form = {};
-            this.errors = {};
-            this.peer = {};
-            this.dialog = !this.dialog;
-        },
-
-        /*
-         * Retrieve the servers
-         */
         async getWgs() {
             try {
                 const res = await this.$api.get("/api/wgs", {
-                    params: {
-                        active: true,
-                    },
+                    params: { active: true },
                 });
-
-                if (res.status == 200) {
-                    this.interfaces = res.data.data;
-                }
+                if (res.status === 200) this.interfaces = res.data.data;
             } catch (err) {}
-        }, 
+        },
 
-        /**
-         * Download peer
-         *
-         * @param Object peer
-         */
+        generateQRCode(content) {
+            const qr = new QRious({
+                value: content.trim(),
+                size: 200,
+                level: "H",
+            });
+            this.qrCode = qr.toDataURL();
+        },
+
         generateConfig() {
-            const content = this.peer.config.replace(/\n/g, "\n").trim();
-            const blob = new Blob([content], { type: "text/plain" });
-
-            const url = URL.createObjectURL(blob);
+            const blob = new Blob([this.peer.config.trim()], {
+                type: "text/plain",
+            });
             const link = document.createElement("a");
-            link.href = url;
+            link.href = URL.createObjectURL(blob);
             link.download = `${this.peer.name}.conf`;
             link.click();
-
-            URL.revokeObjectURL(url);
+            URL.revokeObjectURL(link.href);
         },
     },
 };
 </script>
 
-<style lang="css" scoped>
+<style scoped>
 .canvas {
     width: 200px;
     height: 200px;

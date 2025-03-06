@@ -1,26 +1,45 @@
 <template>
-    <v-dialog v-model="dialog" persistent max-width="400">
-        <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                v-bind="activatorProps"
-                variant="tonal"
-                color="red-lighten-1"
-            >
-                Force Reload
-            </v-btn> 
-        </template>
+    <q-dialog v-model="dialog" persistent>
+        <q-card class="q-pa-md" style="max-width: 400px">
+            <q-card-section class="row items-center">
+                <div>
+                    <div class="text-h6 flex justify-between">
+                        <span>
+                            {{ title }}
+                        </span>
 
-        <v-card prepend-icon="mdi-map-marker" :text="title" :title="message">
-            <template v-slot:actions>
-                <v-spacer></v-spacer>
+                        <q-icon
+                            name="mdi-reload"
+                            color="primary"
+                            size="md"
+                            class="q-mr-sm"
+                        />
+                    </div>
+                    <div class="text-body2">{{ message }}</div>
+                </div>
+            </q-card-section>
 
-                <v-btn @click="dialog = false"> Disagree </v-btn>
+            <q-card-actions align="right">
+                <q-btn
+                    flat
+                    label="Disagree"
+                    color="grey"
+                    @click="dialog = false"
+                />
+                <q-btn label="Agree" color="red" @click="reload(wg)" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
 
-                <v-btn @click="reload(wg)"> Agree </v-btn>
-            </template>
-        </v-card>
-    </v-dialog>
+    <q-btn
+        color="red"
+        text-color="white"
+        label="Force Reload"
+        @click="dialog = true"
+        icon="mdi-reload"
+    />
 </template>
+
 <script>
 export default {
     props: ["wg"],
@@ -37,37 +56,25 @@ export default {
     },
 
     methods: {
-        /**
-         * Delete Server
-         */
         async reload(item) {
             try {
-                const res = await this.$api.put(item.links.reload, {
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                });
-                if (res.status == 201) {
-                    this.$notification.success(
-                        "Network Interface reloaded successfully"
-                    );
+                const res = await this.$api.put(item.links.reload);
+
+                if (res.status === 201) {
+                    this.$q.notify({
+                        type: "positive",
+                        message: "Network Interface reloaded successfully",
+                    });
                     this.dialog = false;
                     this.$emit("updated", true);
                 }
             } catch (err) {
-                if (err.response.status == 403) {
-                    this.$notification.error(err.response.data.message);
-                }
-
-                if (err.response.status == 404) {
-                    this.$notification.error(err.response.data.message);
-                }
-
-                if (err.response.status == 422) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 500) {
-                    this.$notification.error(err.response.data.message);
+                if (err.response) {
+                    this.$q.notify({
+                        type: "negative",
+                        message:
+                            err.response.data.message || "An error occurred",
+                    });
                 }
                 this.dialog = false;
             }

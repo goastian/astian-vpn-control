@@ -1,88 +1,49 @@
 <template>
-    <div class="card border-thin flex items-center">
-        <span class="number bg-light-blue-darken-1">{{ number }}</span>
+    <div
+        class="p-4 mb-4 min-h-[330px] border-gray-50 bg-gray-50 flex items-center border rounded-lg shadow-md"
+    >
         <div>
-            <img :src="image" width="200px">
+            <span class="bg-blue-500 text-white py-1 px-3 rounded-full text-sm">
+                {{ number }}
+            </span>
+
+            <div class="flex items-center gap-1 mt-4">
+                <div class="rounded-md">
+                    <img :src="image" class="max-w-[100px] object-contain" />
+                </div>
+                <div class="rounded-md flex-1">
+                    <h6 class="font-bold">{{ title }}</h6>
+                    <p class="text-sm text-gray-600">{{ description }}</p>
+                </div>
+            </div>
+
+            <a
+                v-if="btnTitle"
+                :href="btnUrl"
+                target="_blank"
+                class="block w-full mt-4 bg-blue-500 text-white text-center py-2 rounded-md hover:bg-blue-600 transition"
+            >
+                {{ btnTitle }}
+            </a>
         </div>
-        <div class="flex flex-column items-center ga-3">
-            <h4><strong>{{ title }}</strong></h4>
-            <span>{{ description }}</span>
-        </div>
-        <a
-            v-if="btnTitle"
-            :href="btnUrl"
-            target="_blank"
-            class="bg-blue text-center"
-        >{{ btnTitle }}</a>
     </div>
 </template>
- 
-<script>
 
+<script>
 export default {
     props: {
-        title: {
-            type: String,
-            required: true
-        },
-        description: {
-            type: String,
-            required: true
-        },
-        number: {
-            type: Number,
-            required: true
-        },
-        image: {
-            type: String,
-            required: true
-        },
-        btnTitle: {
-            type: String,
-        },
-        btnUrl: {
-            type: String
-        }
-    }
-}
-
+        number: Number,
+        image: String,
+        title: String,
+        description: String,
+        btnTitle: String,
+        btnUrl: String,
+    },
+};
 </script>
 
 <style scoped>
-
-.card {
-    position: relative;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    gap: 2rem;
-    min-height: 260px;
-    overflow: hidden;
+.q-card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
-
-.number {
-    position: absolute;
-    padding: .5rem 1rem;
-    left: 0;
-    top: 0;
-    border-radius: 40%;
-}
-
-a {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    left: 0;
-    padding: .4rem;
-}
-
-@media (max-width: 480px) {
-    .card {
-        flex-direction: column;
-    }
-
-    img {
-        width: 100px;
-    }
-}
-
 </style>

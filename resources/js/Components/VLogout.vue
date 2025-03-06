@@ -1,66 +1,64 @@
 <template>
-    <v-menu v-model="menu" :close-on-content-click="false" location="bottom">
-        <template v-slot:activator="{ props }">
-            <v-btn color="indigo" v-bind="props" icon>
-                <v-icon
-                    :icon="$utils.toKebabCase('mdi-account-circle')"
-                    color="indigo-accent-2"
-                    size="30"
-                ></v-icon>
-            </v-btn>
-        </template>
+    <q-btn round flat color="indigo" icon="mdi-account-circle">
+        <q-menu fit anchor="bottom end" self="top end">
+            <q-card style="min-width: 300px">
+                <q-list>
+                    <q-item>
+                        <q-item-section>
+                            <q-item-label>{{ $user.email }}</q-item-label>
+                            <q-item-label caption
+                                >{{ $user.name }}
+                                {{ $user.last_name }}</q-item-label
+                            >
+                        </q-item-section>
+                    </q-item>
+                </q-list>
 
-        <v-card min-width="300">
-            <v-list>
-                <v-list-item
-                    :subtitle="`${$user.name} ${$user.last_name}`"
-                    :title="$user.email"
-                >
-                </v-list-item>
-            </v-list>
- 
-            <v-list>
-                <v-list-item
-                    :prepend-icon="$utils.toKebabCase('mdiAccountKey')"
-                    subtitle="My Account"
-                    title="Administration information"
-                    @click="myAccount"
-                >
-                </v-list-item>
-            </v-list>
+                <q-separator />
 
-            <v-divider></v-divider>
+                <q-list>
+                    <q-item clickable v-ripple @click="myAccount">
+                        <q-item-section avatar>
+                            <q-icon name="mdi-account-key" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label
+                                >Administration information</q-item-label
+                            >
+                            <q-item-label caption>My Account</q-item-label>
+                        </q-item-section>
+                    </q-item>
 
-            <v-list>
-                <v-list-item
-                    title="Logout"
-                    :prepend-icon="$utils.toKebabCase('mdiLogout')"
-                    @click="logout"
-                >
-                </v-list-item>
-            </v-list>
-        </v-card>
-    </v-menu>
+                    <q-separator />
+
+                    <q-item clickable v-ripple @click="logout">
+                        <q-item-section avatar>
+                            <q-icon name="mdi-logout" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>Logout</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                </q-list>
+            </q-card>
+        </q-menu>
+    </q-btn>
 </template>
+
 <script>
 export default {
     inject: ["$user"],
 
-    data() {
-        return {
-            menu: false,
-        };
-    },
-
     methods: {
         async logout() {
             try {
-                const res = await this.$server.post("/api/gateway/logout");
-
-                if (res.status == 200) {
+                const res = await this.$api.post("/logout");
+                if (res.status === 200) {
                     this.$router.push({ name: "welcome" });
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.log(err);
+            }
         },
 
         myAccount() {

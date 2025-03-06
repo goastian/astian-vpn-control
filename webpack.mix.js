@@ -17,7 +17,7 @@ mix.webpackConfig({
         children: true,
     },
 });*/
-mix.js("resources/js/app.js", "js")
+mix.js("resources/js/app.js", "js/app.js")
     .vue()
     .sass("resources/scss/app.scss", "css/app.css")
     .postCss("resources/css/app.css", "css/tailwind.css", [
