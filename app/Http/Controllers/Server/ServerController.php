@@ -138,7 +138,7 @@ class ServerController extends GlobalController
     public function toggle(Server $server)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getJsonHeader());
+        $this->checkContentType(null);
 
         $server->active = !$server->active ? now() : null;
         $server->push();

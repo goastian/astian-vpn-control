@@ -192,7 +192,7 @@ class WgController extends Controller
     public function toggle(Wg $wg, Peer $peer)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getJsonHeader());
+        $this->checkContentType(null);
 
         //open connection
         $core = new Core($wg->server->url, $wg->server->port);
@@ -234,7 +234,7 @@ class WgController extends Controller
     public function reload(Wg $wg)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getJsonHeader());
+        $this->checkContentType(null);
 
         DB::transaction(function () use ($wg) {
             $core = new Core($wg->server->url, $wg->server->port);

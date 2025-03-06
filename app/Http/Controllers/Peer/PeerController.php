@@ -158,7 +158,7 @@ class PeerController extends Controller
     public function toggle(Peer $peer)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getJsonHeader());
+        $this->checkContentType(null);
 
         $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
@@ -182,6 +182,6 @@ class PeerController extends Controller
 
         $peer->push();
 
-        return $this->showOne($peer, $peer->transformer, 201);
+        return $this->showOne($peer, $peer->transformer, 200);
     }
 }
