@@ -1,7 +1,7 @@
 <template>
-    <v-app>
+    <div>
         <router-view></router-view>
-    </v-app>
+    </div>
 </template>
 
 <script>
@@ -11,22 +11,30 @@ export default {
     data() {
         return {
             user: {},
+            app_name: "",
         };
     },
 
     provide() {
         return {
             $user: computed(() => this.user),
+            $app_name: computed(() => this.app_name),
         };
     },
-    
+
     mounted() {
         //Do not remove this line
         // this.addPeer();
-        this.getUser(); 
+        this.getUser();
+        this.getData();
     },
 
     methods: {
+        
+        getData() {
+            this.app_name = document.getElementById("app").dataset.appName;
+        },
+
         async getUser() {
             try {
                 const res = await this.$api.get("/user");

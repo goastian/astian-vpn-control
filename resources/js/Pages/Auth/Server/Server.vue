@@ -1,51 +1,43 @@
 <template>
-    <v-data-table :headers="headers" :items="servers">
-        <template #top>
-            <div class="row d-flex justify-between py-4 px-4">
-                <h1 class="text-subtitle-1 underline">List of Servers</h1>
-                <v-create @created="getServers"></v-create>
-            </div>
-        </template>
-        <template #item.status="{ item }">
-            <v-icon :color="!item.inactive ? 'red-accent-4' : 'green-accent-4'">
-                {{ $utils.toKebabCase("mdiCheckboxBlankCircle") }}
-            </v-icon>
-        </template>
-        <template #item.url="{ item }">
-            <span class="font-bold text-blue-500">{{ item.url }}</span>
-        </template>
-        <template #item.actions="{ item }">
-            <v-menu transition="scale-transition">
-                <template v-slot:activator="{ props }">
-                    <v-btn color="primary" variant="plain" v-bind="props" icon>
-                        <v-icon>
-                            {{ $utils.toKebabCase("mdiTools") }}
-                        </v-icon>
-                    </v-btn>
-                </template>
+    <div class="q-pa-md">
+        <q-table
+            flat
+            bordered
+            title="Servers"
+            :rows="servers"
+            :columns="headers"
+            hide-pagination
+        >
+            <template v-slot:top>
+                <div class="flex space-x-4">
+                    <h6>List of servers</h6>
+                    <v-create @created="getServers"></v-create>
+                </div>
+            </template>
 
-                <v-list>
-                    <v-list-item>
-                        <v-list-item-title>
-                            <v-update
-                                @updated="getServers"
-                                :item="item"
-                            ></v-update>
-                        </v-list-item-title>
-                        <v-list-item-title
-                            class="text-center"
-                            v-if="!item.inactive"
-                        >
-                            <v-delete
-                                @deleted="getServers"
-                                :item="item"
-                            ></v-delete>
-                        </v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-        </template>
-    </v-data-table>
+            <template v-slot:body-cell-actions="props">
+                <q-td :props="props">
+                    <v-delete
+                        @deleted="getServers"
+                        :item="props.row"
+                    ></v-delete>
+                    <v-update
+                        @updated="getServers"
+                        :item="props.row"
+                    ></v-update>
+                </q-td>
+            </template>
+        </q-table>
+
+        <div class="row justify-center q-mt-md">
+            <q-pagination
+                v-model="search.page"
+                color="grey-8"
+                :max="pages.total_pages"
+                size="sm"
+            />
+        </div>
+    </div>
 </template>
 <script>
 import VCreate from "./Create.vue";
@@ -64,43 +56,61 @@ export default {
             servers: [],
             headers: [
                 {
-                    title: "Status",
-                    align: "center",
+                    name: "country",
+                    label: "Country",
+                    align: "left",
                     sortable: false,
-                    key: "status",
+                    field: "country",
                 },
                 {
-                    title: "Country",
-                    align: "start",
+                    name: "url",
+                    label: "URL",
+                    align: "left",
                     sortable: false,
-                    key: "country",
+                    field: "url",
                 },
                 {
-                    title: "URL",
-                    align: "start",
+                    name: "port",
+                    label: "PORT",
+                    align: "left",
                     sortable: false,
-                    key: "url",
+                    field: "port",
                 },
                 {
-                    title: "PORT",
-                    align: "start",
+                    name: "ipv4",
+                    label: "IPV4",
+                    align: "left",
                     sortable: false,
-                    key: "port",
+                    field: "ipv4",
                 },
                 {
-                    title: "IPV4",
-                    align: "start",
+                    name: "actions",
+                    label: "Actions",
+                    align: "left",
                     sortable: false,
-                    key: "ipv4",
-                },
-                {
-                    title: "Actions",
-                    align: "start",
-                    sortable: false,
-                    key: "actions",
+                    field: "actions",
                 },
             ],
+            pages: {
+                total_pages: 0,
+            },
+            search: {
+                page: 1,
+                per_page: 15,
+            },
         };
+    },
+
+    watch: {
+        "search.page"(value) {
+            this.getServers();
+        },
+        "search.per_page"(value) {
+            if (value) {
+                this.search.per_page = value;
+                this.getServers();
+            }
+        },
     },
 
     mounted() {
@@ -113,10 +123,13 @@ export default {
          */
         async getServers() {
             try {
-                const res = await this.$api.get("/api/servers");
+                const res = await this.$api.get("/api/servers", {
+                    params: this.search,
+                });
 
                 if (res.status == 200) {
                     this.servers = res.data.data;
+                    this.pages = res.data.meta.pagination;
                 }
             } catch (err) {}
         },

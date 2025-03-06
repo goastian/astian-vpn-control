@@ -1,38 +1,47 @@
 <template>
-    <v-dialog v-model="dialog" persistent max-width="400">
-        <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                v-bind="activatorProps"
-                variant="text"
-                color="red-lighten-1"
-                icon
-            >
-                <v-icon>
-                    {{ $utils.toKebabCase("mdiServerRemove") }}
-                </v-icon>
-            </v-btn>
+    <q-dialog v-model="dialog" persistent>
+        <template v-slot:activator="{ toggle }">
+            <q-btn
+                flat
+                round
+                color="red"
+                icon="mdi-server-remove"
+                @click="toggle"
+            />
         </template>
 
-        <v-card 
-            prepend-icon="mdi-map-marker"
-            text="Are you sure you want to delete the server?. This action cannot be undone."
-            title="Confirm Deletion"
-        >
-            <template v-slot:actions>
-                <v-spacer></v-spacer>
+        <q-card class="w-96">
+            <q-card-section class="row items-center q-pb-none">
+                <q-icon name="mdi-delete-empty" size="sm" />
+                <span class="q-ml-sm text-h6">Confirm Deletion</span>
+            </q-card-section>
 
-                <v-btn @click="dialog = false"> Disagree </v-btn>
+            <q-card-section>
+                Are you sure you want to delete the server? This action cannot
+                be undone.
+            </q-card-section>
 
-                <v-btn @click="deleteServer(item)"> Agree </v-btn>
-            </template>
-        </v-card>
-    </v-dialog>
+            <q-card-actions align="right">
+                <q-btn flat label="Disagree" @click="dialog = false" />
+                <q-btn color="red" label="Agree" @click="deleteServer(item)" />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-btn
+        flat
+        dense
+        color="red"
+        icon="mdi-delete-empty"
+        @click="dialog = true"
+    ></q-btn>
 </template>
+
 <script>
 export default {
     props: ["item"],
 
-    emits:['deleted'],
+    emits: ["deleted"],
 
     data() {
         return {
@@ -41,25 +50,19 @@ export default {
     },
 
     methods: {
-        /**
-         * Delete Server
-         */
         async deleteServer(item) {
             try {
                 const res = await this.$api.delete(item.links.delete);
-                if (res.status == 200) {
+                if (res.status === 200) {
                     this.$emit("deleted", res.data);
-                    this.dialog = false
+                    this.dialog = false;
                 }
             } catch (err) {
-                if (err.response.status == 403) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 404) {
-                    this.$notification.error(err.response.data.message);
-                } 
-                if (err.response.status == 500) {
-                    this.$notification.error(err.response.data.message);
+                if ([403, 404, 500].includes(err.response?.status)) {
+                    this.$q.notify({
+                        type: "negative",
+                        message: err.response.data.message,
+                    });
                 }
                 this.dialog = false;
             }

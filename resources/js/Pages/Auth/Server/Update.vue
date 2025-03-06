@@ -1,77 +1,78 @@
 <template>
-    <v-dialog v-model="dialog" max-width="900" with="100">
-        <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                class="text-none font-weight-regular mx-4"
-                icon
-                variant="text"
-                color="blue-lighten-1"
-                v-bind="activatorProps"
-            > 
-                <v-icon>
-                    {{ $utils.toKebabCase("mdiServerNetworkOutline") }}
-                </v-icon>
-            </v-btn>
+    <q-dialog v-model="dialog" persistent>
+        <template v-slot:activator="{ toggle }">
+            <q-btn
+                flat
+                round
+                color="blue"
+                icon="mdi-server-network-outline"
+                class="q-mx-md"
+                @click="toggle"
+            />
         </template>
 
-        <v-card
-            :prepend-icon="$utils.toKebabCase('mdiServer')"
-            title="Add Server"
-        >
-            <v-card-text>
-                <v-row dense>
-                    <v-col cols="12" md="6">
-                        <v-text-field label="Country" v-model="item.country">
-                            <template #details>
-                                <v-error :error="errors.country"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
+        <q-card class="w-[900px]">
+            <q-card-section class="row items-center q-pb-none">
+                <q-icon name="mdi-server" size="sm" />
+                <span class="q-ml-sm text-h6">Add Server</span>
+            </q-card-section>
 
-                    <v-col cols="12" md="6">
-                        <v-text-field label="URL" v-model="item.url">
-                            <template #details>
-                                <v-error :error="errors.url"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
+            <q-card-section>
+                <q-form @submit.prevent="updateServer(item)">
+                    <div class="row q-col-gutter-md">
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model="item.country"
+                                label="Country"
+                                :error="!!errors.country"
+                                :error-message="errors.country"
+                            />
+                        </div>
 
-                    <v-col cols="12" md="6">
-                        <v-text-field label="Port" v-model="item.port">
-                            <template #details>
-                                <v-error :error="errors.port"></v-error>
-                            </template>
-                        </v-text-field>
-                    </v-col>
-                </v-row>
-            </v-card-text>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model="item.url"
+                                label="URL"
+                                :error="!!errors.url"
+                                :error-message="errors.url"
+                            />
+                        </div>
 
-            <v-divider></v-divider>
-            <v-card-actions>
-                <v-spacer></v-spacer>
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model="item.port"
+                                label="Port"
+                                :error="!!errors.port"
+                                :error-message="errors.port"
+                            />
+                        </div>
+                    </div>
+                </q-form>
+            </q-card-section>
 
-                <v-btn
-                    text="Close"
-                    variant="plain"
-                    @click="dialog = false"
-                ></v-btn>
+            <q-separator />
 
-                <v-btn
+            <q-card-actions align="right">
+                <q-btn flat label="Close" @click="dialog = false" />
+                <q-btn
                     v-if="!item.deleted"
                     color="primary"
-                    text="Update"
-                    variant="tonal"
+                    label="Update"
                     @click="updateServer(item)"
-                ></v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+                />
+            </q-card-actions>
+        </q-card>
+    </q-dialog>
+
+    <q-btn flat round dense color="blue" @click="dialog = true">
+        <q-icon name="mdi-file-edit" />
+    </q-btn>
 </template>
+
 <script>
 export default {
     props: ["item"],
-
-    emit: ["updated"],
+    emits: ["updated"],
 
     data() {
         return {
@@ -81,9 +82,6 @@ export default {
     },
 
     methods: {
-        /**
-         * Update server
-         */
         async updateServer(item) {
             try {
                 const res = await this.$api.put(item.links.update, this.item, {
@@ -92,25 +90,23 @@ export default {
                     },
                 });
 
-                if (res.status == 201) {
+                if (res.status === 201) {
                     this.dialog = false;
                     this.errors = {};
-                    this.form = {};
                     this.$emit("updated", res.data.data);
-                    this.$notification.success("Updated successfully");
+                    this.$q.notify({
+                        type: "positive",
+                        message: "Updated successfully",
+                    });
                 }
             } catch (err) {
-                if (err.response && err.response.status == 422) {
+                if (err.response?.status === 422) {
                     this.errors = err.response.data.errors;
-                }
-                if (err.response.status == 404) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 403) {
-                    this.$notification.error(err.response.data.message);
-                }
-                if (err.response.status == 500) {
-                    this.$notification.error(err.response.data.message);
+                } else if ([403, 404, 500].includes(err.response?.status)) {
+                    this.$q.notify({
+                        type: "negative",
+                        message: err.response.data.message,
+                    });
                 }
             }
         },
