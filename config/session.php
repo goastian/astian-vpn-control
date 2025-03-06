@@ -129,14 +129,16 @@ return [
 
     'cookie' => env(
         'SESSION_COOKIE',
-        Str::slug(env('APP_NAME', 'laravel'), '_') . '_session'
+        Str::slug(config('app.name'), '_') . '_session'
     ),
 
     /**
      * Xcsrf Token custom name
      */
-    'xcsrf-token' => env('XSRF-TOKEN',
-        Str::slug(env('APP_NAME', 'laravel'), '_') . '_csrf_token'),
+    'xcsrf-token' => env(
+        'XSRF-TOKEN',
+        Str::slug(config('app.name'), '_') . '_csrf_token'
+    ),
 
     /*
     |--------------------------------------------------------------------------
