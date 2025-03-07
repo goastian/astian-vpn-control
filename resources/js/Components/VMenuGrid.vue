@@ -22,7 +22,7 @@
                                 ></v-icon>
                             </template>
                         </v-card>
-                    </template>
+                    </template> 
                 </v-list-item>
             </v-list>
         </v-menu>

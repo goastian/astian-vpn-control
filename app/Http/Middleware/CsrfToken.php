@@ -20,6 +20,10 @@ class CsrfToken extends Middleware
     {
         $token = $request->input('_token') ?: $request->header(config('session.xcsrf-token'));
 
+        if (empty($token)) {
+            $token = $request->cookies->get(config('session.xcsrf-token'));
+        }
+
         if (!$token && $header = $request->header('X-XSRF-TOKEN')) {
             try {
                 $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
@@ -54,4 +58,14 @@ class CsrfToken extends Middleware
         );
     }
 
+
+    /**
+     * Determine if the cookie contents should be serialized.
+     *
+     * @return bool
+     */
+    public static function serialized()
+    {
+        return EncryptCookies::serialized(config('session.xcsrf-token'));
+    }
 }

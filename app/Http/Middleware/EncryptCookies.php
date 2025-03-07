@@ -15,16 +15,18 @@ class EncryptCookies extends Middleware
     protected $except = [
         //
     ];
-
     public function __construct(EncrypterContract $encrypter)
     {
         parent::__construct($encrypter);
 
-        $except = [
-            config('passport_connect.ids.jwt_token'),
-            config('passport_connect.ids.jwt_refresh'),
-        ];
+        $passport = [];
+        $passport = config('passport_connect.server_cookie_names');
+        $passport[] = config('passport_connect.jwt_token');
 
-        $this->except = array_merge($this->except, $except);
+        $this->except = array(
+            ...$this->except,
+            ...$passport
+        );
     }
+
 }

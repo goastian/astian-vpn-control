@@ -14,7 +14,7 @@ class PeerController extends Controller
 {
     public function __construct()
     {
-        parent::__construct();
+        $this->middleware('server');
     }
 
     /**
@@ -30,11 +30,10 @@ class PeerController extends Controller
         $data = $peer->query();
         $data = $data->where('user_id', $this->user()->id);
 
-        $this->search($data, $params);
+        $data = $this->searchByBuilder($data, $params);
+        $data = $this->orderByBuilder($data, $peer->transformer);
 
-        $data = $data->get();
-
-        return $this->showAll($data, $peer->transformer);
+        return $this->showAllByBuilder($data, $peer->transformer);
     }
 
     /**
@@ -159,7 +158,7 @@ class PeerController extends Controller
     public function toggle(Peer $peer)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getJsonHeader());
+        $this->checkContentType(null);
 
         $core = new Core($peer->wg->server->url, $peer->wg->server->port);
 
@@ -183,6 +182,6 @@ class PeerController extends Controller
 
         $peer->push();
 
-        return $this->showOne($peer, $peer->transformer, 201);
+        return $this->showOne($peer, $peer->transformer, 200);
     }
 }

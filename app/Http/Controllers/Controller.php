@@ -15,7 +15,6 @@ abstract class Controller extends RoutingController
 {
     use Asset, ValidatesRequests, Passport, JsonResponser;
 
-
     /**
      * generateNextSubnet
      * @param mixed $subnet

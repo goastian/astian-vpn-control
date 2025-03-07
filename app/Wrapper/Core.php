@@ -24,7 +24,7 @@ final class Core
             'timeout' => 2.0,
             'verify' => false,
             'headers' => [
-                'Authorization' => "Bearer " . request()->cookie(config('passport_connect.ids.jwt_token')),
+                'Authorization' => "Bearer " . request()->cookie(config('passport_connect.jwt_token')),
             ],
         ]);
     }

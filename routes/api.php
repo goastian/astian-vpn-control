@@ -23,5 +23,3 @@ Route::prefix('settings')->name('settings.')->group(function () {
     Route::get('/', [SettingController::class, 'index'])->name('index');
     Route::post('/', [SettingController::class, 'store'])->name('store');
 });
-
-Route::get('/endpoint', [App\Http\Controllers\geoController::class, 'geoController']);

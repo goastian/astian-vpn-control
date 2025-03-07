@@ -20,7 +20,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
+ 
 span {
     font-size: 0.9em;
     color: rgb(223, 40, 40);

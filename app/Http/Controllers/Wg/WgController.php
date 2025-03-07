@@ -30,11 +30,9 @@ class WgController extends Controller
         $params = $this->filter_transform($wg->transformer);
         $data = $wg->query();
 
-        $this->search($data, $params);
+        $data = $this->searchByBuilder($data, $params);
 
-        $data = $data->get();
-
-        return $this->showAll($data, $wg->transformer);
+        return $this->showAllByBuilder($data, $wg->transformer);
     }
 
     /**
@@ -194,7 +192,7 @@ class WgController extends Controller
     public function toggle(Wg $wg, Peer $peer)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getJsonHeader());
+        $this->checkContentType(null);
 
         //open connection
         $core = new Core($wg->server->url, $wg->server->port);
@@ -236,7 +234,7 @@ class WgController extends Controller
     public function reload(Wg $wg)
     {
         $this->checkMethod('put');
-        $this->checkContentType($this->getJsonHeader());
+        $this->checkContentType(null);
 
         DB::transaction(function () use ($wg) {
             $core = new Core($wg->server->url, $wg->server->port);

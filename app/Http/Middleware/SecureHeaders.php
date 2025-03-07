@@ -63,7 +63,6 @@ class SecureHeaders
             "worker-src *",
             "manifest-src 'self'",
             "upgrade-insecure-requests",
-            "block-all-mixed-content",
         ];
 
         return implode(";", $policies);
