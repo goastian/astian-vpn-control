@@ -18,7 +18,7 @@ const routes = [
             },
             {
                 path: "/server", //admin
-                name: "servers",
+                name: "admin.servers",
                 component: () => import("../Pages/Auth/Server/Server.vue"),
                 meta: {
                     auth: true,
@@ -26,7 +26,7 @@ const routes = [
             },
             {
                 path: "/wireguard",
-                name: "wireguard", //admin
+                name: "admin.wireguard", //admin
                 component: () => import("../Pages/Auth/Wg/Wg.vue"),
                 meta: {
                     auth: true,

@@ -78,12 +78,12 @@ export default {
                 {
                     name: "Servers",
                     icon: "mdi mdi-server-security",
-                    route: "servers",
+                    route: "admin.servers",
                 },
                 {
                     name: "Wireguard",
                     icon: "mdi mdi-tools",
-                    route: "wireguard",
+                    route: "admin.wireguard",
                 },
                 {
                     name: "Peers",
