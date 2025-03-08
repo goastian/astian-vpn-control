@@ -1,8 +1,7 @@
 <template>
-    <q-layout view="lHh lpR lFf">
+    <q-layout view="lHh Lpr lff">
         <q-header bordered class="header">
             <q-toolbar>
-
                 <q-toolbar-title> {{ $app_name }} </q-toolbar-title>
 
                 <q-space></q-space>
@@ -12,23 +11,19 @@
         </q-header>
 
         <q-drawer
-            class="nav"
-            show-if-above
             v-model="leftDrawerOpen"
-            side="left"
-            behavior="desktop"
-            :elevation="0"
+            show-if-above
+
             :width="90"
+            class="nav"
         >
-            <div class="nav-container">
+            <q-scroll-area class="fit nav-container">
                 <q-list
-                    borderedless
-                    padding
-                    class="rounded-borders nav-list"
+                    class="nav-list"
                 >
                     <q-item>
                         <q-item-section>
-                            <img src="/img/icon.webp" />
+                            <img src="/img/icon.webp" class="logo" />
                         </q-item-section>
                     </q-item>
 
@@ -42,14 +37,15 @@
                         active-class="active-link"
                     >
                         <q-item-section avatar>
-                            <span class="text-2xl" :class="item.icon"></span>
+                            <span class="text-2xl icon" :class="item.icon"></span>
                         </q-item-section>
 
+                        <!--<q-item-section>{{ item.name }}</q-item-section>-->
                     </q-item>
 
                     <q-separator />
                 </q-list>
-            </div>
+            </q-scroll-area>
         </q-drawer>
 
         <q-page-container class="main">
@@ -123,12 +119,13 @@ export default {
 }
 
 .nav-container {
+    height: 100%;
     background-color: var(--bg-secondary);
     border-radius: 1rem;
+    padding: .6rem 0;
     height: 100%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.04);
     border: .04rem solid var(--border);
-
 }
 
 .nav-list {
@@ -140,18 +137,18 @@ export default {
 
 .q-item {
     position: relative;
+    padding: 0;
 }
 
 .q-item::before {
     content: '';
-    width: 0;
+    width: 0%;
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     margin: auto;
     height: .08rem;
-    background-color: var(--blue);
     transition: 1s ease;
 }
 
@@ -160,7 +157,17 @@ export default {
 }
 
 .active-link::before {
+    background-color: var(--blue);
     width: 50%;
+}
+
+.icon {
+    padding-left: 1rem;
+}
+
+.logo {
+    width: 45px;
+    padding-left: .8rem;
 }
 
 .main {
