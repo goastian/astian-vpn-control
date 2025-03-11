@@ -81,7 +81,10 @@ export default {
 
                 if (res.status === 201) {
                     this.$emit("updated", res.data);
-                }
+                    this.$q.notify({
+                        type: "positive",
+                        message: "The Peer state has been updated",
+                    });}
             } catch (err) {
                 this.$q.notify({
                     type: "negative",
