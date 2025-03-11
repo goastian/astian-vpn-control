@@ -1,8 +1,13 @@
 <template>
-    <q-dialog v-model="dialog" maximized>
-        <q-card>
-            <q-card-section>
-                <div class="text-h6">Add Peer</div>
+    <q-dialog v-model="dialog">
+        <q-card class="w-100 dialog">
+            <q-card-section
+                class="row justify-center"
+                v-if="!peer.id"
+            >
+                <div
+                    class="text-h6"
+                >Add Peer</div>
             </q-card-section>
 
             <q-card-section>
@@ -35,23 +40,21 @@
                         </template>
                     </q-select>
 
-                    <q-banner
-                        v-if="peer.id"
-                        class="bg-blue-3 text-white q-mb-md"
-                    >
-                        The configuration is ready for download and will only be
-                        available once. Please download and save it to your
-                        device.
-                    </q-banner>
-
-                    <div v-if="peer.id" class="row q-mt-md">
+                    <div v-if="peer.id" class="column q-gutter-y-md">
+                        <div class="row justify-center q-gutter-y-md">
+                            <span class="text-h6">
+                                <strong>The Configuration is Ready</strong>
+                            </span>
+                            <span>Open Wireguard and choose scan barcode</span>
+                            <q-img :src="qrCode" v-if="qrCode" class="canvas" />
+                        </div>
+                        <span class="or">Or Enter the configuration manually</span>
                         <q-btn
                             label="Download"
                             color="blue"
                             @click="generateConfig"
-                            class="q-mr-md"
+                            class=""
                         />
-                        <q-img :src="qrCode" v-if="qrCode" class="canvas" />
                     </div>
                 </q-form>
             </q-card-section>
@@ -115,6 +118,10 @@ export default {
                     this.errors = {};
                     this.form = {};
                     this.$emit("created", res.data.data);
+                    this.$q.notify({
+                        type: "positive",
+                        message: "The Peer was Created successfully",
+                    });
                 }
             } catch (err) {
                 if (err.response?.status === 422)
@@ -147,7 +154,7 @@ export default {
 
         generateConfig() {
             const blob = new Blob([this.peer.config.trim()], {
-                type: "text/plain",
+                type: "application/octet-stream",
             });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
@@ -164,4 +171,48 @@ export default {
     width: 200px;
     height: 200px;
 }
+
+.dialog {
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+.or {
+    text-align: center;
+    position: relative;
+}
+.or:after {
+    content: '';
+    width: 15%;
+    height: .06rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    background-color: gray;
+}
+
+.or:before {
+    content: '';
+    width: 15%;
+    height: .06rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    background-color: gray;
+}
+
+@media (max-width: 400px) {
+    .or::after {
+        width: 6%;
+    }
+
+    .or::before {
+        width: 6%
+    }
+}
+
 </style>
