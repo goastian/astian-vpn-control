@@ -5,10 +5,10 @@
                 <q-list>
                     <q-item>
                         <q-item-section>
-                            <q-item-label>{{ $user.email }}</q-item-label>
+                            <q-item-label>{{ user.user.email }}</q-item-label>
                             <q-item-label caption
-                                >{{ $user.name }}
-                                {{ $user.last_name }}</q-item-label
+                                >{{ user.user.name }}
+                                {{ user.user.last_name }}</q-item-label
                             >
                         </q-item-section>
                     </q-item>
@@ -46,8 +46,14 @@
 </template>
 
 <script>
+import { useUserStore } from '../stores/userStore.js';
 export default {
-    inject: ["$user"],
+
+    data() {
+        return {
+            user: useUserStore(),
+        };
+    },
 
     methods: {
         async logout() {
