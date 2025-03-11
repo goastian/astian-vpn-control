@@ -41,9 +41,9 @@
 
     <q-btn
         icon="mdi-trash-can-outline"
-        color="red"
-        round
         @click="dialog = true"
+        flat
+        round
     >
         <q-tooltip class="bg-indigo" :offset="[10, 10]">
             Delete peer
@@ -70,6 +70,10 @@ export default {
                 if (res.status == 200) {
                     this.$emit("deleted", res.data);
                     this.dialog = false;
+                    this.$q.notify({
+                        type: "positive",
+                        message: "The Peer was Delete successfully",
+                    });
                 }
             } catch (err) {
                 if (err.response) {
