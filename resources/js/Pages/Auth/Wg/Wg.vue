@@ -8,6 +8,7 @@
             :rows="interfaces"
             :columns="headers"
             hide-pagination
+            :rows-per-page-options="[search.per_page]"
         >
             <template v-slot:top>
                 <div class="flex space-x-4">
