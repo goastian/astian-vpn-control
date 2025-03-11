@@ -1,5 +1,5 @@
 <template>
-    <q-layout view="lHh Lpr lff">
+    <q-layout view="lHh Lpr lff" class="app">
         <q-header bordered class="header">
             <q-toolbar>
                 <q-toolbar-title> {{ $app_name }} </q-toolbar-title>
@@ -11,10 +11,9 @@
         </q-header>
 
         <q-drawer
-            v-model="leftDrawerOpen"
             show-if-above
 
-            :width="90"
+            :width="104"
             class="nav"
         >
             <q-scroll-area class="fit nav-container">
@@ -28,7 +27,7 @@
                     </q-item>
 
                     <q-item
-                        v-for="(item, index) in menus"
+                        v-for="(item, index) in filterRoutes"
                         clickable
                         v-ripple
                         @click="openLink(item.route)"
@@ -39,8 +38,7 @@
                         <q-item-section avatar>
                             <span class="text-2xl icon" :class="item.icon"></span>
                         </q-item-section>
-
-                        <!--<q-item-section>{{ item.name }}</q-item-section>-->
+                        <span class="navTitle">{{ item.name }}</span>
                     </q-item>
 
                     <q-separator />
@@ -55,6 +53,7 @@
 </template>
 
 <script>
+import { useUserStore } from '../stores/userStore.js';
 export default {
     inject: ["$user", "$app_name"],
 
@@ -64,35 +63,46 @@ export default {
             settings: null,
             open_link: null,
             user: {},
-            leftDrawerOpen: false,
+            userr: useUserStore(),
             menus: [
                 {
                     name: "Home",
                     icon: "mdi mdi-home-automation",
                     route: "home",
+                    roles: ['administrator', 'member']
                 },
                 {
                     name: "Servers",
                     icon: "mdi mdi-server-security",
                     route: "admin.servers",
+                    roles: ['administrator']
                 },
                 {
                     name: "Wireguard",
                     icon: "mdi mdi-tools",
                     route: "admin.wireguard",
+                    roles: ['administrator']
                 },
                 {
                     name: "Peers",
                     icon: "mdi mdi-vpn",
                     route: "peers",
+                    roles: ['administrator', 'member']
                 },
                 {
                     name: "Instructions",
                     icon: "mdi mdi-information-outline",
                     route: "instructions",
+                    roles: ['administrator', 'member']
                 },
             ],
         };
+    },
+
+    computed: {
+        filterRoutes() {
+            return this.menus.filter((data) => data.roles.includes(this.userr.user.groups[0].name))
+        },
     },
 
     methods: {
@@ -131,13 +141,16 @@ export default {
 .nav-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: .4rem;
     color: var(--icon);
+}
+
+.q-drawer {
 }
 
 .q-item {
     position: relative;
-    padding: 0;
+    padding: 1.2rem 0;
 }
 
 .q-item::before {
@@ -161,16 +174,30 @@ export default {
     width: 50%;
 }
 
+.q-scrollarea {
+    contain: none;
+}
+
+.navTitle {
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+    left: 0;
+    margin: auto;
+    text-align: center;
+    font-size: .75rem;
+}
+
 .icon {
-    padding-left: 1rem;
+    padding-left: 1.6rem;
 }
 
 .logo {
-    width: 45px;
-    padding-left: .8rem;
+    width: 55px;
+    padding-left: 1.1rem;
 }
 
-.main {
+.app {
     background-color: var(--bg-primary);
 }
 </style>

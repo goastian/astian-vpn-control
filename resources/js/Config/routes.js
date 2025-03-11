@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from '../stores/userStore.js';
+
 import AuthLayout from "../Pages/AuthLayout.vue";
 import GuestLayout from "../Pages/GuestLayout.vue";
 import SettingLayout from "../Pages/SettingLayout.vue";
@@ -22,6 +24,7 @@ const routes = [
                 component: () => import("../Pages/Auth/Server/Server.vue"),
                 meta: {
                     auth: true,
+                    admin: true
                 },
             },
             {
@@ -30,17 +33,24 @@ const routes = [
                 component: () => import("../Pages/Auth/Wg/Wg.vue"),
                 meta: {
                     auth: true,
+                    admin: true
                 },
             },
             {
                 path: "/peers",
                 name: "peers",
                 component: () => import("../Pages/Auth/Peer/Peer.vue"),
+                meta: {
+                    auth: true,
+                }
             },
             {
                 path: "/instructions",
                 name: "instructions",
                 component: () => import("../Pages/Auth/Instructions/Index.vue"),
+                meta: {
+                    auth: true
+                }
             },
         ],
     },
@@ -77,3 +87,18 @@ export const router = createRouter({
     history: createWebHistory(),
     routes,
 });
+
+router.beforeEach(async (to, from, next) => {
+    const user = useUserStore();
+    const res = await user.getUser();
+    const isAuthenticated = user.access;
+    const userRole = user.role;
+
+    if(to.meta.auth && !isAuthenticated) {
+        next({name: 'welcome'});
+    } else if(to.meta.admin && userRole !== 'administrator') {
+        next('/')
+    } else {
+        next();
+    }
+})
