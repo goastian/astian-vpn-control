@@ -1,5 +1,6 @@
 <template>
     <q-page class="q-pa-md column q-gutter-y-sm">
+        <v-nav-bar />
         <div>
             <q-toolbar>
                 <q-toolbar-title>Dashboard</q-toolbar-title>

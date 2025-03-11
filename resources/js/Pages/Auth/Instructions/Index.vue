@@ -1,5 +1,6 @@
 <template>
     <q-page class="mx-auto p-4">
+        <v-nav-bar />
         <q-toolbar>
             <q-toolbar-title>Instructions</q-toolbar-title>
         </q-toolbar>

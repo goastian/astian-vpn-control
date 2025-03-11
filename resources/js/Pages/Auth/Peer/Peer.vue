@@ -1,5 +1,7 @@
 <template>
     <div class="q-pa-md">
+        <v-nav-bar />
+
         <q-table
             flat
             grid
