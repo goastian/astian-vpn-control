@@ -33,6 +33,7 @@
         "@tailwindcss/postcss": "^4.0.9",
         "js-cookie": "^3.0.5",
         "notyf": "^3.10.0",
+        "pinia": "^3.0.1",
         "postcss": "^8.5.3",
         "qrious": "^4.0.2",
         "quasar": "^2.18.0",
