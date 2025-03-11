@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import { createPinia } from 'pinia';
 
 import { custom_components } from "./Config/globalComponents";
 import { utils } from "./Config/utils";
@@ -20,6 +21,7 @@ import { QComponents } from "./Config/quasar";
 
 //---- APP AUTH USERS ---//
 const app = createApp(App);
+const pinia = createPinia();
 
 custom_components.forEach((index) => {
     app.component(index[0], index[1]);
@@ -42,11 +44,12 @@ QComponents.forEach((item) => {
 });
 
 //Global properties
-app.config.globalProperties.$utils = utils; 
+app.config.globalProperties.$utils = utils;
 app.config.globalProperties.$server = $server;
 app.config.globalProperties.$api = $api;
 app.config.globalProperties.$notification = notyf;
 
+app.use(pinia);
 app.use(router);
 
 app.mount("#app");
