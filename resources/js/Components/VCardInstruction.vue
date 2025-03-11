@@ -6,10 +6,10 @@
             {{ number }}
         </span>
 
-        <div>
+        <div class="containerImage">
             <img :src="image" class="imagen" />
         </div>
-        <div>
+        <div class="containerDescription">
             <h6 class="title"><strong>{{ title }}</strong></h6>
             <p class="description">{{ description }}</p>
         </div>
@@ -59,8 +59,16 @@ export default {
     top: 0;
 }
 
+.containerImage {
+    width: 20%;
+}
+
 .imagen {
-    width: 200px;
+    width: auto;
+}
+
+.containerDescription {
+    width: 80%;
 }
 
 .title {
