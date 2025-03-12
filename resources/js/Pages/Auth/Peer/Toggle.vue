@@ -43,10 +43,11 @@
 
     <q-btn
         icon="mdi-power"
-        :color="peer.active ? 'green' : 'red'"
-        round
+        color="blue"
         @click="dialog = true"
     >
+        <span v-if="peer.active">Power Off</span>
+        <span v-else>Power On</span>
         <q-tooltip class="bg-indigo" :offset="[10, 10]">
             {{ peer.active ? "Turn off this peer" : "Turn on this peer" }}
         </q-tooltip>
@@ -83,6 +84,10 @@ export default {
                 const res = await this.$api.put(item.links.toggle);
                 if (res.status == 200) {
                     this.$emit("updated", res.data);
+                    this.$q.notify({
+                        type: "positive",
+                        message: "The Peer state has been updated",
+                    });
                 }
             } catch (err) {
                 this.$q.notify({

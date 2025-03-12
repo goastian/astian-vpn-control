@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import AuthLayout from "../Pages/AuthLayout.vue";
 import GuestLayout from "../Pages/GuestLayout.vue";
 import SettingLayout from "../Pages/SettingLayout.vue";
@@ -18,29 +19,37 @@ const routes = [
             },
             {
                 path: "/server", //admin
-                name: "servers",
+                name: "admin.servers",
                 component: () => import("../Pages/Auth/Server/Server.vue"),
                 meta: {
                     auth: true,
+                    admin: true,
                 },
             },
             {
                 path: "/wireguard",
-                name: "wireguard", //admin
+                name: "admin.wireguard", //admin
                 component: () => import("../Pages/Auth/Wg/Wg.vue"),
                 meta: {
                     auth: true,
+                    admin: true,
                 },
             },
             {
                 path: "/peers",
                 name: "peers",
                 component: () => import("../Pages/Auth/Peer/Peer.vue"),
+                meta: {
+                    auth: true,
+                },
             },
             {
                 path: "/instructions",
                 name: "instructions",
                 component: () => import("../Pages/Auth/Instructions/Index.vue"),
+                meta: {
+                    auth: true,
+                },
             },
         ],
     },

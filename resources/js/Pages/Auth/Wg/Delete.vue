@@ -45,6 +45,10 @@ export default {
                 const res = await this.$api.delete(item.links.delete);
                 if (res.status === 200) {
                     this.$emit("deleted", res.data);
+                    this.$q.notify({
+                        type: "positive",
+                        message: "Delete successfully",
+                    });
                 }
             } catch (err) {
                 if ([403, 404, 500].includes(err.response?.status)) {

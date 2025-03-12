@@ -109,8 +109,11 @@ export default {
         },
         async createWG() {
             try {
-                this.form.server_id = this.server_selected;
-                const res = await this.$api.post("/api/wgs", this.form);
+                const res = await this.$api.post("/api/wgs", this.form, {
+                    headers: {
+                        "content-type": "multipart/form-data",
+                    },
+                });
                 if (res.status === 201) {
                     this.dialog = false;
                     this.errors = {};
