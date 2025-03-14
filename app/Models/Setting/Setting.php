@@ -42,17 +42,17 @@ class Setting extends Master
      * Load default settings
      * @return void
      */
-    public function loadSetting()
+    public static function loadSetting()
     {
         //
-        Config::set('app.name', settingItem('app.name', 'VPN Server'));
+        Config::set('app.name', settingItem('app.name', 'VPN Server', 'app'));
 
 
         //Plan config
-        Config::set('vpn.free', settingItem('vpn.free', 1));
-        Config::set('vpn.basic', settingItem('vpn.basic', 2));
-        Config::set('vpn.intermediate', settingItem('vpn.intermediate', 5));
-        Config::set('vpn.advanced', settingItem('vpn.advanced', 10));
+        Config::set('vpn.free', settingItem('vpn.free', 1, 'vpn'));
+        Config::set('vpn.basic', settingItem('vpn.basic', 2, 'vpn'));
+        Config::set('vpn.intermediate', settingItem('vpn.intermediate', 5, 'vpn'));
+        Config::set('vpn.advanced', settingItem('vpn.advanced', 10, 'vpn'));
     }
 
 }
