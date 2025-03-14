@@ -1,0 +1,22 @@
+[
+    {
+        "key": "app.name",
+        "value": "VPN Server"
+    },
+    {
+        "key": "vpn.free",
+        "value": 1
+    },
+    {
+        "key": "vpn.basic",
+        "value": 2
+    },
+    {
+        "key": "vpn.intermediate",
+        "value": 5
+    },
+    {
+        "key": "vpn.advanced",
+        "value": 10
+    }
+]
