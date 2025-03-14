@@ -1,22 +1,27 @@
 #!/bin/sh
 
-cd /var/www
+set -e  
 
+cd /var/www || exit 1 
+
+echo "Generating application key..."
 php artisan key:generate
 
-echo "Running migrations"
+echo "Running migrations..."
 php artisan migrate --force
-echo "Migration ran successfully"
+echo "Migrations completed successfully."
 
+echo "Uploading settings..."
 php artisan settings:upload
 
-echo "Running nodejs"
-npm install
+echo "Installing Node.js dependencies..."
+npm install --no-progress
+echo "Building assets..."
 npm run production
-echo "Nodejs ran successfully"
+echo "Node.js build completed successfully."
 
+echo "Starting PHP-FPM..."
+php-fpm83 -D || { echo "Failed to start PHP-FPM"; exit 1; }
 
-php-fpm83 -D
-
-nginx -g "daemon off;"
-echo "Server ran successfully"
+echo "Starting Nginx..."
+exec nginx -g "daemon off;"  
