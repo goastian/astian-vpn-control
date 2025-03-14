@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('key')->index();
             $table->longText('value')->nullable();
             $table->uuid('user_id')->nullable();
+            $table->string('group')->nullable();
         });
 
 

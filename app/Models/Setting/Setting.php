@@ -3,8 +3,9 @@
 namespace App\Models\Setting;
 
 use App\Models\Master;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Config;
+use App\Transformers\Setting\SettingTransformer;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Setting extends Master
 {
@@ -13,12 +14,15 @@ class Setting extends Master
     public $table = "settings";
 
 
+    public $transformer = SettingTransformer::class;
+
     public $timestamps = false;
 
     protected $fillable = [
         'key',
         'value',
-        'user_id'
+        'user_id',
+        'group'
     ];
 
     /**
@@ -30,7 +34,7 @@ class Setting extends Master
         $data = json_decode(file_get_contents(base_path('database/extra/settings.json')));
 
         foreach ($data as $setting) {
-            settingLoad($setting->key, $setting->value);
+            settingLoad($setting->key, $setting->value, $setting->group);
         }
     }
 

@@ -25,11 +25,11 @@ class SettingController extends Controller
     {
         $data = $setting->query();
 
-        $params = $this->filter($setting->table);
+        $params = $this->filter_transform($setting->transformer);
 
         $data = $this->searchByBuilder($data, $params);
 
-        return $this->showAllByBuilder($data, null, 200, false);
+        return $this->showAllByBuilder($data, $setting->transformer);
     }
 
     /**
@@ -40,14 +40,14 @@ class SettingController extends Controller
      */
     public function store(Request $request, Setting $setting)
     {
-        $data = $this->transformRequest($request->all());
+        $data = $this->transformRequest($request->except('group'));
+        $group = $request->group;
 
-        DB::transaction(function () use ($data, $setting) {
+        DB::transaction(function () use ($data, $group) {
 
             foreach ($data as $key => $value) {
-                settingAdd($key, $value);
+                settingAdd($key, $value, $group);
             }
-
         });
 
         return $this->message(__('Settings updated successfully'), 201);
