@@ -1,6 +1,7 @@
 <?php
 namespace App\Transformers\Setting;
 
+use App\Models\Setting\Setting;
 use League\Fractal\TransformerAbstract;
 
 class SettingTransformer extends TransformerAbstract
@@ -28,21 +29,20 @@ class SettingTransformer extends TransformerAbstract
      *
      * @return array
      */
-    public function transform($data)
+    public function transform(Setting $data)
     {
         return [
             'id' => $data->id,
             'key' => $data->key,
             'value' => $data->value,
-            'system' => $data->system
+            'group' => $data->group
         ];
     }
 
     /**
      * Retrieve Original Attributes to filter data
-     *
-     * @param string $index
-     * @return Array|null
+     * @param mixed $index
+     * @return string|null
      */
     public static function getOriginalAttributes($index)
     {
@@ -50,7 +50,7 @@ class SettingTransformer extends TransformerAbstract
             'id' => 'id',
             'key' => 'key',
             'value' => 'value',
-            'system' => 'system'
+            'group' => 'group'
         ];
 
         return isset($attributes[$index]) ? $attributes[$index] : null;

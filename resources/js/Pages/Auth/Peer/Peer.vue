@@ -1,12 +1,16 @@
 <template>
     <div class="q-pa-md">
+        <v-nav-bar />
+
         <q-table
             flat
+            grid
             bordered
-            title="Peers"
+            label="Peers"
             :rows="peers"
             :columns="columns"
             hide-pagination
+            :rows-per-page-options="[search.per_page]"
         >
             <template v-slot:top>
                 <div class="flex space-x-4">
@@ -15,21 +19,54 @@
                 </div>
             </template>
 
-            <template v-slot:body-cell-active="props">
-                <q-td :props="props">
-                    <v-toggle @updated="getPeers" :peer="props.row"></v-toggle>
-                </q-td>
-            </template>
+            <template v-slot:item="props">
+                <q-card class="q-ma-sm q-pa-sm card">
+                    <q-card-section
+                        class="row q-gutter-sm justify-between items-center"
+                    >
+                        <div>
+                            <q-icon
+                                :name="
+                                    props.row.active ? 'check_circle' : 'cancel'
+                                "
+                                :color="props.row.active ? 'green' : 'red'"
+                                size="20px"
+                            />
+                            <span class="q-ml-sm">
+                                {{ props.row.active ? "Active" : "Inactive" }}
+                            </span>
+                        </div>
+                        <div>
+                            <v-delete
+                                @deleted="getPeers"
+                                :peer="props.row"
+                            ></v-delete>
+                        </div>
+                    </q-card-section>
 
-            <template v-slot:body-cell-actions="props">
-                <q-td :props="props">
-                    <div class="flex gap-1">
-                        <v-delete
-                            @deleted="getPeers"
+                    <q-card-section class="column items-center">
+                        <div class="text-h5">
+                            {{ props.row.name }}
+                        </div>
+                        <div>
+                            <span>
+                                <strong>Country</strong>
+                                {{ props.row.network.server_name }} -
+                                <strong>Interface</strong>
+                                {{ props.row.network.name }}
+                            </span>
+                        </div>
+                    </q-card-section>
+                    <q-card-section
+                        class="row q-gutter-sm justify-between items-center q-gutter-y-sm"
+                    >
+                        <v-toggle
+                            @updated="getPeers"
                             :peer="props.row"
-                        ></v-delete>
-                    </div>
-                </q-td>
+                        ></v-toggle>
+                        <span>{{ props.row.created }}</span>
+                    </q-card-section>
+                </q-card>
             </template>
         </q-table>
 
@@ -90,10 +127,11 @@ export default {
             ],
             pages: {
                 total_pages: 0,
+                total: 0,
             },
             search: {
                 page: 1,
-                per_page: 15,
+                per_page: 4,
             },
         };
     },
@@ -145,3 +183,12 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.card {
+    border-radius: 1rem;
+    width: 100%;
+    min-width: 320px;
+    max-width: 330px;
+}
+</style>

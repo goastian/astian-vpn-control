@@ -3,8 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Support\Str;
-use App\Models\System\Setting;
+use App\Models\Setting\Setting;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class SettingCommand extends Command
 {
@@ -20,25 +21,15 @@ class SettingCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'upload default settings';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $data = Setting::defaultSetting();
-
-        foreach ($data as $value) {
-            Setting::firstOrCreate(
-                [
-                    'key' => $value->key
-                ],
-                [
-                    'key' => Str::slug($value->key, "."),
-                    'value' => $value->value,
-                ]
-            );
-        }
+        Setting::defaultSetting();
+        $this->info("Default settings uploaded successfully");
+        Log::info("Default settings uploaded successfully");
     }
 }

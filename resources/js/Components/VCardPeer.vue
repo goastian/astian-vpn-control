@@ -1,27 +1,27 @@
 <template>
     <div
-        class="flex ga-4 card border-thin"
+        class="row card q-gutter-x-md"
     >
         <div>
-            <div class="btn" :class="{'bg-red-accent-2' : !state, 'bg-teal-accent-4' : state}">
-                <v-btn
+            <div class="btn" :class="{'bg-red-6' : !state, 'bg-blue-4' : state}">
+                <q-btn
                     @click="toggle(peer)"
                     icon="mdi-power"
                 >
-                </v-btn>
+                </q-btn>
             </div>
         </div>
-        <div class="flex flex-column ga-3">
+        <div class="column q-gutter-y-md">
             <div class="flex justify-between">
                 <span>{{ title }}</span>
                 <span>{{ server }}</span>
             </div>
             <div>
-                <span><Strong>Interface </Strong> {{ network }} </span>
-                <span><Strong> - Listen Port</Strong> {{ port }}</span>
+                <span><strong>Interface </strong> {{ network }} </span>
+                <span><strong> - Listen Port</strong> {{ port }}</span>
             </div>
         </div>
-    </div> 
+    </div>
 </template>
 
 <script>
@@ -93,18 +93,26 @@ export default {
 
 <style scoped>
 .card {
-    padding: .5rem 1rem;
+    padding: .5rem .8rem;
     border-radius: 1rem;
     align-items: center;
     justify-content: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    max-height: 100px;
 }
 
 .card > div:last-child {
-    width: 80%;
+    width: 70%;
 }
 
 .btn {
     padding: .5rem;
     border-radius: 50%;
+}
+
+.q-btn {
+    border-radius: 50%;
+    padding: .8rem .8rem;
+    background-color: white;
 }
 </style>

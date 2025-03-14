@@ -12,16 +12,17 @@ return new class extends Migration {
      */
     public function up()
     {
+        Schema::dropIfExists('settings');
         Schema::create('settings', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('key')->index();
             $table->longText('value')->nullable();
-            $table->boolean('system')->default(true);
             $table->uuid('user_id')->nullable();
+            $table->string('group')->nullable();
         });
 
 
-        
+
     }
 
     /**

@@ -2,11 +2,14 @@
     <q-dialog v-model="dialog" persistent>
         <q-card class="w-100">
             <q-bar>
-                <div class="flex justify-around py-4">
-                    <q-icon name="mdi-server" />
-                    <div class="q-ml-sm">Add Server</div>
-                    <q-space />
-                    <q-btn dense flat icon="close" @click="dialog = false" />
+                <div class="col row justify-between items-center">
+                    <div class="row items-center">
+                        <q-icon name="mdi-server" />
+                        <div class="q-ml-sm">Add Server</div>
+                    </div>
+                    <div>
+                        <q-btn dense flat icon="close" @click="dialog = false" />
+                    </div>
                 </div>
             </q-bar>
 

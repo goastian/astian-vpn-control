@@ -45,31 +45,33 @@ class PeerController extends Controller
      */
     public function store(Request $request, Peer $peer, Wg $wg)
     {
-        $message = __('You have exceeded the device limit');
+        $message = __('You have exceeded the device limit. To add more devices, please upgrade to a higher plan.');
+
         $data = $peer->query();
-        $data->where('user_id', $this->user()->id);
+        $count = $data->where('user_id', $this->user()->id)->count();
 
-        //check if the app is on dev mode 
-        if (config('app.test')) {
-            throw_if($data->count() >= 5, new ReportError($message, 403));
+        //---------check plans --------------------------//
+        if (!app()->environment(['local', 'dev'])) {
+            //user access
+            $access = collect($this->access())->pluck('id');
+
+            //available plans 
+            $plans = [
+                'commerce_vpn_advanced' => config('vpn.advanced'),
+                'commerce_vpn_intermediate' => config('vpn.intermediate'),
+                'commerce_vpn_basic' => config('vpn.basic'),
+                'commerce_vpn_free' => config('vpn.free'),
+            ];
+
+            //check user plan
+            $userLimit = collect($plans)
+                ->filter(fn($limit, $plan) => $access->contains($plan))
+                ->first() ?? config('vpn.free');
+
+            throw_if($count >= $userLimit, new ReportError($message, 403));
+
+            //---------End check plans -------------------------- 
         }
-
-        //limit peer for admin
-        if ($this->userCan('admin')) {
-            throw_if($data->count() >= 10, new ReportError($message, 403));
-        }
-
-        //check scope in production mode         
-        if (!config('app.test') && !$this->userCan('admin')) {
-            if (!$this->userCan('vpn-free')) {
-                throw new ReportError(__('These features are not yet available to the general public. Please stay tuned for future updates and announcements regarding their release.'), 403);
-            }
-
-            throw_if($data->count() >= 2, new ReportError($message, 403));
-        }
-
-        $this->checkMethod('post');
-        $this->checkContentType($this->getPostHeader());
 
         $request->validate([
             'name' => ['required'],
@@ -86,6 +88,9 @@ class PeerController extends Controller
                 }
             ],
         ]);
+
+        $this->checkMethod('post');
+        $this->checkContentType($this->getPostHeader());
 
         //Wireguard interface
         $wg = $wg->findOrFail($request->wg_id);

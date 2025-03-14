@@ -15,7 +15,11 @@ class WgController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('scope:vpn-full')->except('index');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index', 'interfaces');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_create')->only('store');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_show')->only('show');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_update')->only('update', 'toggle', 'reload');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_destroy')->only('destroy');
     }
 
     /**
@@ -136,15 +140,15 @@ class WgController extends Controller
 
             $updated = false;
 
-            if ($this->is_different($wg->gateway, $request->gateway)) {
+            if ($request->has('gateway') && $wg->gateway != $request->gateway) {
                 $updated = true;
                 $wg->gateway = $request->gateway;
             }
 
-            if ($this->is_different($wg->dns, $request->dns)) {
-                $updated = true;
-                $wg->dns = $request->dns;
-            }
+            /* if ($request->has('dns') && $wg->dns != $request->dns) {
+                 $updated = true;
+                 $wg->dns = $request->dns;
+             }*/
 
             if ($updated) {
                 $wg->push();

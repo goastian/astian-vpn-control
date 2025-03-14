@@ -37,6 +37,8 @@ import {
     QMenu,
     QBtnGroup,
     QBanner,
+    QScrollArea,
+    QSpinner
 } from "quasar";
 
 export const QComponents = [
@@ -78,4 +80,6 @@ export const QComponents = [
     QMenu,
     QBtnGroup,
     QBanner,
+    QScrollArea,
+    QSpinner
 ];
