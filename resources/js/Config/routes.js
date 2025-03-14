@@ -63,6 +63,11 @@ const routes = [
                 name: "settings.general",
                 component: () => import("../Pages/Setting/General.vue"),
             },
+            {
+                path: "/plans",
+                name: "settings.plans",
+                component: () => import("../Pages/Setting/Plan.vue"),
+            },
         ],
     },
 

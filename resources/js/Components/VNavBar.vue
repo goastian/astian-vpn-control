@@ -80,6 +80,12 @@ export default {
                     route: "instructions",
                     show: this.hasGroup("member"),
                 },
+                {
+                    name: "Settings",
+                    icon: "mdi mdi-cogs",
+                    route: "settings.general",
+                    show: this.hasGroup("administrator"),
+                },
             ],
         };
     },

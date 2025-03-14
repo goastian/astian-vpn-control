@@ -4,13 +4,13 @@
             <q-toolbar>
                 <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
-                <q-toolbar-title> Title </q-toolbar-title>
+                <q-toolbar-title> Settings </q-toolbar-title>
             </q-toolbar>
         </q-header>
 
         <q-drawer v-model="leftDrawerOpen" side="left" elevated>
             <q-list v-for="(item, index) in menu">
-                <q-item clickable v-ripple>
+                <q-item clickable v-ripple @click="openRoute(item.route)">
                     <q-item-section avatar>
                         <span
                             class="text-3xl text-gray-500"
@@ -40,8 +40,18 @@ export default {
             menu: [
                 {
                     name: "General",
-                    route: "",
+                    route: "settings.general",
                     icon: "mdi mdi-view-list",
+                },
+                {
+                    name: "Plans",
+                    route: "settings.plans",
+                    icon: "mdi mdi-shield-account-outline",
+                },
+                {
+                    name: "Home",
+                    route: "home",
+                    icon: "mdi mdi-home-automation",
                 },
             ],
         };
@@ -52,6 +62,10 @@ export default {
         },
         toggleRightDrawer() {
             this.rightDrawerOpen = !this.rightDrawerOpen;
+        },
+
+        openRoute(name) {
+            this.$router.push({ name: name });
         },
     },
 };
