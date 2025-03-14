@@ -13,7 +13,11 @@ class ServerController extends GlobalController
 {
     public function __construct()
     {
-        $this->middleware('scope:vpn-full');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index', 'interfaces');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_create')->only('store');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_show')->only('show');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_update')->only('update', 'toggle');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_destroy')->only('destroy');
     }
 
     /**
@@ -92,17 +96,17 @@ class ServerController extends GlobalController
 
             $updated = false;
 
-            if ($this->is_different($server->country, $request->country)) {
+            if ($request->has('country') && $server->country != $request->country) {
                 $updated = true;
                 $server->country = $request->country;
             }
 
-            if ($this->is_different($server->url, $request->url)) {
+            if ($request->has('url') && $server->url != $request->url) {
                 $updated = true;
                 $server->url = $request->url;
             }
 
-            if ($this->is_different($server->port, $request->port)) {
+            if ($request->has('port') && $server->port != $request->port) {
                 $updated = true;
                 $server->port = $request->port;
             }
