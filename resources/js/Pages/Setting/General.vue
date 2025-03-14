@@ -32,6 +32,7 @@
 </template>
 
 <script>
+export default {
     data() {
         return {
             app: {
@@ -120,4 +121,3 @@
     width: 100%;
 }
 </style>
-
