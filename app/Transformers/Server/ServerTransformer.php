@@ -38,6 +38,8 @@ class ServerTransformer extends TransformerAbstract
             'port' => $data->port,
             'active' => $data->active,
             'ipv4' => $data->ip,
+            'ss_port' => $data->ss_port,
+            'ss_method' => $data->ss_method,
             'updated' => $data->updated_at,
             'created' => $data->created_at,
             'links' => [
