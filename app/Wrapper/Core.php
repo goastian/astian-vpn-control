@@ -4,12 +4,11 @@ namespace App\Wrapper;
 
 use GuzzleHttp\Client;
 use Illuminate\Http\Response;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Exception\ConnectException;
+use App\Models\Security\KeyGenerator;
 use Elyerr\ApiResponse\Exceptions\ReportError;
+use Log;
 
-final class Core
+class Core
 {
     /**
      * Client HTTP
@@ -19,12 +18,15 @@ final class Core
 
     public function __construct($endpoint, $port = 8000)
     {
+        $keyGenerator = app(KeyGenerator::class);
+        $token = $keyGenerator->generateAndSignToken();
+
         $this->client = new Client([
             'base_uri' => "{$endpoint}:{$port}",
             'timeout' => 2.0,
             'verify' => false,
             'headers' => [
-                'Authorization' => "Bearer " . request()->cookie(config('passport_connect.jwt_token')),
+                'Authorization' => $token,
             ],
         ]);
     }
@@ -138,6 +140,7 @@ final class Core
 
     /**
      * Add new peer in the Wireguard Network Interface
+     * @param mixed $userId
      * @param mixed $device_name
      * @param mixed $interface_name
      * @param mixed $public_key
@@ -146,11 +149,12 @@ final class Core
      * @param mixed $persistent_keepalive
      * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
      */
-    public function addPeer($device_name, $interface_name, $public_key, $allowed_ips, $endpoint, $preshared_key, $persistent_keepalive)
+    public function addPeer($userId, $device_name, $interface_name, $public_key, $allowed_ips, $endpoint, $preshared_key, $persistent_keepalive)
     {
         try {
             $response = $this->client->request("POST", "/api/wireguard/peer/add", [
                 'json' => [
+                    "user_id" => $userId,
                     "interface_name" => $interface_name,
                     "public_key" => $public_key,
                     "allowed_ips" => $allowed_ips,

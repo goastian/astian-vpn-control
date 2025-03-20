@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Server;
 
+use App\Rules\BooleanRule;
 use App\Wrapper\Core;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Server\Server;
 use Illuminate\Support\Facades\DB;
@@ -51,8 +53,17 @@ class ServerController extends GlobalController
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
-            'ip' => ['required', 'ipv4']
+            'ip' => ['required', 'unique:servers,ipv4', 'ipv4'],
+            "ss_port" => ['nullable'],
+            "ss_method" => ['nullable'],
         ]);
+
+        if (!$request->has('method')) {
+            $request->merge([
+                'ss_method' => 'chacha20-ietf-poly1305',
+                'ss_password' => Str::random(32)
+            ]);
+        }
 
         $this->checkMethod('post');
         $this->checkContentType($this->getPostHeader());
@@ -87,7 +98,12 @@ class ServerController extends GlobalController
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url,' . $server->id, 'url:http,https'],
             'port' => ['required', 'max:6'],
+            "ss_port" => ['nullable'],
+            "ss_method" => ['nullable'],
+            "generate_password" => ['nullable', new BooleanRule()],
         ]);
+
+
 
         $this->checkMethod('put');
         $this->checkContentType($this->getUpdateHeader());
@@ -109,6 +125,22 @@ class ServerController extends GlobalController
             if ($request->has('port') && $server->port != $request->port) {
                 $updated = true;
                 $server->port = $request->port;
+            }
+
+            if ($request->has('ss_port') && $server->ss_port != $request->ss_port) {
+                $updated = true;
+                $server->ss_port = $request->ss_port;
+            }
+
+            if ($request->has('ss_method') && $server->ss_method != $request->ss_method) {
+                $updated = true;
+                $server->ss_method = $request->ss_method;
+            }
+
+            if ($request->has('generate_password') && $request->generate_password) {
+                $updated = true;
+
+                $server->ss_password = Str::random(32);
             }
 
             if ($updated) {

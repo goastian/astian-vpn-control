@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\Security\KeyGeneratorController;
+use App\Http\Controllers\Socks\ShadowsocksController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\geoController;
 use App\Http\Controllers\Wg\WgController;
 use App\Http\Controllers\Peer\PeerController;
-
 use App\Http\Controllers\Server\ServerController;
 use App\Http\Controllers\Setting\SettingController;
+
+
+Route::get('/gateway/authorization', [KeyGeneratorController::class, 'checkCredentials'])->name('gateway.authorization');
 
 Route::put('servers/{server}/toggle', [ServerController::class, 'toggle'])->name('servers.toggle');
 Route::resource('servers', ServerController::class)->except('edit', 'create');
@@ -26,3 +29,12 @@ Route::group([
     Route::get('/', [SettingController::class, 'index'])->name('index');
     Route::post('/', [SettingController::class, 'store'])->name('store');
 });
+
+Route::get("/shadowsocks", [ShadowsocksController::class, 'index'])->name('shadowsocks.index');
+Route::post("/shadowsocks/{server_id}", [ShadowsocksController::class, 'createConfig'])->name('shadowsocks.add_config');
+Route::get("/shadowsocks/{server_id}/config", [ShadowsocksController::class, 'showConfig'])->name('shadowsocks.show_config');
+Route::post("/shadowsocks/{server_id}/start", [ShadowsocksController::class, 'start'])->name('shadowsocks.start');
+Route::post("/shadowsocks/{server_id}/restart", [ShadowsocksController::class, 'restart'])->name('shadowsocks.restart');
+Route::post("/shadowsocks/{server_id}/stop", [ShadowsocksController::class, 'stop'])->name('shadowsocks.stop');
+Route::get("/shadowsocks/{server_id}/status", [ShadowsocksController::class, 'status'])->name('shadowsocks.status');
+Route::delete("/shadowsocks/{server_id}/config/delete", [ShadowsocksController::class, 'deleteConfig'])->name('shadowsocks.config_delete');

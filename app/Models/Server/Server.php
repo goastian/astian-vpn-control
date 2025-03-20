@@ -25,7 +25,10 @@ class Server extends Master
         'url',
         'port',
         'active',
-        'ip'
+        'ip',
+        'ss_port',
+        'ss_password',
+        'ss_method',
     ];
 
     /**
