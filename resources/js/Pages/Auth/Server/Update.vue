@@ -1,16 +1,5 @@
 <template>
     <q-dialog v-model="dialog" persistent>
-        <template v-slot:activator="{ toggle }">
-            <q-btn
-                flat
-                round
-                color="blue"
-                icon="mdi-server-network-outline"
-                class="q-mx-md"
-                @click="toggle"
-            />
-        </template>
-
         <q-card class="w-[900px]">
             <q-card-section class="row items-center q-pb-none">
                 <q-icon name="mdi-server" size="sm" />
@@ -18,11 +7,11 @@
             </q-card-section>
 
             <q-card-section>
-                <q-form @submit.prevent="updateServer(item)">
+                <q-form @submit.prevent="updateServer(form)">
                     <div class="row q-col-gutter-md">
                         <div class="col-12 col-md-6">
                             <q-input
-                                v-model="item.country"
+                                v-model="form.country"
                                 label="Country"
                                 :error="!!errors.country"
                                 :error-message="errors.country"
@@ -31,7 +20,7 @@
 
                         <div class="col-12 col-md-6">
                             <q-input
-                                v-model="item.url"
+                                v-model="form.url"
                                 label="URL"
                                 :error="!!errors.url"
                                 :error-message="errors.url"
@@ -40,10 +29,42 @@
 
                         <div class="col-12 col-md-6">
                             <q-input
-                                v-model="item.port"
+                                v-model="form.port"
                                 label="Port"
                                 :error="!!errors.port"
                                 :error-message="errors.port"
+                            />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <q-input
+                                v-model="form.ss_port"
+                                label="Shadowsocks Port"
+                                filled
+                                type="number"
+                                class="mb-4 col-12 col-md-6"
+                                :error="!!errors.ss_port"
+                            >
+                                <template v-slot:error>
+                                    <v-error :error="errors.ss_port"></v-error>
+                                </template>
+                            </q-input>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <q-select
+                                v-model="form.ss_method"
+                                :options="ciphers"
+                                label="Shadowsocks Ciphers"
+                                class="mb-4 col-12 col-md-6"
+                            />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <q-checkbox
+                                v-model="form.generate_password"
+                                label="Generate new password"
+                                color="orange"
                             />
                         </div>
                     </div>
@@ -55,16 +76,16 @@
             <q-card-actions align="right">
                 <q-btn flat label="Close" @click="dialog = false" />
                 <q-btn
-                    v-if="!item.deleted"
+                    v-if="!form.deleted"
                     color="primary"
                     label="Update"
-                    @click="updateServer(item)"
+                    @click="updateServer(form)"
                 />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
-    <q-btn flat round dense color="blue" @click="dialog = true">
+    <q-btn flat round dense color="blue" @click="loadData">
         <q-icon name="mdi-file-edit" />
     </q-btn>
 </template>
@@ -78,13 +99,21 @@ export default {
         return {
             dialog: false,
             errors: {},
+            form: {},
+            ciphers: ["chacha20-ietf-poly1305", "aes-256-gcm", "aes-128-gcm"],
         };
     },
 
     methods: {
+        loadData() {
+            this.dialog = true;
+            this.form = { ...this.item };
+            Object.assign(this.form, { generate_password: false });
+        },
+
         async updateServer(item) {
             try {
-                const res = await this.$api.put(item.links.update, this.item, {
+                const res = await this.$api.put(item.links.update, this.form, {
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
                     },
