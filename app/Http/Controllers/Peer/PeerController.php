@@ -46,9 +46,9 @@ class PeerController extends Controller
     public function store(Request $request, Peer $peer, Wg $wg)
     {
         $message = __('You have exceeded the device limit. To add more devices, please upgrade to a higher plan.');
-
+        $userId = $this->user()->id;
         $data = $peer->query();
-        $count = $data->where('user_id', $this->user()->id)->count();
+        $count = $data->where('user_id', $userId)->count();
 
         //---------check plans --------------------------//
         if (!app()->environment(['local', 'dev'])) {
@@ -95,7 +95,7 @@ class PeerController extends Controller
         //Wireguard interface
         $wg = $wg->findOrFail($request->wg_id);
 
-        DB::transaction(function () use ($request, $peer, $wg) {
+        DB::transaction(function () use ($request, $peer, $wg, $userId) {
 
             //Generate pair keys
             $keys = $peer->generatePairKeys();
@@ -111,7 +111,7 @@ class PeerController extends Controller
             $peer->preshared_key = $preshared_key;
             $peer->allowed_ips = $ip_allowed;
             $peer->persistent_keepalive = 25;
-            $peer->user_id = $this->user()->id;
+            $peer->user_id = $userId;
             $peer->wg_id = $wg->id;
             $peer->save();
 
@@ -175,6 +175,7 @@ class PeerController extends Controller
         } else {
             $peer->active = !$peer->active;
             $core->addPeer(
+                $this->user()->id,
                 $peer->name,
                 $peer->wg->slug,
                 $peer->public_key,
