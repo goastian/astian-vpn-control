@@ -53,7 +53,7 @@ class ServerController extends GlobalController
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
-            'ip' => ['required', 'unique:servers,ipv4', 'ipv4'],
+            'ip' => ['required', 'unique:servers,ip', 'ipv4'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
         ]);
