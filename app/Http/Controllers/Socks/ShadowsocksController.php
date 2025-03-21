@@ -10,6 +10,15 @@ use App\Transformers\Server\ShadowsocksTransformer;
 class ShadowsocksController extends GlobalController
 {
 
+    public function __construct()
+    {
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_create')->only('createConfig');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_show')->only('showConfig','status');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_update')->only('start', 'stop','restart');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_destroy')->only('deleteConfig');
+    }
+
     /**
      * Summary of index
      * @param \App\Models\Server\Server $server
