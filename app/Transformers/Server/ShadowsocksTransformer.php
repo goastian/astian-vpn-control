@@ -41,13 +41,6 @@ class ShadowsocksTransformer extends TransformerAbstract
             'ss_method' => $data->ss_method,
             'links' => [
                 'index' => route('shadowsocks.index'),
-                'add_config' => route('shadowsocks.add_config', ['server_id' => $data->id]),
-                'show_config' => route('shadowsocks.show_config', ['server_id' => $data->id]),
-                'start' => route('shadowsocks.start', ['server_id' => $data->id]),
-                'restart' => route('shadowsocks.restart', ['server_id' => $data->id]),
-                'stop' => route('shadowsocks.stop', ['server_id' => $data->id]),
-                'status' => route('shadowsocks.status', ['server_id' => $data->id]),
-                'delete_config' => route('shadowsocks.config_delete', ['server_id' => $data->id]),
             ],
         ];
     }

@@ -48,7 +48,13 @@ class ServerTransformer extends TransformerAbstract
                 'show' => route('servers.show', ['server' => $data->id]),
                 'update' => route('servers.update', ['server' => $data->id]),
                 'delete' => route('servers.destroy', ['server' => $data->id]),
-                'toggle' => route('servers.toggle', ['server' => $data->id]),
+                'add_config' => route('shadowsocks.add_config', ['server_id' => $data->id]),
+                'show_config' => route('shadowsocks.show_config', ['server_id' => $data->id]),
+                'start' => route('shadowsocks.start', ['server_id' => $data->id]),
+                'restart' => route('shadowsocks.restart', ['server_id' => $data->id]),
+                'stop' => route('shadowsocks.stop', ['server_id' => $data->id]),
+                'status' => route('shadowsocks.status', ['server_id' => $data->id]),
+                'delete_config' => route('shadowsocks.config_delete', ['server_id' => $data->id]),
             ],
         ];
     }
