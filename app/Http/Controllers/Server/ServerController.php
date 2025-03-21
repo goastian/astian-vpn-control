@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Server;
 
+use App\Http\Controllers\Socks\ShadowsocksController;
 use App\Rules\BooleanRule;
 use App\Wrapper\Core;
 use Illuminate\Support\Str;
@@ -47,7 +48,7 @@ class ServerController extends GlobalController
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function store(Request $request, Server $server)
+    public function store(Request $request, Server $server, ShadowsocksController $shadowsocksController)
     {
         $request->validate([
             'country' => ['string', 'max:190'],
@@ -68,10 +69,14 @@ class ServerController extends GlobalController
         $this->checkMethod('post');
         $this->checkContentType($this->getPostHeader());
 
-        DB::transaction(function () use ($request, $server) {
+        DB::transaction(function () use ($request, $server, $shadowsocksController) {
             $server = $server->fill($request->all());
             $server->save();
         });
+
+        //start sserver
+        $shadowsocksController->createConfig($server, $server->id);
+        $shadowsocksController->start($server, $server->id);
 
         return $this->showOne($server, $server->transformer, 201);
     }
@@ -92,7 +97,7 @@ class ServerController extends GlobalController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Server $server)
+    public function update(Request $request, Server $server, ShadowsocksController $shadowsocksController)
     {
         $request->validate([
             'country' => ['string', 'max:190'],
@@ -108,9 +113,10 @@ class ServerController extends GlobalController
         $this->checkMethod('put');
         $this->checkContentType($this->getUpdateHeader());
 
-        DB::transaction(function () use ($request, $server) {
+        DB::transaction(function () use ($request, $server, $shadowsocksController) {
 
             $updated = false;
+            $updatedsss = false;
 
             if ($request->has('country') && $server->country != $request->country) {
                 $updated = true;
@@ -129,18 +135,35 @@ class ServerController extends GlobalController
 
             if ($request->has('ss_port') && $server->ss_port != $request->ss_port) {
                 $updated = true;
+                $updatedsss = true;
                 $server->ss_port = $request->ss_port;
             }
 
             if ($request->has('ss_method') && $server->ss_method != $request->ss_method) {
                 $updated = true;
+                $updatedsss = true;
                 $server->ss_method = $request->ss_method;
             }
 
             if ($request->has('generate_password') && $request->generate_password) {
                 $updated = true;
-
+                $updatedsss = true;
                 $server->ss_password = Str::random(32);
+            }
+
+            //Reload ssserver
+            if ($updatedsss) {
+                try {
+                    $shadowsocksController->stop($server, $server->id);
+                } catch (\Throwable $th) {
+                }
+                try {
+                    $shadowsocksController->deleteConfig($server, $server->id);
+                } catch (\Throwable $th) {
+                }
+
+                $shadowsocksController->createConfig($server, $server->id);
+                $shadowsocksController->start($server, $server->id);
             }
 
             if ($updated) {
@@ -154,12 +177,14 @@ class ServerController extends GlobalController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Server $server)
+    public function destroy(Server $server, ShadowsocksController $shadowsocksController)
     {
         $this->checkMethod('delete');
         $this->checkContentType(null);
 
         throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
+
+        $shadowsocksController->deleteConfig($server, $server->id);
 
         $server->delete();
 
