@@ -1,34 +1,56 @@
 <template>
     <div class="q-pa-md">
         <v-nav-bar />
-        <q-table
-            flat
-            bordered
-            title="Servers"
-            :rows="servers"
-            :columns="headers"
-            hide-pagination
-        >
-            <template v-slot:top>
-                <div class="flex space-x-4">
-                    <h6>List of servers</h6>
-                    <v-create @created="getServers"></v-create>
-                </div>
-            </template>
 
-            <template v-slot:body-cell-actions="props">
-                <q-td :props="props">
-                    <v-delete
-                        @deleted="getServers"
-                        :item="props.row"
-                    ></v-delete>
-                    <v-update
-                        @updated="getServers"
-                        :item="props.row"
-                    ></v-update>
-                </q-td>
-            </template>
-        </q-table>
+        <div class="row q-mb-md">
+            <div class="col-12 flex">
+                <h6>List of servers</h6>
+                <q-space></q-space>
+                <v-create @created="getServers"></v-create>
+            </div>
+        </div>
+
+        <div class="row q-gutter-md">
+            <div
+                v-for="server in servers"
+                :key="server.id"
+                class="col-xs-12 col-sm-6 col-md-3 col-lg-4"
+            >
+                <q-card class="q-pa-md">
+                    <q-card-section>
+                        <q-item>
+                            <q-item-section>
+                                <q-item-label
+                                    ><strong>Country:</strong>
+                                    {{ server.country }}</q-item-label
+                                >
+                                <q-item-label
+                                    ><strong>URL:</strong>
+                                    {{ server.url }}</q-item-label
+                                >
+                                <q-item-label
+                                    ><strong>PORT:</strong>
+                                    {{ server.port }}</q-item-label
+                                >
+                                <q-item-label
+                                    ><strong>IPV4:</strong>
+                                    {{ server.ipv4 }}</q-item-label
+                                >
+                            </q-item-section>
+                        </q-item>
+                    </q-card-section>
+
+                    <q-separator />
+
+                    <q-card-actions>
+                        <v-start :item="server" />
+                        <v-stop :item="server" />
+                        <v-delete @deleted="getServers" :item="server" />
+                        <v-update @updated="getServers" :item="server" />
+                    </q-card-actions>
+                </q-card>
+            </div>
+        </div>
 
         <div class="row justify-center q-mt-md">
             <q-pagination
@@ -40,58 +62,26 @@
         </div>
     </div>
 </template>
+
 <script>
 import VCreate from "./Create.vue";
 import VUpdate from "./Update.vue";
 import VDelete from "./Delete.vue";
+import VStop from "./Start.vue";
+import VStart from "./Stop.vue";
 
 export default {
     components: {
         VCreate,
         VUpdate,
         VDelete,
+        VStart,
+        VStop,
     },
 
     data() {
         return {
             servers: [],
-            headers: [
-                {
-                    name: "country",
-                    label: "Country",
-                    align: "left",
-                    sortable: false,
-                    field: "country",
-                },
-                {
-                    name: "url",
-                    label: "URL",
-                    align: "left",
-                    sortable: false,
-                    field: "url",
-                },
-                {
-                    name: "port",
-                    label: "PORT",
-                    align: "left",
-                    sortable: false,
-                    field: "port",
-                },
-                {
-                    name: "ipv4",
-                    label: "IPV4",
-                    align: "left",
-                    sortable: false,
-                    field: "ipv4",
-                },
-                {
-                    name: "actions",
-                    label: "Actions",
-                    align: "left",
-                    sortable: false,
-                    field: "actions",
-                },
-            ],
             pages: {
                 total_pages: 0,
             },
@@ -103,14 +93,8 @@ export default {
     },
 
     watch: {
-        "search.page"(value) {
+        "search.page"() {
             this.getServers();
-        },
-        "search.per_page"(value) {
-            if (value) {
-                this.search.per_page = value;
-                this.getServers();
-            }
         },
     },
 
@@ -119,20 +103,19 @@ export default {
     },
 
     methods: {
-        /**
-         * Retrieve the servers
-         */
         async getServers() {
             try {
                 const res = await this.$api.get("/api/servers", {
                     params: this.search,
                 });
 
-                if (res.status == 200) {
+                if (res.status === 200) {
                     this.servers = res.data.data;
                     this.pages = res.data.meta.pagination;
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.error("Error fetching servers:", err);
+            }
         },
     },
 };

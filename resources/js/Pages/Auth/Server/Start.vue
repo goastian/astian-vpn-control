@@ -4,8 +4,8 @@
             <q-btn
                 flat
                 round
-                color="red"
-                icon="mdi-server-remove"
+                color="start"
+                icon="mdi-power"
                 @click="toggle"
             />
         </template>
@@ -13,17 +13,16 @@
         <q-card class="w-96">
             <q-card-section class="row items-center q-pb-none">
                 <q-icon name="mdi-delete-empty" size="sm" />
-                <span class="q-ml-sm text-h6">Confirm Deletion</span>
+                <span class="q-ml-sm text-h6">Start shadowsocks server</span>
             </q-card-section>
 
             <q-card-section>
-                Are you sure you want to delete the server? This action cannot
-                be undone.
+                Are you sure you want to start the server?
             </q-card-section>
 
             <q-card-actions align="right">
                 <q-btn flat label="Disagree" @click="dialog = false" />
-                <q-btn color="red" label="Agree" @click="deleteServer(item)" />
+                <q-btn color="red" label="Agree" @click="startServer(item)" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -31,8 +30,8 @@
     <q-btn
         flat
         dense
-        color="red"
-        icon="mdi-delete-empty"
+        color="green"
+        icon="mdi-power"
         @click="dialog = true"
     ></q-btn>
 </template>
@@ -40,9 +39,7 @@
 <script>
 export default {
     props: ["item"],
-
-    emits: ["deleted"],
-
+ 
     data() {
         return {
             dialog: false,
@@ -50,16 +47,15 @@ export default {
     },
 
     methods: {
-        async deleteServer(item) {
+        async startServer(item) {
             try {
-                const res = await this.$api.delete(item.links.delete);
+                const res = await this.$api.post(item.links.start);
                 if (res.status === 200) {
                     this.$emit("deleted", res.data);
                     this.dialog = false;
                 }
-            } catch (err) { 
-                
-                if ([403, 400 , 404, 500].includes(err.response?.status)) {
+            } catch (err) {
+                if ([403, 404, 500].includes(err.response?.status)) {
                     this.$q.notify({
                         type: "negative",
                         message: err.response.data.message,
