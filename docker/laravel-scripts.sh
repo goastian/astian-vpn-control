@@ -24,7 +24,7 @@ npm run production
 echo "Node.js build completed successfully."
 
 echo "Starting PHP-FPM..."
-php-fpm8.3 -D || { echo "Failed to start PHP-FPM"; exit 1; }
+php-fpm83 -D || { echo "Failed to start PHP-FPM"; exit 1; }
 
 echo "Starting Nginx..."
-exec nginx -g "daemon off;"
+exec nginx -g "daemon off;"  
