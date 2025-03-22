@@ -7,7 +7,7 @@ cd /var/www || exit 1
 echo "Generating application key..."
 php artisan key:generate
 
-echo "Generating priv and pub key
+echo "Generating priv and pub key"
 php artisan settings:generate-keys
 
 echo "Running migrations..."
@@ -24,7 +24,7 @@ npm run production
 echo "Node.js build completed successfully."
 
 echo "Starting PHP-FPM..."
-php-fpm83 -D || { echo "Failed to start PHP-FPM"; exit 1; }
+php-fpm8.3 -D || { echo "Failed to start PHP-FPM"; exit 1; }
 
 echo "Starting Nginx..."
-exec nginx -g "daemon off;"  
+exec nginx -g "daemon off;"
