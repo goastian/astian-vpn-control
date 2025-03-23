@@ -112,11 +112,11 @@ class ServerController extends GlobalController
 
         $this->checkMethod('put');
         $this->checkContentType($this->getUpdateHeader());
+        $updatedsss = false;
 
-        DB::transaction(function () use ($request, $server, $shadowsocksController) {
+        DB::transaction(function () use ($request, $server, &$updatedsss) {
 
             $updated = false;
-            $updatedsss = false;
 
             if ($request->has('country') && $server->country != $request->country) {
                 $updated = true;
@@ -151,25 +151,27 @@ class ServerController extends GlobalController
                 $server->ss_password = Str::random(32);
             }
 
-            //Reload ssserver
-            if ($updatedsss) {
-                try {
-                    $shadowsocksController->stop($server, $server->id);
-                } catch (\Throwable $th) {
-                }
-                try {
-                    $shadowsocksController->deleteConfig($server, $server->id);
-                } catch (\Throwable $th) {
-                }
-
-                $shadowsocksController->createConfig($server, $server->id);
-                $shadowsocksController->start($server, $server->id);
-            }
-
             if ($updated) {
                 $server->push();
             }
         });
+
+        //Reload ssserver
+        if ($updatedsss) {
+            try {
+                $shadowsocksController->stop($server, $server->id);
+            } catch (\Throwable $th) {
+            }
+
+            try {
+                $shadowsocksController->deleteConfig($server, $server->id);
+            } catch (\Throwable $th) {
+            }
+
+            $shadowsocksController->createConfig($server, $server->id);
+
+            $shadowsocksController->start($server, $server->id);
+        }
 
         return $this->showOne($server, $server->transformer, 201);
     }
