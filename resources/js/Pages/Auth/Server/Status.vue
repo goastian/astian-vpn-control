@@ -5,29 +5,25 @@
         </template>
 
         <q-card class="w-96">
-            <q-card-section class="row items-center q-pb-none">
-                <q-icon name="mdi-delete-empty" size="sm" />
-                <span class="q-ml-sm text-h6">Stop Shadowsocks Server</span>
-            </q-card-section>
 
-            <q-card-section>
-                Are you sure you want to stop the server?.
+            <q-card-section> 
+                {{ message }}
             </q-card-section>
 
             <q-card-actions align="right">
-                <q-btn flat label="Disagree" @click="dialog = false" />
-                <q-btn color="red" label="Agree" @click="stopServer(item)" />
+                <q-btn flat label="Close" @click="dialog = false" />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
     <q-btn
+        class="d-block"
         flat
         dense
-        label="Stop"
-        color="red"
-        icon="mdi-power"
-        @click="dialog = true"
+        label="Status"
+        color="blue"
+        icon="mdi-eye-circle-outline"
+        @click="statusServer(item)"
     ></q-btn>
 </template>
 
@@ -38,24 +34,22 @@ export default {
     data() {
         return {
             dialog: false,
+            message: "",
         };
     },
 
     methods: {
-        async stopServer(item) {
+        async statusServer(item) {
+            this.dialog = true;
             try {
-                const res = await this.$api.post(item.links.stop);
+                const res = await this.$api.get(item.links.status);
                 if (res.status === 200) {
-                    this.dialog = false;
-                    this.$q.notify({
-                        type: "positive",
-                        message: res.data.message,
-                    });
+                    this.message = res.data.message;
                 }
             } catch (err) {
                 if ([403, 404, 500].includes(err.response?.status)) {
                     this.$q.notify({
-                        type: "negative",
+                        type: "positive",
                         message: err.response.data.message,
                     });
                 }

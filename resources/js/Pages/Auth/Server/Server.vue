@@ -43,10 +43,21 @@
                     <q-separator />
 
                     <q-card-actions>
-                        <v-start :item="server" />
-                        <v-stop :item="server" />
                         <v-delete @deleted="getServers" :item="server" />
+                        <q-space></q-space>
                         <v-update @updated="getServers" :item="server" />
+                    </q-card-actions>
+                    <q-card-actions class="row border-1 q-pa-md">
+                        <div class="col-12">ShadowSocks Actions</div>
+                        <div class="col-12">
+                            <v-start :item="server" />
+                        </div>
+                        <div class="col-12">
+                            <v-stop :item="server" />
+                        </div>
+                        <div class="col-12">
+                            <v-status :item="server" />
+                        </div>
                     </q-card-actions>
                 </q-card>
             </div>
@@ -67,8 +78,9 @@
 import VCreate from "./Create.vue";
 import VUpdate from "./Update.vue";
 import VDelete from "./Delete.vue";
-import VStop from "./Start.vue";
-import VStart from "./Stop.vue";
+import VStart from "./Start.vue";
+import VStatus from "./Status.vue";
+import VStop from "./Stop.vue";
 
 export default {
     components: {
@@ -77,6 +89,7 @@ export default {
         VDelete,
         VStart,
         VStop,
+        VStatus,
     },
 
     data() {

@@ -1,13 +1,7 @@
 <template>
     <q-dialog v-model="dialog" persistent>
         <template v-slot:activator="{ toggle }">
-            <q-btn
-                flat
-                round
-                color="start"
-                icon="mdi-power"
-                @click="toggle"
-            />
+            <q-btn flat round color="start" icon="mdi-power" @click="toggle" />
         </template>
 
         <q-card class="w-96">
@@ -29,7 +23,7 @@
 
     <q-btn
         flat
-        dense
+        label="Start"
         color="green"
         icon="mdi-power"
         @click="dialog = true"
@@ -39,7 +33,7 @@
 <script>
 export default {
     props: ["item"],
- 
+
     data() {
         return {
             dialog: false,
@@ -53,6 +47,10 @@ export default {
                 if (res.status === 200) {
                     this.$emit("deleted", res.data);
                     this.dialog = false;
+                    this.$q.notify({
+                        type: "positive",
+                        message: res.data.message,
+                    });
                 }
             } catch (err) {
                 if ([403, 404, 500].includes(err.response?.status)) {
