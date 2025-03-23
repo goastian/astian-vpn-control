@@ -42,9 +42,8 @@ class ShadowsocksController extends GlobalController
         $server = $server->find($server_id);
 
         $shadowsocks = new Shadowsocks($server->url, $server->port);
-
+        
         $response = $shadowsocks->createConfig(
-            $server->ip,
             $server->ss_port,
             $server->ss_password,
             $server->ss_method

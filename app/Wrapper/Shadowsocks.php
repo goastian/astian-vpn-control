@@ -33,19 +33,17 @@ class Shadowsocks
 
     /**
      * create config
-     * @param string $server
      * @param int $port
      * @param string $password
      * @param string $method
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      * @return \Psr\Http\Message\ResponseInterface|void
      */
-    public function createConfig(string $server, int $port, string $password, string $method = "chacha20-ietf-poly1305")
+    public function createConfig(int $port, string $password, string $method = "chacha20-ietf-poly1305")
     {
         try {
             $response = $this->client->request("POST", "/api/shadowsocks/add", [
                 'json' => [
-                    "server" => $server,
                     "server_port" => $port,
                     "password" => $password,
                     "method" => $method
