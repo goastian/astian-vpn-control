@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CsrfToken;
 use App\Http\Middleware\SecureHeaders;
+use App\Http\Middleware\WantsJsonHeader;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\EncryptCookies;
 use Elyerr\Passport\Connect\Middleware\CheckScopes;
@@ -24,7 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'scope' => CheckForAnyScope::class,
             'scopes' => CheckScopes::class,
             'server' => Authorization::class,
-            'client-credentials' => CheckCredentials::class
+            'client-credentials' => CheckCredentials::class,
+            'json.response' => WantsJsonHeader::class
         ]);
 
         $middleware->web(
