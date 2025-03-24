@@ -14,8 +14,8 @@ class ShadowsocksController extends GlobalController
     {
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index');
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_create')->only('createConfig');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_show')->only('showConfig','status');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_update')->only('start', 'stop','restart');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_show')->only('showConfig', 'status');
+        $this->middleware('scope:administrator_vpn_full,administrator_vpn_update')->only('start', 'stop', 'restart');
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_destroy')->only('deleteConfig');
     }
 
@@ -42,13 +42,16 @@ class ShadowsocksController extends GlobalController
         $server = $server->find($server_id);
 
         $shadowsocks = new Shadowsocks($server->url, $server->port);
-        
+
+        $domain = parse_url($server->url, PHP_URL_HOST) ?? null;
+
         $response = $shadowsocks->createConfig(
             $server->ss_port,
             $server->ss_password,
-            $server->ss_method
+            $server->ss_method,
+            $domain
         );
-        
+
         $data = json_decode($response->getBody());
         return $this->message($data->message, $response->getStatusCode());
     }
