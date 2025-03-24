@@ -43,13 +43,12 @@ class ShadowsocksController extends GlobalController
 
         $shadowsocks = new Shadowsocks($server->url, $server->port);
 
-        $domain = parse_url($server->url, PHP_URL_HOST) ?? null;
+       // $domain = parse_url($server->url, PHP_URL_HOST) ?? null;
 
         $response = $shadowsocks->createConfig(
             $server->ss_port,
             $server->ss_password,
-            $server->ss_method,
-            $domain
+            $server->ss_method
         );
 
         $data = json_decode($response->getBody());
