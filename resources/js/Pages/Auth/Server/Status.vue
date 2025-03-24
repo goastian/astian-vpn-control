@@ -40,6 +40,7 @@ export default {
             try {
                 const res = await this.$api.get(item.links.status);
                 if (res.status === 200) {
+                    this.dialog = true
                     this.message = res.data.message;
                 }
             } catch (err) {
