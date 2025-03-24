@@ -22,10 +22,10 @@
     </q-dialog>
 
     <q-btn
-        flat
+        icon="play_arrow"
+        color="positive"
         label="Start"
-        color="green"
-        icon="mdi-power"
+        outline
         @click="dialog = true"
     ></q-btn>
 </template>

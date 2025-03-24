@@ -22,11 +22,10 @@
     </q-dialog>
 
     <q-btn
-        flat
-        dense
+        icon="stop"
+        color="negative"
         label="Stop"
-        color="red"
-        icon="mdi-power"
+        outline
         @click="dialog = true"
     ></q-btn>
 </template>

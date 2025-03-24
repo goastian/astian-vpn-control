@@ -5,8 +5,7 @@
         </template>
 
         <q-card class="w-96">
-
-            <q-card-section> 
+            <q-card-section>
                 {{ message }}
             </q-card-section>
 
@@ -17,12 +16,10 @@
     </q-dialog>
 
     <q-btn
-        class="d-block"
-        flat
-        dense
+        icon="info"
+        color="info"
         label="Status"
-        color="blue"
-        icon="mdi-eye-circle-outline"
+        outline
         @click="statusServer(item)"
     ></q-btn>
 </template>
