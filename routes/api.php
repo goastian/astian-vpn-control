@@ -8,9 +8,10 @@ use App\Http\Controllers\Peer\PeerController;
 use App\Http\Controllers\Server\ServerController;
 use App\Http\Controllers\Setting\SettingController;
 
-Route::middleware(['json.response'])->group(function () {
+Route::get('/gateway/authorization', [KeyGeneratorController::class, 'checkCredentials'])->name('gateway.authorization');
 
-    Route::get('/gateway/authorization', [KeyGeneratorController::class, 'checkCredentials'])->name('gateway.authorization');
+
+Route::middleware(['json.response'])->group(function () {
 
     Route::put('servers/{server}/toggle', [ServerController::class, 'toggle'])->name('servers.toggle');
     Route::resource('servers', ServerController::class)->except('edit', 'create');
