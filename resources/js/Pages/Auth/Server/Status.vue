@@ -37,7 +37,6 @@ export default {
 
     methods: {
         async statusServer(item) {
-            this.dialog = true;
             try {
                 const res = await this.$api.get(item.links.status);
                 if (res.status === 200) {
@@ -50,7 +49,6 @@ export default {
                         message: err.response.data.message,
                     });
                 }
-                this.dialog = false;
             }
         },
     },
