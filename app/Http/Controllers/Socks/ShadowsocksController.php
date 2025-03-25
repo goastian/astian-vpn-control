@@ -43,13 +43,15 @@ class ShadowsocksController extends GlobalController
 
         $shadowsocks = new Shadowsocks($server->url, $server->port);
 
-       // $domain = parse_url($server->url, PHP_URL_HOST) ?? null;
+        $domain = parse_url($server->url, PHP_URL_HOST) ?? null;
 
         $response = $shadowsocks->createConfig(
             $server->ss_port,
             $server->ss_password,
-            $server->ss_method
+            $server->ss_method,
+            $server->ss_over_https ? $domain : null
         );
+
 
         $data = json_decode($response->getBody());
         return $this->message($data->message, $response->getStatusCode());
@@ -82,9 +84,17 @@ class ShadowsocksController extends GlobalController
         $server = $server->find($server_id);
         $shadowsocks = new Shadowsocks($server->url, $server->port);
 
-        $response = $shadowsocks->start();
-        $data = json_decode($response->getBody());
-        return $this->message($data->message, $response->getStatusCode());
+        try {
+
+            $shadowsocks->start();
+
+        } catch (\Throwable $th) {
+
+            $this->createConfig($server, $server->id);
+            $shadowsocks->start();
+
+        }
+        return $this->message("Server started successfully", 200);
     }
 
     /**

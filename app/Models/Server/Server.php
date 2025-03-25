@@ -29,6 +29,7 @@ class Server extends Master
         'ss_port',
         'ss_password',
         'ss_method',
+        'ss_over_https'
     ];
 
     /**

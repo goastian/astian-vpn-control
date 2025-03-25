@@ -57,6 +57,7 @@ class ServerController extends GlobalController
             'ip' => ['required', 'unique:servers,ip', 'ipv4'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
+            'ss_over_https' => ['nullable', new BooleanRule()]
         ]);
 
         if (!$request->has('method')) {
@@ -75,8 +76,8 @@ class ServerController extends GlobalController
         });
 
         //start sserver
-        $shadowsocksController->createConfig($server, $server->id);
-        $shadowsocksController->start($server, $server->id);
+        //$shadowsocksController->createConfig($server, $server->id);
+        //s$shadowsocksController->start($server, $server->id);
 
         return $this->showOne($server, $server->transformer, 201);
     }
@@ -105,6 +106,7 @@ class ServerController extends GlobalController
             'port' => ['required', 'max:6'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
+            "ss_over_https" => ['nullable', new BooleanRule()],
             "generate_password" => ['nullable', new BooleanRule()],
         ]);
 
@@ -137,6 +139,12 @@ class ServerController extends GlobalController
                 $updated = true;
                 $updatedsss = true;
                 $server->ss_port = $request->ss_port;
+            }
+
+            if ($request->has('ss_over_https') && $server->ss_over_https != $request->ss_over_https) {
+                $updated = true;
+                $updatedsss = true;
+                $server->ss_over_https = $request->ss_over_https;
             }
 
             if ($request->has('ss_method') && $server->ss_method != $request->ss_method) {
