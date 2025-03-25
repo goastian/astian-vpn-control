@@ -9,6 +9,7 @@
             <q-card-section>
                 <q-form @submit.prevent="updateServer(form)">
                     <div class="row q-col-gutter-md">
+                        <!-- Información del Servidor -->
                         <div class="col-12 col-md-6">
                             <q-input
                                 v-model="form.country"
@@ -36,19 +37,20 @@
                             />
                         </div>
 
+                        <!-- Sección de Shadowsocks -->
+                        <q-separator class="col-12 q-my-md" />
+                        <div class="col-12">
+                            <span class="text-h6">Shadowsocks Settings</span>
+                        </div>
+
                         <div class="col-12 col-md-6">
                             <q-input
                                 v-model="form.ss_port"
                                 label="Shadowsocks Port"
-                                filled
                                 type="number"
-                                class="mb-4 col-12 col-md-6"
                                 :error="!!errors.ss_port"
-                            >
-                                <template v-slot:error>
-                                    <v-error :error="errors.ss_port"></v-error>
-                                </template>
-                            </q-input>
+                                :error-message="errors.ss_port"
+                            />
                         </div>
 
                         <div class="col-12 col-md-6">
@@ -56,7 +58,14 @@
                                 v-model="form.ss_method"
                                 :options="ciphers"
                                 label="Shadowsocks Ciphers"
-                                class="mb-4 col-12 col-md-6"
+                            />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <q-checkbox
+                                v-model="form.ss_over_https"
+                                label="Enable Shadowsocks over HTTPS"
+                                color="orange"
                             />
                         </div>
 

@@ -21,6 +21,7 @@
             <q-card-section>
                 <q-form @submit.prevent="createServer">
                     <div class="row q-col-gutter-md">
+                        <!-- General Server Information -->
                         <q-input
                             v-model="form.country"
                             label="Country"
@@ -70,6 +71,12 @@
                             </template>
                         </q-input>
 
+                        <!-- Shadowsocks Configuration -->
+                        <q-separator class="full-width q-mt-md" />
+                        <div class="full-width text-bold q-mt-md">
+                            Shadowsocks Settings
+                        </div>
+
                         <q-input
                             v-model="form.ss_port"
                             label="Shadowsocks Port"
@@ -88,7 +95,26 @@
                             :options="ciphers"
                             label="Shadowsocks Ciphers"
                             class="mb-4 col-12 col-md-6"
-                        />
+                            :error="!!errors.ss_method"
+                        >
+                            <template v-slot:error>
+                                <v-error :error="errors.ss_method"></v-error>
+                            </template>
+                        </q-select>
+
+                        <q-checkbox
+                            v-model="form.ss_over_https"
+                            label="Enable Shadowsocks over HTTPS"
+                            color="orange"
+                            class="col-12"
+                            :error="!!errors.ss_over_https"
+                        >
+                            <template v-slot:error>
+                                <v-error
+                                    :error="errors.ss_over_https"
+                                ></v-error>
+                            </template>
+                        </q-checkbox>
                     </div>
                 </q-form>
             </q-card-section>
@@ -100,12 +126,7 @@
         </q-card>
     </q-dialog>
 
-    <q-btn
-        icon="mdi-server-plus-outline"
-        color="blue"
-        round
-        @click="dialog = true"
-    >
+    <q-btn icon="mdi-server-plus-outline" color="blue" round @click="open">
         <q-tooltip class="bg-indigo" :offset="[10, 10]">
             Add a new server
         </q-tooltip>
@@ -119,20 +140,24 @@ export default {
     data() {
         return {
             dialog: false,
-            form: {
-                country: "",
-                url: "",
-                port: "",
-                ip: "",
-                ss_port: 8388,
-                ss_method: "chacha20-ietf-poly1305",
-            },
+            form: {},
             ciphers: ["chacha20-ietf-poly1305", "aes-256-gcm", "aes-128-gcm"],
             errors: {},
         };
     },
 
     methods: {
+        open() {
+            this.form.country = "";
+            this.form.url = "";
+            this.form.port = 443;
+            this.form.ip = "";
+            this.form.ss_over_https = false;
+            this.form.ss_port = 8388;
+            this.form.ss_method = "chacha20-ietf-poly1305";
+            this.dialog = true;
+        },
+
         async createServer() {
             try {
                 const res = await this.$api.post("/api/servers", this.form, {
