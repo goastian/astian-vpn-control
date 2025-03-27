@@ -33,6 +33,11 @@ class Wg extends Master
         'active',
         'interface',
         'server_id',
+        'enable_dns'
+    ];
+
+    public $cast = [
+        'enable_dns' => 'bool'
     ];
 
     public $append = [

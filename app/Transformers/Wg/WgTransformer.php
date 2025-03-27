@@ -31,35 +31,38 @@ class WgTransformer extends TransformerAbstract
      *
      * @return array
      */
-    public function transform($data)
+    public function transform(Wg $wg)
     {
         return [
-            'id' => $data->id,
-            'name' => $data->name,
-            'subnet' => $data->subnet,
-            'listen_port' => $data->listen_port,
-            'interface' => $data->interface,
-            'gateway' => $data->gateway,
-            'dns' => $data->dns,
-            'created' => $data->created_at,
-            'updated' => $data->updated_at,
-            'active' => $data->active,
-            'server_country' => $data->server->country,
-            'server_url' => $data->server->url,
-            'server_id' => $data->server->id,
+            'id' => $wg->id,
+            'name' => $wg->name,
+            'subnet' => $wg->subnet,
+            'listen_port' => $wg->listen_port,
+            'interface' => $wg->interface,
+            'gateway' => $wg->gateway,
+            'dns' => $wg->dns,
+            'enable_dns' => $wg->enable_dns ? true : false,
+            'created' => $wg->created_at,
+            'updated' => $wg->updated_at,
+            'active' => $wg->active,
+            'server_country' => $wg->server->country,
+            'server_url' => $wg->server->url,
+            'server_id' => $wg->server->id,
+            "devices" => $wg->peers()->count(),
             'links' => [
                 'index' => route('wgs.index'),
                 'store' => route('wgs.store'),
-                'show' => route('wgs.show', ['wg' => $data->id]),
-                'delete' => route('wgs.destroy', ['wg' => $data->id]),
-                'toggle' => route('wgs.toggle', ['wg' => $data->id]),
-                'reload' => route('wgs.reload', ['wg' => $data->id]),
+                'show' => route('wgs.show', ['wg' => $wg->id]),
+                'update' => route('wgs.show', ['wg' => $wg->id]),
+                'delete' => route('wgs.destroy', ['wg' => $wg->id]),
+                'toggle' => route('wgs.toggle', ['wg' => $wg->id]),
+                'reload' => route('wgs.reload', ['wg' => $wg->id]),
             ],
         ];
     }
 
     /**
-     * Retrieve Original Attributes to filter data
+     * Retrieve Original Attributes to filter wg
      *
      * @param string $index
      * @return Array|null

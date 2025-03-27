@@ -39,10 +39,11 @@ class Core
      * @param mixed $private_key
      * @param mixed $physical_interface
      * @param mixed $listen_port
+     * @param mixed $dns
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
      */
-    public function mountInterface($interface_name, $subnet, $gateway, $private_key, $physical_interface, $listen_port = 51820)
+    public function mountInterface($interface_name, $subnet, $gateway, $private_key, $physical_interface, $listen_port = 51820, $dns, $enable_dns)
     {
         try {
             $response = $this->client->request("POST", "/api/wireguard/mount", [
@@ -52,7 +53,9 @@ class Core
                     'physical_interface' => $physical_interface,
                     'listen_port' => $listen_port,
                     'subnet' => $subnet,
-                    'address' => $gateway
+                    'address' => $gateway,
+                    'dns' => $dns,
+                    'enable_dns' => $enable_dns
                 ]
             ]);
 
@@ -61,10 +64,18 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+            
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['data'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 
@@ -87,10 +98,18 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 
@@ -109,10 +128,18 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 
@@ -131,10 +158,18 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 
@@ -170,10 +205,18 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 
@@ -198,10 +241,18 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 
@@ -220,10 +271,18 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 
@@ -251,10 +310,54 @@ class Core
             }
 
         } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
+            $errorResponse = $th->getMessage();
+
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
             }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+
+            throw new ReportError($message, $th->getCode());
+        }
+    }
+
+    /**
+     * update interface
+     * @param mixed $interface_name
+     * @param mixed $dns
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
+     */
+    public function update($interface_name, $dns, $enable_dns)
+    {
+        try {
+            $response = $this->client->request("PUT", "/api/wireguard/{$interface_name}", [
+                'json' => [
+                    "dns" => $dns,
+                    "enable_dns" => $enable_dns
+                ]
+            ]);
+
+            if ($response->getStatusCode() == 201) {
+                return response(null, 201);
+            }
+
+        } catch (\Throwable $th) {
+            $errorResponse = $th->getMessage();
+            preg_match('/\{.*\}/s', $errorResponse, $matches);
+
+            if (!empty($matches)) {
+                $errorData = json_decode($matches[0], true);
+                $message = $errorData['message'] ?? 'Unknown error';
+            } else {
+                $message = 'Unknown error';
+            }
+
+            throw new ReportError($message, $th->getCode());
         }
     }
 }
