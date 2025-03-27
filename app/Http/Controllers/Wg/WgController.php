@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Wg;
 
+use App\Rules\BooleanRule;
 use App\Wrapper\Core;
 use App\Models\Server\Wg;
 use App\Models\Server\Peer;
@@ -70,7 +71,15 @@ class WgController extends Controller
             'listen_port' => ['required', 'max:10', 'unique:wgs,listen_port'],
             'interface' => ['required', 'max:50'],
             'server_id' => ['required', 'exists:servers,id'],
-            'dns' => ['nullable', 'max:190'],
+            'enable_dns' => ['required', new BooleanRule()],
+            'dns' => [
+                function ($attribute, $value, $fail) use ($request) {
+                    if ((bool) $request->enable_dns && empty($value)) {
+                        $fail("The field is required");
+                    }
+                },
+                'max:190'
+            ],
         ]);
 
         $this->checkMethod('post');
@@ -91,14 +100,17 @@ class WgController extends Controller
 
             $core = new Core($wg->server->url, $wg->server->port);
             $core->mountInterface(
-                $request->slug,
-                $subnet,
-                $gateway,
+                $wg->slug,
+                $wg->subnet,
+                $wg->gateway,
                 $wg->private_key,
                 $wg->interface,
-                $wg->listen_port
+                $wg->listen_port,
+                $wg->dns,
+                $wg->enable_dns ? true : false
             );
         });
+
 
         return $this->showOne($wg, $wg->transformer, 201);
     }
@@ -125,37 +137,46 @@ class WgController extends Controller
      */
     public function update(Request $request, Wg $wg)
     {
-        throw_if($wg->active, new ReportError(__('This action can be done, please stop the Wireguard Interface'), 422));
+        //throw_if($wg->active, new ReportError(__('This action can be done, please stop the Wireguard Interface'), 422));
 
         $request->validate([
-            'name' => ['nullable', 'max:20'],
-            'gateway' => ['nullable', 'max:190'],
-            'dns' => ['nullable', 'max:190'],
+            'enable_dns' => ['required', new BooleanRule()],
+            'dns' => [
+                'nullable',
+                'max:190',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->has('enable_dns') && empty($value)) {
+                        $fail("The field is required");
+                    }
+                }
+            ],
         ]);
 
         $this->checkMethod('put');
         $this->checkContentType($this->getUpdateHeader());
 
-        DB::transaction(function () use ($request, $wg) {
+        $updated = false;
+        DB::transaction(function () use ($request, $wg, &$updated) {
 
-            $updated = false;
-
-            if ($request->has('gateway') && $wg->gateway != $request->gateway) {
+            if ($request->has('dns') && $wg->dns != $request->dns) {
                 $updated = true;
-                $wg->gateway = $request->gateway;
+                $wg->dns = $request->dns;
             }
 
-            /* if ($request->has('dns') && $wg->dns != $request->dns) {
-                 $updated = true;
-                 $wg->dns = $request->dns;
-             }*/
+            if ($request->has('enable_dns') && $wg->enable_dns != $request->enable_dns) {
+                $updated = true;
+                $wg->enable_dns = $request->enable_dns;
+            }
 
             if ($updated) {
                 $wg->push();
             }
         });
 
-        return $this->showOne($wg, $wg->transformer, 201);
+        $core = new Core($wg->server->url, $wg->server->port);
+        $core->update($wg->slug, $wg->dns, $wg->enable_dns);
+
+        return $this->showOne($wg, $wg->transformer, 200);
     }
 
     /**
