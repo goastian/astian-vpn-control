@@ -20,24 +20,16 @@
             </q-card-section>
 
             <q-card-actions align="right">
-                <q-btn
-                    flat
-                    label="Disagree"
-                    color="grey"
-                    @click="dialog = false"
-                />
-                <q-btn label="Agree" color="red" @click="reload(wg)" />
+                <q-btn flat label="Reload" color="grey" @click="reload(wg)" />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
-    <q-btn
-        color="red"
-        text-color="white"
-        label="Force Reload"
-        @click="dialog = true"
-        icon="mdi-reload"
-    />
+    <q-btn color="red" outline rounded @click="dialog = true" icon="mdi-reload">
+        <q-tooltip class="bg-purple text-body2" :offset="[10, 10]">
+            Force this network to reload
+        </q-tooltip>
+    </q-btn>
 </template>
 
 <script>

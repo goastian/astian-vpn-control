@@ -33,11 +33,16 @@
         </q-card>
     </q-dialog>
 
-    <q-btn flat round dense @click="dialog = true">
-        <q-icon
-            :name="wg.active ? 'mdi-access-point' : 'mdi-access-point-remove'"
-            :color="wg.active ? 'green' : 'red'"
-        />
+    <q-btn
+        outline
+        rounded
+        :color="wg.active ? 'green' : 'red'"
+        @click="dialog = true"
+        :icon="wg.active ? 'mdi-access-point' : 'mdi-access-point-remove'"
+    >
+        <q-tooltip class="bg-purple text-body2" :offset="[10, 10]">
+            {{ wg.active ? "Turn off" : "Turn on" }}
+        </q-tooltip>
     </q-btn>
 </template>
 
@@ -84,7 +89,8 @@ export default {
                     this.$q.notify({
                         type: "positive",
                         message: "The Peer state has been updated",
-                    });}
+                    });
+                }
             } catch (err) {
                 this.$q.notify({
                     type: "negative",

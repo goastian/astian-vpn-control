@@ -1,57 +1,162 @@
 <template>
     <div class="q-pa-md">
         <v-nav-bar />
-        <q-table
-            flat
-            grid
-            bordered
-            label="Servers"
-            :rows="interfaces"
-            :columns="headers"
-            hide-pagination
-            :rows-per-page-options="[search.per_page]"
-        >
-            <template v-slot:top>
-                <div class="flex space-x-4">
-                    <h6>List of network interfaces</h6>
-                    <v-create @created="getWgs"></v-create>
-                </div>
-            </template>
 
-            <template v-slot:item="props">
-                <q-card class="q-ma-sm">
-                    <q-card-section>
-                        <div class="text-h6">
-                            {{ props.row.server_country }}
-                        </div>
-                    </q-card-section>
+        <!-- Header -->
+        <div class="row items-center q-mb-sm">
+            <h6 class="text-h6 text-weight-bold">Network Interfaces</h6>
+            <q-space />
+            <v-create @created="getWgs" />
+        </div>
 
-                    <q-card-section class="q-gutter-sm">
+        <!-- Cards Grid -->
+        <div class="row q-col-gutter-sm">
+            <q-card
+                v-for="(wg, index) in interfaces"
+                :key="index"
+                class="col-xs-12 col-sm-6 col-md-4"
+                bordered
+                flat
+                style="
+                    border-radius: 12px;
+                    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.08);
+                "
+            >
+                <q-card-section class="q-pa-sm">
+                    <div class="row items-center">
                         <q-icon
-                            :name="props.row.active ? 'check_circle' : 'cancel'"
-                            :color="props.row.active ? 'green' : 'red'"
-                            size="20px"
+                            name="mdi-server-network"
+                            color="primary"
+                            size="24px"
+                            class="q-mr-sm"
                         />
-                        <span class="q-ml-sm">
-                            {{ props.row.active ? "Active" : "Inactive" }}
-                        </span>
-                    </q-card-section>
+                        <div>
+                            <div class="text-subtitle1 text-weight-medium">
+                                {{ wg.server_country }} ({{ wg.name }})
+                            </div>
+                            <div class="text-caption text-grey-7">
+                                {{ wg.server_url }}
+                            </div>
+                        </div>
+                    </div>
+                </q-card-section>
 
-                    <q-card-section class="q-gutter-sm">
-                        <v-reload @updated="getWgs" :wg="props.row"></v-reload>
-                        <v-delete @deleted="getWgs" :wg="props.row"></v-delete>
-                        <v-toggle @updated="getWgs" :wg="props.row"></v-toggle>
-                    </q-card-section>
-                </q-card>
-            </template>
-        </q-table>
+                <q-separator />
 
-        <div class="row justify-center q-mt-md">
+                <q-card-section class="q-pa-sm">
+                    <q-chip
+                        :color="wg.active ? 'green' : 'red'"
+                        text-color="white"
+                        icon="mdi-wifi"
+                        dense
+                    >
+                        {{ wg.active ? "Active" : "Inactive" }}
+                    </q-chip>
+                </q-card-section>
+
+                <q-card-section class="q-pa-sm">
+                    <div class="row items-center q-gutter-x-sm">
+                        <q-chip color="orange-5" text-color="white" dense>
+                            <q-icon
+                                name="mdi-portable-network"
+                                class="q-mr-xs"
+                            />
+                            Port: {{ wg.listen_port }}
+                        </q-chip>
+                        <q-chip color="purple-5" text-color="white" dense>
+                            <q-icon name="mdi-ethernet" class="q-mr-xs" />
+                            {{ wg.interface }}
+                        </q-chip>
+                        <q-chip color="green-5" text-color="white" dense>
+                            <q-icon
+                                name="mdi-monitor-cellphone-star"
+                                class="q-mr-xs"
+                            />
+                            Devices {{ wg.devices }}
+                        </q-chip>
+                    </div>
+                </q-card-section>
+
+                <q-separator />
+
+                <q-card-section class="q-pa-sm">
+                    <q-list dense>
+                        <q-item>
+                            <q-item-section avatar>
+                                <q-icon name="mdi-ip-network" color="blue" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>Subnet</q-item-label>
+                                <q-item-label caption>{{
+                                    wg.subnet
+                                }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section avatar>
+                                <q-icon
+                                    name="mdi-router-network"
+                                    color="teal"
+                                />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>Gateway</q-item-label>
+                                <q-item-label caption>{{
+                                    wg.gateway
+                                }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section avatar>
+                                <q-icon name="mdi-dns" color="indigo" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>DNS</q-item-label>
+                                <q-item-label caption>{{
+                                    wg.dns
+                                }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item>
+                            <q-item-section avatar>
+                                <q-icon
+                                    :name="
+                                        wg.enable_dns
+                                            ? 'mdi-check'
+                                            : 'mdi-close'
+                                    "
+                                    :color="wg.enable_dns ? 'green' : 'red'"
+                                />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>Enable DNS</q-item-label>
+                                <q-item-label caption>{{
+                                    wg.enable_dns ? "Yes" : "No"
+                                }}</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                    </q-list>
+                </q-card-section>
+
+                <q-separator />
+
+                <q-card-actions class="q-pa-sm justify-end">
+                    <v-update @updated="getWgs" :wg="wg" />
+                    <v-reload @updated="getWgs" :wg="wg" />
+                    <v-toggle @updated="getWgs" :wg="wg" />
+                    <v-delete @deleted="getWgs" :wg="wg" />
+                </q-card-actions>
+            </q-card>
+        </div>
+
+        <!-- Pagination -->
+        <div class="row justify-center q-mt-sm">
             <q-pagination
                 v-model="search.page"
-                color="grey-8"
+                color="primary"
                 :max="pages.total_pages"
                 size="sm"
+                rounded
             />
         </div>
     </div>
@@ -75,57 +180,6 @@ export default {
 
     data() {
         return {
-            headers: [
-                {
-                    name: "active",
-                    label: "On And Off",
-                    align: "left",
-                    sortable: false,
-                    field: "active",
-                },
-                {
-                    name: "name",
-                    label: "Name",
-                    align: "left",
-                    sortable: false,
-                    field: "name",
-                },
-                {
-                    name: "listen_port",
-                    label: "Port",
-                    align: "left",
-                    sortable: false,
-                    field: "listen_port",
-                },
-                {
-                    name: "server",
-                    label: "Server",
-                    align: "left",
-                    sortable: false,
-                    field: "server",
-                },
-                {
-                    name: "reload",
-                    label: "Reload",
-                    align: "left",
-                    sortable: false,
-                    field: "reload",
-                },
-                {
-                    name: "interface",
-                    label: "NetLan",
-                    align: "left",
-                    sortable: false,
-                    field: "interface",
-                },
-                {
-                    name: "actions",
-                    label: "Actions",
-                    align: "left",
-                    sortable: false,
-                    field: "actions",
-                },
-            ],
             interfaces: [],
             pages: {
                 total_pages: 0,

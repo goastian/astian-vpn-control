@@ -13,18 +13,27 @@
 
             <q-card-actions align="right">
                 <q-btn flat label="Disagree" v-close-popup />
-                <q-btn flat label="Agree" color="red" @click="deleteWg(wg)" />
+                <q-btn
+                    outline
+                    label="Agree"
+                    color="red"
+                    @click="deleteWg(wg)"
+                />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
     <q-btn
-        flat
-        dense
+        outline
+        rounded
         color="red"
         icon="mdi-delete-empty"
         @click="dialog = true"
-    />
+    >
+    <q-tooltip class="bg-purple text-body2" :offset="[10, 10]">
+        Delete this networks
+    </q-tooltip>
+    </q-btn>
 </template>
 
 <script>
