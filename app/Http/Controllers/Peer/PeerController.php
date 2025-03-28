@@ -75,7 +75,7 @@ class PeerController extends Controller
 
         $request->validate([
             'name' => ['required'],
-            'wg_id' => [
+            'server_id' => [
                 'required',
                 'exists:wgs,id',
                 function ($attribute, $value, $fail) use ($wg) {
@@ -83,7 +83,7 @@ class PeerController extends Controller
                     $wg = $wg->where('id', $value)->first();
 
                     if (!$wg->active) {
-                        $fail("The $wg->name is currently offline and cannot be used.");
+                        $fail("The server is currently offline and cannot be used.");
                     }
                 }
             ],
@@ -93,7 +93,7 @@ class PeerController extends Controller
         $this->checkContentType($this->getPostHeader());
 
         //Wireguard interface
-        $wg = $wg->findOrFail($request->wg_id);
+        $wg = $wg->findOrFail($request->server_id);
 
         DB::transaction(function () use ($request, $peer, $wg, $userId) {
 
