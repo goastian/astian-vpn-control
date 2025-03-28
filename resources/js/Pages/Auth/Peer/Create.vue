@@ -1,69 +1,62 @@
 <template>
     <q-dialog v-model="dialog">
-        <q-card class="w-100 dialog">
-            <q-card-section
-                class="row justify-center"
-                v-if="!peer.id"
-            >
-                <div
-                    class="text-h6"
-                >Add Peer</div>
+        <q-card class="dialog full-width">
+            <q-card-section class="row justify-center">
+                <div class="text-h6">
+                    {{ peer.id ? "Device Configuration" : "Device Generator" }}
+                </div>
             </q-card-section>
 
             <q-card-section>
-                <q-form @submit.prevent="addPeer">
-                    <q-input
-                        v-model="form.name"
-                        label="Device name"
-                        v-if="!peer.id"
-                        filled
-                        :error="!!errors.name"
-                    >
-                        <template v-slot:error>
-                            <v-error :error="errors.name"></v-error>
-                        </template>
-                    </q-input>
-
-                    <q-select
-                        v-model="form.wg_id"
-                        :options="interfaces"
-                        option-value="id"
-                        option-label="name"
-                        emit-value
-                        map-options
-                        filled
-                        label="Choose the server"
-                        v-if="!peer.id"
-                    >
-                        <template v-slot:error>
-                            <v-error :error="errors.wg_id"></v-error>
-                        </template>
-                    </q-select>
-
-                    <div v-if="peer.id" class="column q-gutter-y-md">
-                        <div class="row justify-center q-gutter-y-md">
-                            <span class="text-h6">
-                                <strong>The Configuration is Ready</strong>
-                            </span>
-                            <span>Open Wireguard and choose scan barcode</span>
-                            <q-img :src="qrCode" v-if="qrCode" class="canvas" />
-                        </div>
-                        <span class="or">Or Enter the configuration manually</span>
-                        <q-btn
-                            label="Download"
-                            color="blue"
-                            @click="generateConfig"
-                            class=""
+                <div class="row" v-show="!peer.id">
+                    <div class="col-12 mb-2">
+                        <q-input
+                            v-model="form.name"
+                            label="Device Name"
+                            filled
                         />
+                        <v-error :error="errors.name"></v-error>
                     </div>
-                </q-form>
+                    <div class="col-12 mb-2">
+                        <q-select
+                            v-model="form.server_id"
+                            :options="interfaces"
+                            option-value="id"
+                            option-label="name"
+                            emit-value
+                            map-options
+                            filled
+                            label="Choose Server"
+                        />
+                        <v-error :error="errors.server_id"></v-error>
+                    </div>
+                </div>
+
+                <div v-if="peer.id" class="column items-center q-gutter-y-md">
+                    <span class="text-h6">
+                        <strong>Configuration Ready</strong>
+                    </span>
+                    <span>Open WireGuard and scan the QR code</span>
+
+                    <q-img :src="qrCode" v-if="qrCode" class="qr-code" />
+
+                    <span class="or">Or enter the configuration manually</span>
+
+                    <q-btn
+                        label="Download Config"
+                        color="blue"
+                        @click="generateConfig"
+                    />
+                </div>
             </q-card-section>
 
             <q-card-actions align="right">
+                <q-space />
                 <q-btn flat label="Close" v-close-popup />
                 <q-btn
                     label="Save"
                     color="primary"
+                    unelevated
                     @click="addPeer"
                     v-if="!peer.id"
                 />
@@ -71,9 +64,15 @@
         </q-card>
     </q-dialog>
 
-    <q-btn icon="mdi-vpn" color="blue" round @click="loadData">
+    <q-btn
+        icon="mdi-vpn"
+        label="Generator"
+        color="positive"
+        outline
+        @click="loadData"
+    >
         <q-tooltip class="bg-indigo" :offset="[10, 10]">
-            Add a new peer
+            Generate VPN configuration for your device
         </q-tooltip>
     </q-btn>
 </template>
@@ -91,7 +90,7 @@ export default {
             peer: {},
             form: {
                 name: "",
-                wg_id: "",
+                server_id: "",
             },
             errors: {},
             qrCode: "",
@@ -158,7 +157,9 @@ export default {
             });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `${this.peer.name}.conf`;
+            link.download = `${this.peer.name
+                .replace(/\s+/g, "")
+                .toLowerCase()}.conf`;
             link.click();
             URL.revokeObjectURL(link.href);
         },
@@ -167,9 +168,10 @@ export default {
 </script>
 
 <style scoped>
-.canvas {
-    width: 200px;
-    height: 200px;
+.qr-code {
+    width: 300px;
+    height: 300px;
+    max-width: 100%;
 }
 
 .dialog {
@@ -180,39 +182,26 @@ export default {
 .or {
     text-align: center;
     position: relative;
+    font-weight: bold;
+    margin-top: 0.5rem;
 }
-.or:after {
-    content: '';
-    width: 15%;
-    height: .06rem;
+
+.or::after,
+.or::before {
+    content: "";
+    width: 20%;
+    height: 0.06rem;
+    background-color: gray;
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.or::after {
     left: 0;
-    margin: auto;
-    background-color: gray;
 }
 
-.or:before {
-    content: '';
-    width: 15%;
-    height: .06rem;
-    position: absolute;
-    top: 0;
-    bottom: 0;
+.or::before {
     right: 0;
-    margin: auto;
-    background-color: gray;
 }
-
-@media (max-width: 400px) {
-    .or::after {
-        width: 6%;
-    }
-
-    .or::before {
-        width: 6%
-    }
-}
-
 </style>

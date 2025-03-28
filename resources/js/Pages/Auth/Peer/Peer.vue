@@ -3,7 +3,8 @@
         <v-nav-bar />
 
         <div class="flex space-x-4">
-            <h6>Wireguard Generator</h6>
+            <h6>My devices</h6>
+            <q-space/>
             <v-create @created="getPeers" />
         </div>
 
@@ -76,7 +77,7 @@ export default {
             },
             search: {
                 page: 1,
-                per_page: 4,
+                per_page: 10,
             },
         };
     },
