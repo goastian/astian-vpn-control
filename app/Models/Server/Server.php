@@ -41,4 +41,13 @@ class Server extends Master
         return $this->hasMany(Wg::class);
     }
 
+    /**
+     * Show the IP Address 
+     * @return string
+     */
+    public function getIpAddress()
+    {
+        $domain = parse_url($this->url, PHP_URL_HOST);
+        return gethostbyname($domain);
+    }
 }

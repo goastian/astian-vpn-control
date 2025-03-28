@@ -28,7 +28,7 @@ class Wg extends Master
         'private_key',
         'listen_port',
         'subnet',
-        'gateway', 
+        'gateway',
         'dns',
         'active',
         'interface',
@@ -97,6 +97,7 @@ class Wg extends Master
      */
     public function getEndpoint()
     {
-        return "{$this->server->ip}:{$this->listen_port}";
+        $ip = $this->server->getIpAddress();
+        return "{$ip}:{$this->listen_port}";
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Transformers\Server;
 
+use App\Models\Server\Server;
 use League\Fractal\TransformerAbstract;
 
 class ServerTransformer extends TransformerAbstract
@@ -29,41 +30,41 @@ class ServerTransformer extends TransformerAbstract
      *
      * @return array
      */
-    public function transform($data)
+    public function transform(Server $server)
     {
         return [
-            'id' => $data->id,
-            'country' => $data->country,
-            'url' => $data->url,
-            'port' => $data->port,
-            'active' => $data->active,
-            'ipv4' => $data->ip,
-            'ss_domain' => parse_url($data->url, PHP_URL_HOST),
-            'ss_port' => $data->ss_port,
-            'ss_method' => $data->ss_method,
-            'ss_password' => $data->ss_password,
-            'ss_over_https' => $data->ss_over_https,
-            'updated' => $data->updated_at,
-            'created' => $data->created_at,
+            'id' => $server->id,
+            'country' => $server->country,
+            'url' => $server->url,
+            'port' => $server->port,
+            'active' => $server->active,
+            'ipv4' => $server->getIpAddress(),
+            'ss_domain' => parse_url($server->url, PHP_URL_HOST),
+            'ss_port' => $server->ss_port,
+            'ss_method' => $server->ss_method,
+            'ss_password' => $server->ss_password,
+            'ss_over_https' => $server->ss_over_https,
+            'updated' => $server->updated_at,
+            'created' => $server->created_at,
             'links' => [
                 'index' => route('servers.index'),
                 'store' => route('servers.store'),
-                'show' => route('servers.show', ['server' => $data->id]),
-                'update' => route('servers.update', ['server' => $data->id]),
-                'delete' => route('servers.destroy', ['server' => $data->id]),
-                'add_config' => route('shadowsocks.add_config', ['server_id' => $data->id]),
-                'show_config' => route('shadowsocks.show_config', ['server_id' => $data->id]),
-                'start' => route('shadowsocks.start', ['server_id' => $data->id]),
-                'restart' => route('shadowsocks.restart', ['server_id' => $data->id]),
-                'stop' => route('shadowsocks.stop', ['server_id' => $data->id]),
-                'status' => route('shadowsocks.status', ['server_id' => $data->id]),
-                'delete_config' => route('shadowsocks.config_delete', ['server_id' => $data->id]),
+                'show' => route('servers.show', ['server' => $server->id]),
+                'update' => route('servers.update', ['server' => $server->id]),
+                'delete' => route('servers.destroy', ['server' => $server->id]),
+                'add_config' => route('shadowsocks.add_config', ['server_id' => $server->id]),
+                'show_config' => route('shadowsocks.show_config', ['server_id' => $server->id]),
+                'start' => route('shadowsocks.start', ['server_id' => $server->id]),
+                'restart' => route('shadowsocks.restart', ['server_id' => $server->id]),
+                'stop' => route('shadowsocks.stop', ['server_id' => $server->id]),
+                'status' => route('shadowsocks.status', ['server_id' => $server->id]),
+                'delete_config' => route('shadowsocks.config_delete', ['server_id' => $server->id]),
             ],
         ];
     }
 
     /**
-     * Retrieve Original Attributes to filter data
+     * Retrieve Original Attributes to filter server
      *
      * @param string $index
      * @return string|null

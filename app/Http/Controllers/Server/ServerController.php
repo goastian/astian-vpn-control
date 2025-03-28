@@ -54,16 +54,23 @@ class ServerController extends GlobalController
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
-            'ip' => ['required', 'unique:servers,ip', 'ipv4'],
+            'ip' => ['nullable', 'ipv4'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
             'ss_over_https' => ['nullable', new BooleanRule()]
         ]);
 
-        if (!$request->has('method')) {
+        if (empty($request->method)) {
             $request->merge([
                 'ss_method' => 'chacha20-ietf-poly1305',
                 'ss_password' => Str::random(32)
+            ]);
+        }
+
+        if (empty($request->ip)) {
+            $domain = parse_url($request->url, PHP_URL_HOST);
+            $request->merge([
+                'ip' => gethostbyname($domain)
             ]);
         }
 
@@ -76,8 +83,8 @@ class ServerController extends GlobalController
         });
 
         //start sserver
-        //$shadowsocksController->createConfig($server, $server->id);
-        //s$shadowsocksController->start($server, $server->id);
+        $shadowsocksController->createConfig($server, $server->id);
+        $shadowsocksController->start($server, $server->id);
 
         return $this->showOne($server, $server->transformer, 201);
     }
@@ -193,8 +200,10 @@ class ServerController extends GlobalController
         $this->checkContentType(null);
 
         throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
-
-        $shadowsocksController->deleteConfig($server, $server->id);
+        try {
+            $shadowsocksController->deleteConfig($server, $server->id);
+        } catch (\Throwable $th) {
+        }
 
         $server->delete();
 
