@@ -97,7 +97,7 @@ class Wg extends Master
      */
     public function getEndpoint()
     {
-        $ip = $this->server->getIpAddress();
-        return "{$ip}:{$this->listen_port}";
+        $domain = $this->server->getDomain();
+        return "{$domain}:{$this->listen_port}";
     }
 }

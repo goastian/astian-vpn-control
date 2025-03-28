@@ -54,7 +54,7 @@ class ServerController extends GlobalController
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
-            'ip' => ['nullable', 'ipv4'],
+           // 'ip' => ['nullable', 'ipv4'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
             'ss_over_https' => ['nullable', new BooleanRule()]
@@ -66,13 +66,11 @@ class ServerController extends GlobalController
                 'ss_password' => Str::random(32)
             ]);
         }
-
-        if (empty($request->ip)) {
-            $domain = parse_url($request->url, PHP_URL_HOST);
-            $request->merge([
-                'ip' => gethostbyname($domain)
-            ]);
-        }
+        
+        $domain = parse_url($request->url, PHP_URL_HOST);
+        $request->merge([
+            'ip' => gethostbyname($domain)
+        ]);
 
         $this->checkMethod('post');
         $this->checkContentType($this->getPostHeader());

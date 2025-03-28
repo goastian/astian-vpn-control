@@ -50,4 +50,13 @@ class Server extends Master
         $domain = parse_url($this->url, PHP_URL_HOST);
         return gethostbyname($domain);
     }
+
+    /**
+     * get domain
+     * @return array|bool|int|string|null
+     */
+    public function getDomain()
+    {
+        return parse_url($this->url, PHP_URL_HOST);
+    }
 }
