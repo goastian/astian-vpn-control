@@ -58,18 +58,19 @@
                                 <v-error :error="errors.port"></v-error>
                             </template>
                         </q-input>
-
-                        <q-input
+                        <!--
+                            <q-input
                             v-model="form.ip"
                             label="IPv4"
                             filled
                             class="mb-4 col-12 col-md-6"
                             :error="!!errors.ip"
-                        >
+                            >
                             <template v-slot:error>
                                 <v-error :error="errors.ip"></v-error>
                             </template>
                         </q-input>
+                        -->
 
                         <!-- Shadowsocks Configuration -->
                         <q-separator class="full-width q-mt-md" />
