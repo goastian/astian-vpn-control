@@ -102,7 +102,7 @@ class PeerController extends Controller
 
             //Preshared key
             $preshared_key = $peer->generatePresharedkey();
-            $dns = str_replace('/16', '', $wg->subnet);
+            $dns = $wg->enable_dns ? $wg->dns : null;
             $ip_allowed = $this->generateRandomIp($wg->subnet);
 
             //peer
@@ -116,19 +116,20 @@ class PeerController extends Controller
             $peer->save();
 
             //user config
-            $config = [
-                "[Interface]",
-                "PrivateKey = {$keys['private_key']}",
-                "ListenPort = {$wg->listen_port}",
-                "Address =  {$ip_allowed}/32",
-                "",
-                "[Peer]",
-                "PublicKey = {$wg->generatePubKey()}",
-                "Endpoint = {$wg->getEndpoint()}",
-                "AllowedIPs = 0.0.0.0/0, ::/0",
-                "PresharedKey = {$preshared_key}",
-                "PersistentKeepalive = {$peer->persistent_keepalive}",
-            ];
+            $config[] = "[Interface]";
+            $config[] = "PrivateKey = {$keys['private_key']}";
+            $config[] = "ListenPort = {$wg->listen_port}";
+            $config[] = "Address =  {$ip_allowed}/32";
+            if ($wg->enable_dns) {
+                $config[] = "DNS =  {$dns}";
+            }
+            $config[] = "";
+            $config[] = "[Peer]";
+            $config[] = "PublicKey = {$wg->generatePubKey()}";
+            $config[] = "Endpoint = {$wg->getEndpoint()}";
+            $config[] = "AllowedIPs = 0.0.0.0/0, ::/0";
+            $config[] = "PresharedKey = {$preshared_key}";
+            $config[] = "PersistentKeepalive = {$peer->persistent_keepalive}";
 
             $peer->config = implode("\n", $config);
         });
