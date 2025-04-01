@@ -49,7 +49,8 @@ class ShadowsocksController extends GlobalController
             $server->ss_port,
             $server->ss_password,
             $server->ss_method,
-            $server->ss_over_https ? $domain : null
+            $server->ss_over_https ? $domain : null,
+            $server->dns
         );
 
 

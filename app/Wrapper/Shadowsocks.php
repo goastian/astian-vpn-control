@@ -40,7 +40,7 @@ class Shadowsocks
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      * @return \Psr\Http\Message\ResponseInterface|void
      */
-    public function createConfig($port, $password, $method = "chacha20-ietf-poly1305", $domain = null)
+    public function createConfig($port, $password, $method = "chacha20-ietf-poly1305", $domain = null, $dns = null)
     {
 
         $data = [
@@ -51,6 +51,10 @@ class Shadowsocks
 
         if (!empty($domain)) {
             $data["domain"] = $domain;
+        }
+
+        if (!empty($dns)) {
+            $data["dns"] = $dns;
         }
 
         try {

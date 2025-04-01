@@ -50,24 +50,35 @@ class ServerController extends GlobalController
      */
     public function store(Request $request, Server $server, ShadowsocksController $shadowsocksController)
     {
+
         $request->validate([
             'country' => ['string', 'max:190'],
             'url' => ['required', 'unique:servers,url', 'url:http,https'],
             'port' => ['required', 'max:6'],
-           // 'ip' => ['nullable', 'ipv4'],
+            'dns' => ['nullable', 'array'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
             'ss_over_https' => ['nullable', new BooleanRule()]
         ]);
 
+        $request->merge([
+            'ss_password' => Str::random(32)
+        ]);
+
+        if (!empty($request->dns)) {
+            $request->merge([
+                'dns' => json_encode($request->dns),
+            ]);
+        }
+
         if (empty($request->method)) {
             $request->merge([
                 'ss_method' => 'chacha20-ietf-poly1305',
-                'ss_password' => Str::random(32)
             ]);
         }
-        
+
         $domain = parse_url($request->url, PHP_URL_HOST);
+
         $request->merge([
             'ip' => gethostbyname($domain)
         ]);
@@ -76,7 +87,9 @@ class ServerController extends GlobalController
         $this->checkContentType($this->getPostHeader());
 
         DB::transaction(function () use ($request, $server, $shadowsocksController) {
+
             $server = $server->fill($request->all());
+
             $server->save();
         });
 
@@ -113,12 +126,12 @@ class ServerController extends GlobalController
             "ss_method" => ['nullable'],
             "ss_over_https" => ['nullable', new BooleanRule()],
             "generate_password" => ['nullable', new BooleanRule()],
+            "dns" => ['nullable', 'array']
         ]);
-
-
 
         $this->checkMethod('put');
         $this->checkContentType($this->getUpdateHeader());
+
         $updatedsss = false;
 
         DB::transaction(function () use ($request, $server, &$updatedsss) {
@@ -157,6 +170,13 @@ class ServerController extends GlobalController
                 $updatedsss = true;
                 $server->ss_method = $request->ss_method;
             }
+
+            if ($request->has('dns') && $server->dns != $request->dns) {
+                $updated = true;
+                $updatedsss = true;
+                $server->dns = json_encode($request->dns);
+            }
+
 
             if ($request->has('generate_password') && $request->generate_password) {
                 $updated = true;

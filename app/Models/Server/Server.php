@@ -29,7 +29,8 @@ class Server extends Master
         'ss_port',
         'ss_password',
         'ss_method',
-        'ss_over_https'
+        'ss_over_https',
+        'dns'
     ];
 
     /**
@@ -58,5 +59,13 @@ class Server extends Master
     public function getDomain()
     {
         return parse_url($this->url, PHP_URL_HOST);
+    }
+
+    /**
+     * 
+     */
+    public function getDnsAttribute($value)
+    {
+        return json_decode($value);
     }
 }

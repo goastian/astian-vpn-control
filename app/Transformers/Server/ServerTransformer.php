@@ -44,6 +44,7 @@ class ServerTransformer extends TransformerAbstract
             'ss_method' => $server->ss_method,
             'ss_password' => $server->ss_password,
             'ss_over_https' => $server->ss_over_https,
+            'dns' => $server->dns,
             'updated' => $server->updated_at,
             'created' => $server->created_at,
             'links' => [
