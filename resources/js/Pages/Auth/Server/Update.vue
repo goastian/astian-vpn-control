@@ -1,101 +1,132 @@
 <template>
-    <q-dialog v-model="dialog" persistent>
-        <q-card class="w-[900px]">
-            <q-card-section class="row items-center q-pb-none">
-                <q-icon name="mdi-server" size="sm" />
-                <span class="q-ml-sm text-h6">Add Server</span>
-            </q-card-section>
+    <q-dialog v-model="dialog" persistent class="q-pa-md">
+        <q-card class="server-card">
+            <q-bar>
+                <div class="col row justify-between items-center">
+                    <div class="row items-center">
+                        <q-icon name="mdi-server" />
+                        <div class="q-ml-sm">Add Server</div>
+                    </div>
+                    <div>
+                        <q-btn
+                            dense
+                            flat
+                            icon="close"
+                            @click="dialog = false"
+                        />
+                    </div>
+                </div>
+            </q-bar>
 
             <q-card-section>
-                <q-form @submit.prevent="updateServer(form)">
+                <q-form @submit.prevent="updateServer">
                     <div class="row q-col-gutter-md">
-                        <!-- Información del Servidor -->
-                        <div class="col-12 col-md-6">
+                        <div class="mb-4 col-12 col-md-6">
                             <q-input
                                 v-model="form.country"
                                 label="Country"
+                                filled
                                 :error="!!errors.country"
-                                :error-message="errors.country"
                             />
+                            <v-error :error="errors.country"></v-error>
                         </div>
-
-                        <div class="col-12 col-md-6">
+                        <div class="mb-4 col-12 col-md-6">
                             <q-input
                                 v-model="form.url"
                                 label="URL"
+                                filled
                                 :error="!!errors.url"
-                                :error-message="errors.url"
                             />
+                            <v-error :error="errors.url"></v-error>
                         </div>
-
-                        <div class="col-12 col-md-6">
+                        <div class="mb-4 col-12 col-md-6">
                             <q-input
                                 v-model="form.port"
                                 label="Port"
+                                filled
+                                type="number"
                                 :error="!!errors.port"
-                                :error-message="errors.port"
                             />
+                            <v-error :error="errors.port"></v-error>
                         </div>
 
-                        <!-- Sección de Shadowsocks -->
-                        <q-separator class="col-12 q-my-md" />
-                        <div class="col-12">
-                            <span class="text-h6">Shadowsocks Settings</span>
+                        <q-separator class="full-width q-mt-md" />
+                        <div class="full-width text-bold q-mt-md">
+                            Shadowsocks Settings
                         </div>
 
-                        <div class="col-12 col-md-6">
+                        <div class="mb-4 col-12 col-md-6">
                             <q-input
                                 v-model="form.ss_port"
                                 label="Shadowsocks Port"
+                                filled
                                 type="number"
                                 :error="!!errors.ss_port"
-                                :error-message="errors.ss_port"
                             />
+                            <v-error :error="errors.ss_port"></v-error>
                         </div>
 
-                        <div class="col-12 col-md-6">
+                        <div class="mb-4 col-12 col-md-6">
                             <q-select
                                 v-model="form.ss_method"
                                 :options="ciphers"
                                 label="Shadowsocks Ciphers"
+                                :error="!!errors.ss_method"
                             />
+                            <v-error :error="errors.ss_method"></v-error>
                         </div>
-
-                        <div class="col-12 col-md-6">
+                        <div class="mb-4 col-12 col-md-6">
                             <q-checkbox
                                 v-model="form.ss_over_https"
                                 label="Enable Shadowsocks over HTTPS"
                                 color="orange"
+                                class="col-12 col-md-6"
                             />
+                            <v-error :error="errors.ss_over_https"></v-error>
                         </div>
 
-                        <div class="col-12 col-md-6">
-                            <q-checkbox
-                                v-model="form.generate_password"
-                                label="Generate new password"
-                                color="orange"
+                        <div class="col-12">
+                            <div
+                                class="row items-center q-mb-md"
+                                v-for="(dns, index) in form.dns"
+                                :key="index"
+                            >
+                                <q-input
+                                    v-model="form.dns[index]"
+                                    label="DNS"
+                                    filled
+                                    class="col-grow q-mr-sm"
+                                />
+                                <q-btn
+                                    dense
+                                    flat
+                                    icon="mdi-delete"
+                                    color="negative"
+                                    @click="removeDns(index)"
+                                />
+                            </div>
+                            <q-btn
+                                dense
+                                flat
+                                icon="mdi-plus"
+                                color="positive"
+                                label="Add DNS"
+                                @click="addDns"
                             />
                         </div>
                     </div>
                 </q-form>
             </q-card-section>
 
-            <q-separator />
-
             <q-card-actions align="right">
                 <q-btn flat label="Close" @click="dialog = false" />
-                <q-btn
-                    v-if="!form.deleted"
-                    color="primary"
-                    label="Update"
-                    @click="updateServer(form)"
-                />
+                <q-btn label="Update" color="primary" @click="updateServer" />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
-    <q-btn flat round dense color="blue" @click="loadData">
-        <q-icon name="mdi-file-edit" />
+    <q-btn icon="mdi-file-edit" color="blue" round @click="loadData">
+        <q-tooltip class="bg-indigo" :offset="[10, 10]">Edit server</q-tooltip>
     </q-btn>
 </template>
 
@@ -107,26 +138,40 @@ export default {
     data() {
         return {
             dialog: false,
-            errors: {},
             form: {},
             ciphers: ["chacha20-ietf-poly1305", "aes-256-gcm", "aes-128-gcm"],
+            errors: {},
         };
     },
 
     methods: {
         loadData() {
-            this.dialog = true;
             this.form = { ...this.item };
-            Object.assign(this.form, { generate_password: false });
+            if (!this.form.dns) {
+                this.form.dns = [""];
+            }
+            this.dialog = true;
         },
 
-        async updateServer(item) {
+        addDns() {
+            this.form.dns.push("");
+        },
+
+        removeDns(index) {
+            this.form.dns.splice(index, 1);
+        },
+
+        async updateServer() {
             try {
-                const res = await this.$api.put(item.links.update, this.form, {
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                });
+                const res = await this.$api.put(
+                    this.form.links.update,
+                    this.form,
+                    {
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                    }
+                );
 
                 if (res.status === 201) {
                     this.dialog = false;
@@ -134,16 +179,17 @@ export default {
                     this.$emit("updated", res.data.data);
                     this.$q.notify({
                         type: "positive",
-                        message: "Updated successfully",
+                        message: "Server updated!",
                     });
                 }
             } catch (err) {
                 if (err.response?.status === 422) {
                     this.errors = err.response.data.errors;
-                } else if ([403, 404, 500].includes(err.response?.status)) {
+                } else {
                     this.$q.notify({
                         type: "negative",
-                        message: err.response.data.message,
+                        message:
+                            err.response?.data.message || "An error occurred",
                     });
                 }
             }
@@ -151,3 +197,10 @@ export default {
     },
 };
 </script>
+
+<style lang="css" scoped>
+.server-card {
+    width: 100%;
+    max-width: 800px;
+}
+</style>
