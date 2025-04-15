@@ -81,9 +81,7 @@ class ServerController extends GlobalController
         });
 
         //start sserver
-        $shadowsocksController->createConfig($server, $server->id);
-        $shadowsocksController->serverStart($server, $server->id);
-        $shadowsocksController->clientStart($server, $server->id);
+        $shadowsocksController->createConfig($server, $server->id); 
 
         return $this->showOne($server, $server->transformer, 201);
     }
@@ -161,10 +159,7 @@ class ServerController extends GlobalController
         //Reload ssserver
         if ($updatedsss) {
             
-            $shadowsocksController->createConfig($server, $server->id);
-
-            $shadowsocksController->serverStart($server, $server->id);
-            $shadowsocksController->clientStart($server, $server->id);
+            $shadowsocksController->createConfig($server, $server->id); 
         }
 
         return $this->showOne($server, $server->transformer, 201);
