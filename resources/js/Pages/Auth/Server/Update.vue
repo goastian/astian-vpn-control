@@ -32,12 +32,12 @@
                         </div>
                         <div class="mb-4 col-12 col-md-6">
                             <q-input
-                                v-model="form.url"
-                                label="URL"
+                                v-model="form.ip"
+                                label="IP Address"
                                 filled
-                                :error="!!errors.url"
+                                :error="!!errors.ip"
                             />
-                            <v-error :error="errors.url"></v-error>
+                            <v-error :error="errors.ip"></v-error>
                         </div>
                         <div class="mb-4 col-12 col-md-6">
                             <q-input
@@ -75,44 +75,15 @@
                             />
                             <v-error :error="errors.ss_method"></v-error>
                         </div>
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-checkbox
-                                v-model="form.ss_over_https"
-                                label="Enable Shadowsocks over HTTPS"
-                                color="orange"
-                                class="col-12 col-md-6"
-                            />
-                            <v-error :error="errors.ss_over_https"></v-error>
-                        </div>
+                        
 
-                        <div class="col-12">
-                            <div
-                                class="row items-center q-mb-md"
-                                v-for="(dns, index) in form.dns"
-                                :key="index"
-                            >
-                                <q-input
-                                    v-model="form.dns[index]"
-                                    label="DNS"
-                                    filled
-                                    class="col-grow q-mr-sm"
-                                />
-                                <q-btn
-                                    dense
-                                    flat
-                                    icon="mdi-delete"
-                                    color="negative"
-                                    @click="removeDns(index)"
-                                />
-                            </div>
-                            <q-btn
-                                dense
-                                flat
-                                icon="mdi-plus"
-                                color="positive"
-                                label="Add DNS"
-                                @click="addDns"
+                        <div class="mb-4 col-12 col-md-6">
+                            <q-input
+                                v-model="form.dns"
+                                label="DNS Servers"
+                                placeholder="1.1.1.1, 2.2.2.2"
                             />
+                            <v-error :error="errors.dns"></v-error>
                         </div>
                     </div>
                 </q-form>
@@ -120,7 +91,12 @@
 
             <q-card-actions align="right">
                 <q-btn flat label="Close" @click="dialog = false" />
-                <q-btn label="Update" color="primary" @click="updateServer" />
+                <q-btn
+                    label="Update"
+                    :disable="disabled"
+                    color="primary"
+                    @click="updateServer"
+                />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -141,27 +117,18 @@ export default {
             form: {},
             ciphers: ["chacha20-ietf-poly1305", "aes-256-gcm", "aes-128-gcm"],
             errors: {},
+            disabled: false,
         };
     },
 
     methods: {
         loadData() {
             this.form = { ...this.item };
-            if (!this.form.dns) {
-                this.form.dns = [""];
-            }
             this.dialog = true;
         },
 
-        addDns() {
-            this.form.dns.push("");
-        },
-
-        removeDns(index) {
-            this.form.dns.splice(index, 1);
-        },
-
         async updateServer() {
+            this.disable = true;
             try {
                 const res = await this.$api.put(
                     this.form.links.update,
@@ -192,6 +159,8 @@ export default {
                             err.response?.data.message || "An error occurred",
                     });
                 }
+            } finally {
+                this.disabled = false;
             }
         },
     },

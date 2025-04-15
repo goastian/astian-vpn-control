@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 
 export const $server = axios.create({
     baseURL: process.env.MIX_APP_SERVER,
-    timeout: 5000,
+    timeout: 10000,
     withCredentials: true,
     httpsAgent: new https.Agent({ keepAlive: true }),
     headers: {
@@ -14,9 +14,8 @@ export const $server = axios.create({
 });
 
 export const $api = axios.create({
-    timeout: 5000,
-    withCredentials: true,
-    xsrfHeaderName: "elyerr_vpn_csrf_token",
+    timeout: 10000,
+    withCredentials: true, 
     httpsAgent: new https.Agent({ keepAlive: true }),
     headers: {
         Accept: "application/json",

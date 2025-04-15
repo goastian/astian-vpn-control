@@ -10,7 +10,12 @@
             </q-card-section>
 
             <q-card-actions align="right">
-                <q-btn flat label="Close" @click="dialog = false" />
+                <q-btn
+                    color="positive"
+                    outline 
+                    label="Close"
+                    @click="dialog = false"
+                />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -38,13 +43,13 @@ export default {
     methods: {
         async statusServer(item) {
             try {
-                const res = await this.$api.get(item.links.status);
+                const res = await this.$api.get(item.links.server_status);
                 if (res.status === 200) {
-                    this.dialog = true
+                    this.dialog = true;
                     this.message = res.data.message;
                 }
             } catch (err) {
-                if ([403, 404, 500].includes(err.response?.status)) {
+                if ([403, 404,400, 500].includes(err.response?.status)) {
                     this.$q.notify({
                         type: "positive",
                         message: err.response.data.message,

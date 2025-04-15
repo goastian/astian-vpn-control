@@ -179,7 +179,7 @@ export default {
             try {
                 const res = await this.$api.get(`/api/interfaces/${id}`);
                 if (res.status === 200) {
-                    this.interfaces = res.data.data;
+                    this.interfaces = res.data;
                 }
             } catch (error) {}
         },

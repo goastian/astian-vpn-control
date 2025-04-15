@@ -24,13 +24,10 @@
                                     server.country
                                 }}</q-item-label>
                                 <q-item-label class="text-caption text-grey">
-                                    <strong>URL:</strong> {{ server.url }}
+                                    <strong>URL:</strong> {{ server.ip }}
                                 </q-item-label>
                                 <q-item-label class="text-caption text-grey">
                                     <strong>Port:</strong> {{ server.port }}
-                                </q-item-label>
-                                <q-item-label class="text-caption text-grey">
-                                    <strong>IPv4:</strong> {{ server.ipv4 }}
                                 </q-item-label>
                             </q-item-section>
                         </q-item>
@@ -38,7 +35,7 @@
 
                     <q-separator />
 
-                    <q-card-actions align="between">
+                    <q-card-actions align="center">
                         <v-delete @deleted="getServers" :item="server" />
                         <v-update @updated="getServers" :item="server" />
                     </q-card-actions>
@@ -49,8 +46,7 @@
                         <div class="text-bold text-primary text-center">
                             ShadowSocks Settings
                         </div>
-                        <div class="text-caption q-mt-sm text-grey-8">
-                            <strong>Domain:</strong> {{ server.ss_domain }}
+                        <div class="text-caption q-mt-sm text-grey-8"> 
                             <br />
                             <strong>Port:</strong> {{ server.ss_port }} <br />
                             <strong>Password:</strong>
@@ -71,11 +67,29 @@
 
                     <q-separator />
 
-                    <q-card-actions class="justify-around">
-                        <v-start :item="server" /> 
-                        <v-stop :item="server" /> 
-                        <v-status :item="server" /> 
-                    </q-card-actions>
+                    <q-card-section>
+                        <div class="text-bold text-primary text-center">
+                            Server Controls
+                        </div>
+                        <q-card-actions align="center" class="q-mb-sm">
+                            <v-server-start :item="server" />
+                            <v-server-stop :item="server" />
+                            <v-server-status :item="server" />
+                        </q-card-actions>
+                    </q-card-section>
+
+                    <q-separator />
+
+                    <q-card-section>
+                        <div class="text-bold text-primary text-center">
+                            Client Controls
+                        </div>
+                        <q-card-actions align="center">
+                            <v-client-start :item="server" />
+                            <v-client-stop :item="server" />
+                            <v-client-status :item="server" />
+                        </q-card-actions>
+                    </q-card-section>
                 </q-card>
             </div>
         </div>
@@ -96,18 +110,25 @@
 import VCreate from "./Create.vue";
 import VUpdate from "./Update.vue";
 import VDelete from "./Delete.vue";
-import VStart from "./Start.vue";
-import VStatus from "./Status.vue";
-import VStop from "./Stop.vue";
+import VServerStart from "./ServerStart.vue";
+import VServerStatus from "./ServerStatus.vue";
+import VServerStop from "./ServerStop.vue";
+
+import VClientStart from "./ClientStart.vue";
+import VClientStatus from "./ClientStatus.vue";
+import VClientStop from "./ClientStop.vue";
 
 export default {
     components: {
         VCreate,
         VUpdate,
         VDelete,
-        VStart,
-        VStop,
-        VStatus,
+        VServerStart,
+        VServerStop,
+        VServerStatus,
+        VClientStart,
+        VClientStatus,
+        VClientStop,
     },
 
     data() {
@@ -155,9 +176,7 @@ export default {
                     this.servers = res.data.data;
                     this.pages = res.data.meta.pagination;
                 }
-            } catch (err) {
-                console.error("Error fetching servers:", err);
-            }
+            } catch (err) {}
         },
     },
 };

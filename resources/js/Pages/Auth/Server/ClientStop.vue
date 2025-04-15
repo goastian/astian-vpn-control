@@ -1,43 +1,39 @@
 <template>
     <q-dialog v-model="dialog" persistent>
         <template v-slot:activator="{ toggle }">
-            <q-btn
-                flat
-                round
-                color="red"
-                icon="mdi-server-remove"
-                @click="toggle"
-            />
+            <q-btn flat round color="red" icon="mdi-power" @click="toggle" />
         </template>
 
         <q-card class="w-96">
             <q-card-section class="row items-center q-pb-none">
-                <q-icon name="mdi-delete-empty" size="sm" />
-                <span class="q-ml-sm text-h6">Confirm Deletion</span>
+                <span class="q-ml-sm text-h6">Server client</span>
             </q-card-section>
 
-            <q-card-section>
-                Are you sure you want to delete the server? This action cannot
-                be undone.
-            </q-card-section>
+            <q-card-section> Server client will be stopped </q-card-section>
 
             <q-card-actions align="right">
-                <q-btn flat label="Disagree" @click="dialog = false" />
                 <q-btn
-                    color="red"
+                    color="negative"
+                    outline
+                    label="Abort"
+                    @click="dialog = false"
+                />
+                <q-btn
+                    color="positive"
+                    outline
                     :disable="disabled"
                     label="Agree"
-                    @click="deleteServer(item)"
+                    @click="stopServer(item)"
                 />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
     <q-btn
-        flat
-        dense
-        color="red"
-        icon="mdi-delete-empty"
+        icon="stop"
+        color="negative"
+        label="Stop"
+        outline
         @click="dialog = true"
     ></q-btn>
 </template>
@@ -45,8 +41,6 @@
 <script>
 export default {
     props: ["item"],
-
-    emits: ["deleted"],
 
     data() {
         return {
@@ -56,22 +50,26 @@ export default {
     },
 
     methods: {
-        async deleteServer(item) {
+        async stopServer(item) {
             this.disabled = true;
             try {
-                const res = await this.$api.delete(item.links.delete);
+                const res = await this.$api.get(item.links.client_stop);
                 if (res.status === 200) {
-                    this.$emit("deleted", res.data);
+                    this.dialog = false;
+                    this.$q.notify({
+                        type: "positive",
+                        message: res.data.message,
+                    });
                 }
             } catch (err) {
-                if ([403, 400, 404, 500].includes(err.response?.status)) {
+                if ([403, 404, 400, 500].includes(err.response?.status)) {
                     this.$q.notify({
                         type: "negative",
                         message: err.response.data.message,
                     });
                 }
-            } finally {
                 this.dialog = false;
+            } finally {
                 this.disabled = false;
             }
         },

@@ -33,12 +33,12 @@
 
                         <div class="mb-4 col-12 col-md-6">
                             <q-input
-                                v-model="form.url"
-                                label="URL"
+                                v-model="form.ip"
+                                label="IP Address"
                                 filled
-                                :error="!!errors.url"
+                                :error="!!errors.ip"
                             />
-                            <v-error :error="errors.url"></v-error>
+                            <v-error :error="errors.ip"></v-error>
                         </div>
                         <div class="mb-4 col-12 col-md-6">
                             <q-input
@@ -79,44 +79,12 @@
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-checkbox
-                                v-model="form.ss_over_https"
-                                label="Enable Shadowsocks over HTTPS"
-                                color="orange"
-                                class="mb-4 col-12 col-md-6"
+                            <q-input
+                                v-model="form.dns"
+                                label="DNS Servers"
+                                placeholder="1.1.1.1, 2.2.2.2"
                             />
-                            <v-error :error="errors.ss_over_https"></v-error>
-                        </div>
-
-                        <!-- DNS Fields -->
-                        <div class="col-12">
-                            <div
-                                class="row items-center q-mb-md"
-                                v-for="(dns, index) in form.dns"
-                                :key="index"
-                            >
-                                <q-input
-                                    v-model="form.dns[index]"
-                                    label="DNS"
-                                    filled
-                                    class="col-grow q-mr-sm"
-                                />
-                                <q-btn
-                                    dense
-                                    flat
-                                    icon="mdi-delete"
-                                    color="negative"
-                                    @click="removeDns(index)"
-                                />
-                            </div>
-                            <q-btn
-                                dense
-                                flat
-                                icon="mdi-plus"
-                                color="positive"
-                                label="Add DNS"
-                                @click="addDns"
-                            />
+                            <v-error :error="errors.dns"></v-error>
                         </div>
                     </div>
                 </q-form>
@@ -124,7 +92,12 @@
 
             <q-card-actions align="right">
                 <q-btn flat label="Close" @click="dialog = false" />
-                <q-btn label="Save" color="primary" @click="createServer" />
+                <q-btn
+                    label="Save"
+                    :disable="disabled"
+                    color="primary"
+                    @click="createServer"
+                />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -143,14 +116,14 @@ export default {
     data() {
         return {
             dialog: false,
+            disabled: false,
             form: {
                 country: "",
-                url: "",
-                port: 443,
+                ip: "",
+                port: 50051,
                 ss_port: 8388,
-                ss_method: "chacha20-ietf-poly1305",
-                ss_over_https: false,
-                dns: [""],
+                ss_method: "chacha20-ietf-poly1305", 
+                dns: "",
             },
             ciphers: ["chacha20-ietf-poly1305", "aes-256-gcm", "aes-128-gcm"],
             errors: {},
@@ -161,25 +134,18 @@ export default {
         open() {
             this.form = {
                 country: "",
-                url: "",
-                port: 443,
+                ip: "",
+                port: 50051,
                 ss_port: 8388,
-                ss_method: "chacha20-ietf-poly1305",
-                ss_over_https: false,
-                dns: [""],
+                ss_method: "chacha20-ietf-poly1305", 
+                dns: "",
             };
+
             this.dialog = true;
         },
 
-        addDns() {
-            this.form.dns.push("");
-        },
-
-        removeDns(index) {
-            this.form.dns.splice(index, 1);
-        },
-
         async createServer() {
+            this.disabled = true;
             try {
                 const res = await this.$api.post("/api/servers", this.form, {
                     headers: {
@@ -206,6 +172,8 @@ export default {
                             err.response?.data.message || "An error occurred",
                     });
                 }
+            } finally {
+                this.disabled = false;
             }
         },
     },
