@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\Security\KeyGeneratorController;
-use App\Http\Controllers\Socks\ShadowsocksController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Wg\WgController;
 use App\Http\Controllers\Peer\PeerController;
 use App\Http\Controllers\Server\ServerController;
 use App\Http\Controllers\Setting\SettingController;
+use App\Http\Controllers\Socks\ShadowsocksController;
+use App\Http\Controllers\Security\KeyGeneratorController;
 
 Route::get('/gateway/authorization', [KeyGeneratorController::class, 'checkCredentials'])->name('gateway.authorization');
 
@@ -32,13 +32,21 @@ Route::middleware(['json.response'])->group(function () {
         Route::post('/', [SettingController::class, 'store'])->name('store');
     });
 
-    Route::get("/shadowsocks", [ShadowsocksController::class, 'index'])->name('shadowsocks.index');
-    Route::post("/shadowsocks/{server_id}", [ShadowsocksController::class, 'createConfig'])->name('shadowsocks.add_config');
-    Route::get("/shadowsocks/{server_id}/config", [ShadowsocksController::class, 'showConfig'])->name('shadowsocks.show_config');
-    Route::post("/shadowsocks/{server_id}/start", [ShadowsocksController::class, 'start'])->name('shadowsocks.start');
-    Route::post("/shadowsocks/{server_id}/restart", [ShadowsocksController::class, 'restart'])->name('shadowsocks.restart');
-    Route::post("/shadowsocks/{server_id}/stop", [ShadowsocksController::class, 'stop'])->name('shadowsocks.stop');
-    Route::get("/shadowsocks/{server_id}/status", [ShadowsocksController::class, 'status'])->name('shadowsocks.status');
-    Route::delete("/shadowsocks/{server_id}/config/delete", [ShadowsocksController::class, 'deleteConfig'])->name('shadowsocks.config_delete');
+    Route::group([
+        'prefix' => 'shadowsocks',
+        'as' => "shadowsocks."
+    ], function () {
+        
+        Route::get("/", [ShadowsocksController::class, 'index'])->name('shadowsocks.index');
+        
+       // Route::post("/{server_id}", [ShadowsocksController::class, 'createConfig'])->name('server.add_config');
+        
+        Route::get("/{server_id}/server/start", [ShadowsocksController::class, 'serverStart'])->name('server.start');
+        Route::get("/{server_id}/server/stop", [ShadowsocksController::class, 'serverStop'])->name('server.stop');
+        Route::get("/{server_id}/server/status", [ShadowsocksController::class, 'serverStatus'])->name('server.status');
 
+        Route::get("/{server_id}/client/start", [ShadowsocksController::class, 'clientStart'])->name('client.start');
+        Route::get("/{server_id}/client/stop", [ShadowsocksController::class, 'clientStop'])->name('client.stop');
+        Route::get("/{server_id}/client/status", [ShadowsocksController::class, 'clientStatus'])->name('client.status');
+    });
 });

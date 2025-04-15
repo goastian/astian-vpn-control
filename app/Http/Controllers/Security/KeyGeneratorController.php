@@ -20,6 +20,7 @@ class KeyGeneratorController extends Controller
     public function checkCredentials(Request $request, KeyGenerator $keyGenerator)
     {
         $token = $request->header('Authorization');
+        Log::info($token);
         if (!empty($token) && $keyGenerator->verifyAndDecryptToken($token)) { 
             return $this->message(__("Credentials han been verified successfully"), 200);
         }

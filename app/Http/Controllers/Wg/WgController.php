@@ -26,7 +26,7 @@ class WgController extends Controller
     /**
      * Show the all resources
      * @param \App\Models\Server\Wg $wg
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function index(Wg $wg)
     {
@@ -39,12 +39,12 @@ class WgController extends Controller
 
         return $this->showAllByBuilder($data, $wg->transformer);
     }
-
+    
     /**
      * Create a new resource
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Server\Wg $wg
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function store(Request $request, Wg $wg)
     {
@@ -81,7 +81,7 @@ class WgController extends Controller
                 'max:190'
             ],
         ]);
-
+        
         $this->checkMethod('post');
         $this->checkContentType($this->getPostHeader());
 
@@ -97,8 +97,8 @@ class WgController extends Controller
             $wg->subnet = $subnet;
             $wg->gateway = $gateway;
             $wg->save();
-
-            $core = new Core($wg->server->url, $wg->server->port);
+            
+            $core = new Core($wg->server->ip, $wg->server->port);
             $core->mountInterface(
                 $wg->slug,
                 $wg->subnet,
@@ -118,7 +118,7 @@ class WgController extends Controller
     /**
      * Show a resource
      * @param \App\Models\Server\Wg $server
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function show(Wg $server)
     {
@@ -173,7 +173,7 @@ class WgController extends Controller
             }
         });
 
-        $core = new Core($wg->server->url, $wg->server->port);
+        $core = new Core($wg->server->ip, $wg->server->port);
         $core->update($wg->slug, $wg->dns, $wg->enable_dns);
 
         return $this->showOne($wg, $wg->transformer, 200);
@@ -182,7 +182,8 @@ class WgController extends Controller
     /**
      * Destroy current resource
      * @param \App\Models\Server\Wg $wg
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @param \App\Models\Server\Peer $peer
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function destroy(Wg $wg, Peer $peer)
     {
@@ -194,7 +195,7 @@ class WgController extends Controller
 
         DB::transaction(function () use ($wg, $peer) {
 
-            $core = new Core($wg->server->url, $wg->server->port);
+            $core = new Core($wg->server->ip, $wg->server->port);
             $core->removeInterface($wg->slug);
 
             $status = $wg->delete();
@@ -220,7 +221,7 @@ class WgController extends Controller
         $this->checkContentType(null);
 
         //open connection
-        $core = new Core($wg->server->url, $wg->server->port);
+        $core = new Core($wg->server->ip, $wg->server->port);
 
         DB::transaction(function () use ($wg, $peer, $core) {
 
@@ -254,7 +255,7 @@ class WgController extends Controller
     /**
      * Reload Wireguard Network using a config file
      * @param \App\Models\Server\Wg $wg
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function reload(Wg $wg)
     {
@@ -262,7 +263,7 @@ class WgController extends Controller
         $this->checkContentType(null);
 
         DB::transaction(function () use ($wg) {
-            $core = new Core($wg->server->url, $wg->server->port);
+            $core = new Core($wg->server->ip, $wg->server->port);
             $core->reloadNetwork($wg->slug);
             $wg->active = true;
             $wg->push();

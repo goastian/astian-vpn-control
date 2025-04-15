@@ -35,13 +35,10 @@ class ShadowsocksTransformer extends TransformerAbstract
             'id' => $data->id,
             'country' => $data->country,
             'ipv4' => $data->ip,
-            'port' => $data->port,
+            'port' => 1080,
             'ss_port' => $data->ss_port,
-            'ss_password' => $data->ss_password,
-            'ss_method' => $data->ss_method,
-            'links' => [
-                'index' => route('shadowsocks.index'),
-            ],
+            //'ss_password' => $data->ss_password,
+            //'ss_method' => $data->ss_method,             
         ];
     }
 }

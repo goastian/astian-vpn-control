@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package proto.shadowsocks;
+
+message MountRequest {
+  int32 server_port = 1;
+  int32 local_port = 2;
+  string password = 3;
+  string method = 4;
+  string timeout = 5;
+  bool fast_open = 6;
+  bool no_delay = 7;
+  string mode = 8;
+  bool reuse_port = 9;
+  string dns = 10;
+}
+
+message MessageResponse { string message = 1; }
+
+message EmptyRequest {}
+
+service ShadowsocksService {
+  rpc mount(MountRequest) returns (MessageResponse);
+  rpc delete (EmptyRequest) returns (MessageResponse);
+  rpc ServerStart(EmptyRequest) returns (MessageResponse);
+  rpc ServerStatus(EmptyRequest) returns (MessageResponse);
+  rpc ServerStop(EmptyRequest) returns (MessageResponse);
+  rpc ClientStart(EmptyRequest) returns (MessageResponse);
+  rpc ClientStatus(EmptyRequest) returns (MessageResponse);
+  rpc ClientStop(EmptyRequest) returns (MessageResponse);
+}

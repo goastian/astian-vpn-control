@@ -12,7 +12,7 @@ class ShadowsocksController extends GlobalController
 
     public function __construct()
     {
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index');
+        $this->middleware('auth:api')->only('index');
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_create')->only('createConfig');
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_show')->only('showConfig', 'status');
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_update')->only('start', 'stop', 'restart');
@@ -41,37 +41,18 @@ class ShadowsocksController extends GlobalController
     {
         $server = $server->find($server_id);
 
-        $shadowsocks = new Shadowsocks($server->url, $server->port);
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
 
-        $domain = parse_url($server->url, PHP_URL_HOST) ?? null;
+        //$domain = parse_url($server->url, PHP_URL_HOST) ?? null;
 
         $response = $shadowsocks->createConfig(
             $server->ss_port,
             $server->ss_password,
             $server->ss_method,
-            $server->ss_over_https ? $domain : null,
             $server->dns
         );
 
-
-        $data = json_decode($response->getBody());
-        return $this->message($data->message, $response->getStatusCode());
-    }
-
-    /**
-     * showConfig
-     * @param \App\Models\Server\Server $server
-     * @param mixed $server_id
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function showConfig(Server $server, $server_id)
-    {
-        $server = $server->find($server_id);
-        $shadowsocks = new Shadowsocks($server->url, $server->port);
-
-        $response = $shadowsocks->showConfig();
-        $data = json_decode($response->getBody());
-        return $this->showOne($data->data, $response->getStatusCode());
+        return $this->message($response, 200);
     }
 
     /**
@@ -80,39 +61,14 @@ class ShadowsocksController extends GlobalController
      * @param mixed $server_id
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function start(Server $server, $server_id)
+    public function serverStart(Server $server, $server_id)
     {
         $server = $server->find($server_id);
-        $shadowsocks = new Shadowsocks($server->url, $server->port);
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
 
-        try {
+        $response = $shadowsocks->serverStart();
 
-            $shadowsocks->start();
-
-        } catch (\Throwable $th) {
-
-            $this->createConfig($server, $server->id);
-            $shadowsocks->start();
-
-        }
-        return $this->message("Server started successfully", 200);
-    }
-
-    /**
-     * Summary of restart
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Server\Server $server
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function restart(Server $server, $server_id)
-    {
-        $server = $server->find($server_id);
-
-        $shadowsocks = new Shadowsocks($server->url, $server->port);
-
-        $response = $shadowsocks->restart();
-        $data = json_decode($response->getBody());
-        return $this->message($data->message, $response->getStatusCode());
+        return $this->message($response, 200);
     }
 
     /**
@@ -121,16 +77,15 @@ class ShadowsocksController extends GlobalController
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function stop(Server $server, $server_id)
+    public function serverStop(Server $server, $server_id)
     {
         $server = $server->find($server_id);
 
-        $shadowsocks = new Shadowsocks($server->url, $server->port);
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
 
-        $response = $shadowsocks->stop();
+        $response = $shadowsocks->serverStop();
 
-        $data = json_decode($response->getBody());
-        return $this->message($data->message, $response->getStatusCode());
+        return $this->message($response, 200);
     }
 
     /**
@@ -139,16 +94,15 @@ class ShadowsocksController extends GlobalController
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function status(Server $server, $server_id)
+    public function serverStatus(Server $server, $server_id)
     {
         $server = $server->find($server_id);
 
-        $shadowsocks = new Shadowsocks($server->url, $server->port);
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
 
-        $response = $shadowsocks->status();
+        $response = $shadowsocks->serverStatus();
 
-        $data = json_decode($response->getBody());
-        return $this->message($data->message, $response->getStatusCode());
+        return $this->message($response, 200);
     }
 
     /**
@@ -161,11 +115,43 @@ class ShadowsocksController extends GlobalController
     {
         $server = $server->find($server_id);
 
-        $shadowsocks = new Shadowsocks($server->url, $server->port);
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
 
         $response = $shadowsocks->deleteConfig();
 
-        $data = json_decode($response->getBody());
-        return $this->message($data->message, $response->getStatusCode());
+        return $this->message($response, 200);
+    }
+
+    public function clientStart(Server $server, $server_id)
+    {
+        $server = $server->find($server_id);
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
+
+        $response = $shadowsocks->clientStart();
+
+        return $this->message($response, 200);
+    }
+
+
+    public function clientStop(Server $server, $server_id)
+    {
+        $server = $server->find($server_id);
+
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
+
+        $response = $shadowsocks->clientStop();
+
+        return $this->message($response, 200);
+    }
+
+    public function clientStatus(Server $server, $server_id)
+    {
+        $server = $server->find($server_id);
+
+        $shadowsocks = new Shadowsocks($server->ip, $server->port);
+
+        $response = $shadowsocks->clientStatus();
+
+        return $this->message($response, 200);
     }
 }

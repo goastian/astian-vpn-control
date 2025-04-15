@@ -20,7 +20,7 @@ class PeerController extends Controller
     /**
      * Show all resources
      * @param \App\Models\Server\Peer $peer
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function index(Peer $peer)
     {
@@ -35,13 +35,13 @@ class PeerController extends Controller
 
         return $this->showAllByBuilder($data, $peer->transformer);
     }
-
+    
     /**
      * Store a new resource
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Server\Peer $peer
      * @param \App\Models\Server\Wg $wg
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function store(Request $request, Peer $peer, Wg $wg)
     {
@@ -159,14 +159,14 @@ class PeerController extends Controller
     /**
      * On and off the current peer
      * @param \App\Models\Server\Peer $peer
-     * @return \Elyerr\ApiResponse\Assets\Json
+     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public function toggle(Peer $peer)
     {
         $this->checkMethod('put');
         $this->checkContentType(null);
 
-        $core = new Core($peer->wg->server->url, $peer->wg->server->port);
+        $core = new Core($peer->wg->server->ip, $peer->wg->server->port);
 
         if ($peer->active) {
 

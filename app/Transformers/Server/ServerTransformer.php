@@ -35,15 +35,12 @@ class ServerTransformer extends TransformerAbstract
         return [
             'id' => $server->id,
             'country' => $server->country,
-            'url' => $server->url,
+            'ip' => $server->ip,
             'port' => $server->port,
             'active' => $server->active,
-            'ipv4' => $server->getIpAddress(),
-            'ss_domain' => parse_url($server->url, PHP_URL_HOST),
             'ss_port' => $server->ss_port,
             'ss_method' => $server->ss_method,
-            'ss_password' => $server->ss_password,
-            'ss_over_https' => $server->ss_over_https,
+            'ss_password' => $server->ss_password, 
             'dns' => $server->dns,
             'updated' => $server->updated_at,
             'created' => $server->created_at,
@@ -53,13 +50,16 @@ class ServerTransformer extends TransformerAbstract
                 'show' => route('servers.show', ['server' => $server->id]),
                 'update' => route('servers.update', ['server' => $server->id]),
                 'delete' => route('servers.destroy', ['server' => $server->id]),
-                'add_config' => route('shadowsocks.add_config', ['server_id' => $server->id]),
-                'show_config' => route('shadowsocks.show_config', ['server_id' => $server->id]),
-                'start' => route('shadowsocks.start', ['server_id' => $server->id]),
-                'restart' => route('shadowsocks.restart', ['server_id' => $server->id]),
-                'stop' => route('shadowsocks.stop', ['server_id' => $server->id]),
-                'status' => route('shadowsocks.status', ['server_id' => $server->id]),
-                'delete_config' => route('shadowsocks.config_delete', ['server_id' => $server->id]),
+
+                //'server_add_config' => route('shadowsocks.server.add_config', ['server_id' => $server->id]),
+                
+                'server_start' => route('shadowsocks.server.start', ['server_id' => $server->id]),
+                'server_stop' => route('shadowsocks.server.stop', ['server_id' => $server->id]),
+                'server_status' => route('shadowsocks.server.status', ['server_id' => $server->id]),
+
+                'client_start' => route('shadowsocks.client.start', ['server_id' => $server->id]),
+                'client_stop' => route('shadowsocks.client.stop', ['server_id' => $server->id]),
+                'client_status' => route('shadowsocks.client.status', ['server_id' => $server->id]),
             ],
         ];
     }
@@ -73,10 +73,9 @@ class ServerTransformer extends TransformerAbstract
     public static function getOriginalAttributes($index)
     {
         $attributes = [
-            'country' => 'country',
-            'url' => 'url',
+            'country' => 'country', 
             'port' => 'port',
-            'ipv6' => 'ipv6',
+            'ip' => 'ip',
             'uri' => 'uri',
             'active' => 'active',
         ];

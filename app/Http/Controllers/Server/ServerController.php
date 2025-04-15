@@ -53,35 +53,22 @@ class ServerController extends GlobalController
 
         $request->validate([
             'country' => ['string', 'max:190'],
-            'url' => ['required', 'unique:servers,url', 'url:http,https'],
+            'ip' => ['required', 'ipv4'],
             'port' => ['required', 'max:6'],
-            'dns' => ['nullable', 'array'],
+            'dns' => ['nullable', 'max:190'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
-            'ss_over_https' => ['nullable', new BooleanRule()]
         ]);
 
         $request->merge([
             'ss_password' => Str::random(32)
         ]);
 
-        if (!empty($request->dns)) {
-            $request->merge([
-                'dns' => json_encode($request->dns),
-            ]);
-        }
-
         if (empty($request->method)) {
             $request->merge([
                 'ss_method' => 'chacha20-ietf-poly1305',
             ]);
-        }
-
-        $domain = parse_url($request->url, PHP_URL_HOST);
-
-        $request->merge([
-            'ip' => gethostbyname($domain)
-        ]);
+        } 
 
         $this->checkMethod('post');
         $this->checkContentType($this->getPostHeader());
@@ -95,7 +82,8 @@ class ServerController extends GlobalController
 
         //start sserver
         $shadowsocksController->createConfig($server, $server->id);
-        $shadowsocksController->start($server, $server->id);
+        $shadowsocksController->serverStart($server, $server->id);
+        $shadowsocksController->clientStart($server, $server->id);
 
         return $this->showOne($server, $server->transformer, 201);
     }
@@ -120,13 +108,12 @@ class ServerController extends GlobalController
     {
         $request->validate([
             'country' => ['string', 'max:190'],
-            'url' => ['required', 'unique:servers,url,' . $server->id, 'url:http,https'],
+            'ip' => ['required', 'ipv4'],
             'port' => ['required', 'max:6'],
             "ss_port" => ['nullable'],
             "ss_method" => ['nullable'],
-            "ss_over_https" => ['nullable', new BooleanRule()],
             "generate_password" => ['nullable', new BooleanRule()],
-            "dns" => ['nullable', 'array']
+            "dns" => ['nullable', "max:190"]
         ]);
 
         $this->checkMethod('put');
@@ -141,12 +128,7 @@ class ServerController extends GlobalController
             if ($request->has('country') && $server->country != $request->country) {
                 $updated = true;
                 $server->country = $request->country;
-            }
-
-            if ($request->has('url') && $server->url != $request->url) {
-                $updated = true;
-                $server->url = $request->url;
-            }
+            } 
 
             if ($request->has('port') && $server->port != $request->port) {
                 $updated = true;
@@ -157,28 +139,15 @@ class ServerController extends GlobalController
                 $updated = true;
                 $updatedsss = true;
                 $server->ss_port = $request->ss_port;
-            }
+            } 
 
-            if ($request->has('ss_over_https') && $server->ss_over_https != $request->ss_over_https) {
+            if ($server->dns != $request->dns) {
                 $updated = true;
                 $updatedsss = true;
-                $server->ss_over_https = $request->ss_over_https;
+                $server->dns = $request->dns;
             }
 
-            if ($request->has('ss_method') && $server->ss_method != $request->ss_method) {
-                $updated = true;
-                $updatedsss = true;
-                $server->ss_method = $request->ss_method;
-            }
-
-            if ($request->has('dns') && $server->dns != $request->dns) {
-                $updated = true;
-                $updatedsss = true;
-                $server->dns = json_encode($request->dns);
-            }
-
-
-            if ($request->has('generate_password') && $request->generate_password) {
+            if (empty($server->ss_password) || $request->generate_password) {
                 $updated = true;
                 $updatedsss = true;
                 $server->ss_password = Str::random(32);
@@ -191,19 +160,11 @@ class ServerController extends GlobalController
 
         //Reload ssserver
         if ($updatedsss) {
-            try {
-                $shadowsocksController->stop($server, $server->id);
-            } catch (\Throwable $th) {
-            }
-
-            try {
-                $shadowsocksController->deleteConfig($server, $server->id);
-            } catch (\Throwable $th) {
-            }
-
+            
             $shadowsocksController->createConfig($server, $server->id);
 
-            $shadowsocksController->start($server, $server->id);
+            $shadowsocksController->serverStart($server, $server->id);
+            $shadowsocksController->clientStart($server, $server->id);
         }
 
         return $this->showOne($server, $server->transformer, 201);
@@ -218,6 +179,7 @@ class ServerController extends GlobalController
         $this->checkContentType(null);
 
         throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
+        
         try {
             $shadowsocksController->deleteConfig($server, $server->id);
         } catch (\Throwable $th) {
@@ -257,7 +219,9 @@ class ServerController extends GlobalController
         $this->checkContentType(null);
 
         $host = $server->findOrFail($id);
-        $core = new Core($host->url, $host->port);
-        return $core->networkInterfaces();
+        $core = new Core($host->ip, $host->port);
+
+        $data = $core->networkInterfaces();
+        return $data;
     }
 }

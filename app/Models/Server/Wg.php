@@ -88,7 +88,7 @@ class Wg extends Master
      */
     public function getServer()
     {
-        return "{$this->server->url}:{$this->listen_port}";
+        return "{$this->server->ip}:{$this->listen_port}";
     }
 
     /**
@@ -97,7 +97,7 @@ class Wg extends Master
      */
     public function getEndpoint()
     {
-        $domain = $this->server->getDomain();
+        $domain = $this->server->ip;
         return "{$domain}:{$this->listen_port}";
     }
 }
