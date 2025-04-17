@@ -32,7 +32,7 @@ class ShadowsocksController extends GlobalController
     }
 
     /**
-     * Summary of createConfig
+     * add new config
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse 
@@ -42,8 +42,6 @@ class ShadowsocksController extends GlobalController
         $server = $server->find($server_id);
 
         $shadowsocks = new Shadowsocks($server->ip, $server->port);
-
-        //$domain = parse_url($server->url, PHP_URL_HOST) ?? null;
 
         $response = $shadowsocks->createConfig(
             $server->ss_port,
@@ -56,7 +54,7 @@ class ShadowsocksController extends GlobalController
     }
 
     /**
-     * Summary of start
+     * Start the server
      * @param \App\Models\Server\Server $server
      * @param mixed $server_id
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -72,7 +70,7 @@ class ShadowsocksController extends GlobalController
     }
 
     /**
-     * Summary of stop
+     * Stop the server
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -89,7 +87,7 @@ class ShadowsocksController extends GlobalController
     }
 
     /**
-     * Summary of status
+     * Show the status of the server
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -106,7 +104,7 @@ class ShadowsocksController extends GlobalController
     }
 
     /**
-     * Summary of deleteConfig
+     * Remove config of the server
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse
@@ -122,6 +120,12 @@ class ShadowsocksController extends GlobalController
         return $this->message($response, 200);
     }
 
+    /**
+     * Start the server client
+     * @param \App\Models\Server\Server $server
+     * @param mixed $server_id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function clientStart(Server $server, $server_id)
     {
         $server = $server->find($server_id);
@@ -132,7 +136,12 @@ class ShadowsocksController extends GlobalController
         return $this->message($response, 200);
     }
 
-
+    /**
+     * stop the server client
+     * @param \App\Models\Server\Server $server
+     * @param mixed $server_id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function clientStop(Server $server, $server_id)
     {
         $server = $server->find($server_id);
@@ -144,6 +153,12 @@ class ShadowsocksController extends GlobalController
         return $this->message($response, 200);
     }
 
+    /**
+     * Show the status og the server client
+     * @param \App\Models\Server\Server $server
+     * @param mixed $server_id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function clientStatus(Server $server, $server_id)
     {
         $server = $server->find($server_id);

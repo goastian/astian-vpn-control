@@ -58,6 +58,9 @@ class System
             $target,
             [
                 'credentials' => ChannelCredentials::createInsecure(),
+                'grpc.keepalive_timeout_ms' => 5000,  
+                'grpc.keepalive_time_ms' => 10000,    
+                'grpc.keepalive_permit_without_calls' => 1, 
             ]
         );
     }
