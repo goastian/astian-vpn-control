@@ -21,70 +21,13 @@
             <q-card-section>
                 <q-form @submit.prevent="updateServer">
                     <div class="row q-col-gutter-md">
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.country"
-                                label="Country"
-                                filled
-                                :error="!!errors.country"
-                            />
-                            <v-error :error="errors.country"></v-error>
-                        </div>
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.ip"
-                                label="IP Address"
-                                filled
-                                :error="!!errors.ip"
-                            />
-                            <v-error :error="errors.ip"></v-error>
-                        </div>
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.port"
-                                label="Port"
-                                filled
-                                type="number"
-                                :error="!!errors.port"
-                            />
-                            <v-error :error="errors.port"></v-error>
-                        </div>
-
-                        <q-separator class="full-width q-mt-md" />
-                        <div class="full-width text-bold q-mt-md">
-                            Shadowsocks Settings
-                        </div>
-
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.ss_port"
-                                label="Shadowsocks Port"
-                                filled
-                                type="number"
-                                :error="!!errors.ss_port"
-                            />
-                            <v-error :error="errors.ss_port"></v-error>
-                        </div>
-
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-select
-                                v-model="form.ss_method"
-                                :options="ciphers"
-                                label="Shadowsocks Ciphers"
-                                :error="!!errors.ss_method"
-                            />
-                            <v-error :error="errors.ss_method"></v-error>
-                        </div>
-                        
-
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.dns"
-                                label="DNS Servers"
-                                placeholder="1.1.1.1, 2.2.2.2"
-                            />
-                            <v-error :error="errors.dns"></v-error>
-                        </div>
+                        <q-input
+                            v-model="form.country"
+                            label="Country"
+                            filled
+                            :error="!!errors.country"
+                        />
+                        <v-error :error="errors.country"></v-error>
                     </div>
                 </q-form>
             </q-card-section>
@@ -166,10 +109,3 @@ export default {
     },
 };
 </script>
-
-<style lang="css" scoped>
-.server-card {
-    width: 100%;
-    max-width: 800px;
-}
-</style>

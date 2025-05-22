@@ -50,42 +50,6 @@
                             />
                             <v-error :error="errors.port"></v-error>
                         </div>
-
-                        <q-separator class="full-width q-mt-md" />
-                        <div class="full-width text-bold q-mt-md">
-                            Shadowsocks Settings
-                        </div>
-
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.ss_port"
-                                label="Shadowsocks Port"
-                                filled
-                                type="number"
-                                class="mb-4 col-12 col-md-6"
-                                :error="!!errors.ss_port"
-                            />
-                            <v-error :error="errors.ss_port"></v-error>
-                        </div>
-
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-select
-                                v-model="form.ss_method"
-                                :options="ciphers"
-                                label="Shadowsocks Ciphers"
-                                :error="!!errors.ss_method"
-                            />
-                            <v-error :error="errors.ss_method"></v-error>
-                        </div>
-
-                        <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.dns"
-                                label="DNS Servers"
-                                placeholder="1.1.1.1, 2.2.2.2"
-                            />
-                            <v-error :error="errors.dns"></v-error>
-                        </div>
                     </div>
                 </q-form>
             </q-card-section>
@@ -117,15 +81,7 @@ export default {
         return {
             dialog: false,
             disabled: false,
-            form: {
-                country: "",
-                ip: "",
-                port: 50051,
-                ss_port: 8388,
-                ss_method: "chacha20-ietf-poly1305", 
-                dns: "",
-            },
-            ciphers: ["chacha20-ietf-poly1305", "aes-256-gcm", "aes-128-gcm"],
+            form: {},
             errors: {},
         };
     },
@@ -136,9 +92,6 @@ export default {
                 country: "",
                 ip: "",
                 port: 50051,
-                ss_port: 8388,
-                ss_method: "chacha20-ietf-poly1305", 
-                dns: "",
             };
 
             this.dialog = true;

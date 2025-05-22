@@ -9,17 +9,9 @@ message MountRequest {
   string physical_interface = 4;
   string subnet = 5;
   string address = 6;
-  string dns = 7;
-  bool enable_dns = 8;
 }
 
 message EmptyRequest {}
-
-message DnsRequest {
-  string interface_name = 1;
-  string dns = 2;
-  bool enable_dns = 3;
-}
 
 message InterfaceRequest { string interface_name = 1; }
 
@@ -50,8 +42,7 @@ service WireguardService {
   rpc umount(InterfaceRequest) returns (MessageResponse);
   rpc down(InterfaceRequest) returns (MessageResponse);
   rpc up(InterfaceRequest) returns (MessageResponse);
-  rpc restart(InterfaceRequest) returns (MessageResponse);
-  rpc dns(DnsRequest) returns (MessageResponse);
+  rpc restart(InterfaceRequest) returns (MessageResponse); 
   rpc addPeer(AddPeerRequest) returns (MessageResponse);
   rpc deletePeer(DeletePeerRequest) returns (MessageResponse);
   rpc interfaces(EmptyRequest) returns (ListInterfacesResponse);

@@ -31,9 +31,7 @@ class Core extends System
      * @param mixed $gateway
      * @param mixed $private_key
      * @param mixed $physical_interface
-     * @param mixed $listen_port
-     * @param mixed $dns
-     * @param mixed $enable_dns
+     * @param mixed $listen_port 
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      */
     public function mountInterface(
@@ -43,8 +41,6 @@ class Core extends System
         $private_key,
         $physical_interface,
         $listen_port = 51820,
-        $dns,
-        $enable_dns
     ) {
         $request = new MountRequest();
         $request->setInterfaceName($interface_name);
@@ -53,8 +49,6 @@ class Core extends System
         $request->setPrivateKey($private_key);
         $request->setPhysicalInterface($physical_interface);
         $request->setListenPort($listen_port);
-        $request->setDns($dns);
-        $request->setEnableDns($enable_dns);
         
         list($response, $status) = $this->getClient()->mount(
             $request,
@@ -239,32 +233,6 @@ class Core extends System
         $request->setInterfaceName($interface_name);
 
         list($response, $status) = $this->getClient()->restart(
-            $request,
-            $this->getMetadata()
-        )->wait();
-
-        if ($status->code != \Grpc\STATUS_OK) {
-            throw new ReportError("gRPC error: " . $status->details, $status->code);
-        }
-
-        return $response->getMessage();
-    }
-
-    /**
-     * Update interface
-     * @param mixed $interface_name
-     * @param mixed $dns
-     * @param mixed $enable_dns
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
-     */
-    public function update($interface_name, $dns, $enable_dns)
-    {
-        $request = new DnsRequest();
-        $request->setInterfaceName($interface_name);
-        $request->setDns($dns);
-        $request->setEnableDns($enable_dns);
-
-        list($response, $status) = $this->getClient()->dns(
             $request,
             $this->getMetadata()
         )->wait();

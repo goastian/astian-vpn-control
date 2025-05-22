@@ -39,7 +39,7 @@ class WgController extends Controller
 
         return $this->showAllByBuilder($data, $wg->transformer);
     }
-    
+
     /**
      * Create a new resource
      * @param \Illuminate\Http\Request $request
@@ -81,9 +81,6 @@ class WgController extends Controller
                 'max:190'
             ],
         ]);
-        
-        $this->checkMethod('post');
-        $this->checkContentType($this->getPostHeader());
 
         $request->merge([
             'slug' => Str::slug($request->name, "-")
@@ -97,7 +94,7 @@ class WgController extends Controller
             $wg->subnet = $subnet;
             $wg->gateway = $gateway;
             $wg->save();
-            
+
             $core = new Core($wg->server->ip, $wg->server->port);
             $core->mountInterface(
                 $wg->slug,
@@ -105,12 +102,9 @@ class WgController extends Controller
                 $wg->gateway,
                 $wg->private_key,
                 $wg->interface,
-                $wg->listen_port,
-                $wg->dns,
-                $wg->enable_dns ? true : false
+                $wg->listen_port
             );
         });
-
 
         return $this->showOne($wg, $wg->transformer, 201);
     }
@@ -152,29 +146,15 @@ class WgController extends Controller
             ],
         ]);
 
-        $this->checkMethod('put');
-        $this->checkContentType($this->getUpdateHeader());
 
-        $updated = false;
-        DB::transaction(function () use ($request, $wg, &$updated) {
+        DB::transaction(function () use ($request, $wg) {
 
-            if ($request->has('dns') && $wg->dns != $request->dns) {
-                $updated = true;
-                $wg->dns = $request->dns;
-            }
+            $wg->dns = $request->dns; 
+            $wg->enable_dns = $request->enable_dns;
 
-            if ($request->has('enable_dns') && $wg->enable_dns != $request->enable_dns) {
-                $updated = true;
-                $wg->enable_dns = $request->enable_dns;
-            }
+            $wg->push();
 
-            if ($updated) {
-                $wg->push();
-            }
         });
-
-        $core = new Core($wg->server->ip, $wg->server->port);
-        $core->update($wg->slug, $wg->dns, $wg->enable_dns);
 
         return $this->showOne($wg, $wg->transformer, 200);
     }

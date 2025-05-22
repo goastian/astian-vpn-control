@@ -87,20 +87,6 @@ class WireguardServiceClient extends \Grpc\BaseStub {
     }
 
     /**
-     * @param \Proto\Wireguard\DnsRequest $argument input argument
-     * @param array $metadata metadata
-     * @param array $options call options
-     * @return \Grpc\UnaryCall
-     */
-    public function dns(\Proto\Wireguard\DnsRequest $argument,
-      $metadata = [], $options = []) {
-        return $this->_simpleRequest('/proto.wireguard.WireguardService/dns',
-        $argument,
-        ['\Proto\Wireguard\MessageResponse', 'decode'],
-        $metadata, $options);
-    }
-
-    /**
      * @param \Proto\Wireguard\AddPeerRequest $argument input argument
      * @param array $metadata metadata
      * @param array $options call options

@@ -38,14 +38,6 @@ class MountRequest extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string address = 6;</code>
      */
     protected $address = '';
-    /**
-     * Generated from protobuf field <code>string dns = 7;</code>
-     */
-    protected $dns = '';
-    /**
-     * Generated from protobuf field <code>string enable_dns = 8;</code>
-     */
-    protected $enable_dns = '';
 
     /**
      * Constructor.
@@ -59,8 +51,6 @@ class MountRequest extends \Google\Protobuf\Internal\Message
      *     @type string $physical_interface
      *     @type string $subnet
      *     @type string $address
-     *     @type string $dns
-     *     @type string $enable_dns
      * }
      */
     public function __construct($data = NULL) {
@@ -196,50 +186,6 @@ class MountRequest extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->address = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string dns = 7;</code>
-     * @return string
-     */
-    public function getDns()
-    {
-        return $this->dns;
-    }
-
-    /**
-     * Generated from protobuf field <code>string dns = 7;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setDns($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->dns = $var;
-
-        return $this;
-    }
-
-    /**
-     * Generated from protobuf field <code>string enable_dns = 8;</code>
-     * @return string
-     */
-    public function getEnableDns()
-    {
-        return $this->enable_dns;
-    }
-
-    /**
-     * Generated from protobuf field <code>string enable_dns = 8;</code>
-     * @param string $var
-     * @return $this
-     */
-    public function setEnableDns($var)
-    {
-        GPBUtil::checkString($var, True);
-        $this->enable_dns = $var;
 
         return $this;
     }

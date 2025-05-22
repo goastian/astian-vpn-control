@@ -81,7 +81,7 @@ class System
     public function getMetadata(): array
     {
         $keyGenerator = app(KeyGenerator::class);
-        $token = $keyGenerator->generateAndSignToken();
+        $token = $keyGenerator->generateToken();
 
         return [
             'authorization' => [$token]

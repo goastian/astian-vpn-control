@@ -48,40 +48,24 @@ class ServerController extends GlobalController
      * @param \App\Models\Server\Server $server
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function store(Request $request, Server $server, ShadowsocksController $shadowsocksController)
+    public function store(Request $request, Server $server)
     {
 
         $request->validate([
             'country' => ['string', 'max:190'],
             'ip' => ['required', 'ipv4'],
             'port' => ['required', 'max:6'],
-            'dns' => ['nullable', 'max:190'],
-            "ss_port" => ['nullable'],
-            "ss_method" => ['nullable'],
         ]);
-
-        $request->merge([
-            'ss_password' => Str::random(32)
-        ]);
-
-        if (empty($request->method)) {
-            $request->merge([
-                'ss_method' => 'chacha20-ietf-poly1305',
-            ]);
-        } 
 
         $this->checkMethod('post');
         $this->checkContentType($this->getPostHeader());
 
-        DB::transaction(function () use ($request, $server, $shadowsocksController) {
+        DB::transaction(function () use ($request, $server) {
 
             $server = $server->fill($request->all());
 
             $server->save();
         });
-
-        //start sserver
-        $shadowsocksController->createConfig($server, $server->id); 
 
         return $this->showOne($server, $server->transformer, 201);
     }
@@ -93,74 +77,27 @@ class ServerController extends GlobalController
      */
     public function show(Server $server)
     {
-        $this->checkMethod('get');
-        $this->checkContentType(null);
-
         return $this->showOne($server);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Server $server, ShadowsocksController $shadowsocksController)
+    public function update(Request $request, Server $server)
     {
         $request->validate([
             'country' => ['string', 'max:190'],
             'ip' => ['required', 'ipv4'],
             'port' => ['required', 'max:6'],
-            "ss_port" => ['nullable'],
-            "ss_method" => ['nullable'],
-            "generate_password" => ['nullable', new BooleanRule()],
-            "dns" => ['nullable', "max:190"]
         ]);
 
-        $this->checkMethod('put');
-        $this->checkContentType($this->getUpdateHeader());
+        DB::transaction(function () use ($request, $server) {
 
-        $updatedsss = false;
+            $server->country = $request->country;
 
-        DB::transaction(function () use ($request, $server, &$updatedsss) {
+            $server->push();
 
-            $updated = false;
-
-            if ($request->has('country') && $server->country != $request->country) {
-                $updated = true;
-                $server->country = $request->country;
-            } 
-
-            if ($request->has('port') && $server->port != $request->port) {
-                $updated = true;
-                $server->port = $request->port;
-            }
-
-            if ($request->has('ss_port') && $server->ss_port != $request->ss_port) {
-                $updated = true;
-                $updatedsss = true;
-                $server->ss_port = $request->ss_port;
-            } 
-
-            if ($server->dns != $request->dns) {
-                $updated = true;
-                $updatedsss = true;
-                $server->dns = $request->dns;
-            }
-
-            if (empty($server->ss_password) || $request->generate_password) {
-                $updated = true;
-                $updatedsss = true;
-                $server->ss_password = Str::random(32);
-            }
-
-            if ($updated) {
-                $server->push();
-            }
         });
-
-        //Reload ssserver
-        if ($updatedsss) {
-            
-            $shadowsocksController->createConfig($server, $server->id); 
-        }
 
         return $this->showOne($server, $server->transformer, 201);
     }
@@ -168,39 +105,15 @@ class ServerController extends GlobalController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Server $server, ShadowsocksController $shadowsocksController)
+    public function destroy(Server $server)
     {
-        $this->checkMethod('delete');
-        $this->checkContentType(null);
 
         throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
-        
-        try {
-            $shadowsocksController->deleteConfig($server, $server->id);
-        } catch (\Throwable $th) {
-        }
 
         $server->delete();
 
         return $this->showOne($server, $server->transformer);
     }
-
-    /**
-     * On and Off Server
-     * @param \App\Models\Server\Server $server
-     * @return mixed|\Illuminate\Http\JsonResponse
-     */
-    public function toggle(Server $server)
-    {
-        $this->checkMethod('put');
-        $this->checkContentType(null);
-
-        $server->active = !$server->active ? now() : null;
-        $server->push();
-
-        return $this->showOne($server, $server->transformer, 201);
-    }
-
 
     /**
      * show interfaces of interfaces
@@ -210,9 +123,6 @@ class ServerController extends GlobalController
      */
     public function interfaces($id, Server $server)
     {
-        $this->checkMethod('get');
-        $this->checkContentType(null);
-
         $host = $server->findOrFail($id);
         $core = new Core($host->ip, $host->port);
 
