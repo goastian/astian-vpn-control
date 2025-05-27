@@ -3,13 +3,21 @@
 namespace App\Http\Controllers\Security;
 
 use Illuminate\Http\Request;
+use App\Models\Server\Device;
+use Illuminate\Http\Response; 
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Security\KeyGenerator;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 
-class KeyGeneratorController extends Controller
+class GatewayController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('server')->only('checkAuth');
+    }
+
     /**
      * checkCredentials
      * @param \Illuminate\Http\Request $request
@@ -26,5 +34,23 @@ class KeyGeneratorController extends Controller
         }
 
         throw new ReportError(__("Invalid credentials"), 401);
+    }
+
+    /**
+     * check auth
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Server\Device $device
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
+     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function checkAuth(Request $request, Device $device)
+    {
+        $device = $device->find($request->header('X-Device-ID') ?? null);
+        Log::info("request : {$request->header('Authorization')}  |   id {$request->header('X-Device-ID')}");
+        if ($device && $device->id) { 
+            return response("", 200);
+        }
+
+        throw new ReportError("Unauthorized", 401);
     }
 }

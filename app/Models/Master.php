@@ -33,4 +33,15 @@ class Master extends Model
     {
         return date('Y-m-d H:i:s', strtotime($value));
     }
+
+    /**
+     * Retrieve metadata of the model
+     * @param $transformer
+     */
+    public function meta($transformer = null)
+    {
+        $data = fractal($this, $transformer ?? $this->transformer)->toArray()['data'];
+        unset($data['links']);
+        return $data;
+    }
 }
