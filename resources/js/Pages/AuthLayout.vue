@@ -78,6 +78,12 @@ export default {
                     show: this.hasGroup("administrator"),
                 },
                 {
+                    name: "Devices",
+                    icon: "mdi mdi-device",
+                    route: "devices",
+                    show: this.hasGroup("member"),
+                },
+                {
                     name: "Wireguard Generator",
                     icon: "mdi mdi-vpn",
                     route: "peers",

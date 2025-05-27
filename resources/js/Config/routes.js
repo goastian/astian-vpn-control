@@ -44,6 +44,14 @@ const routes = [
                 },
             },
             {
+                path: "/devices",
+                name: "devices",
+                component: () => import("../Pages/Auth/Device/Index.vue"),
+                meta: {
+                    auth: true,
+                },
+            },
+            {
                 path: "/instructions",
                 name: "instructions",
                 component: () => import("../Pages/Auth/Instructions/Index.vue"),
