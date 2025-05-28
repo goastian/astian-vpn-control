@@ -1,21 +1,13 @@
 <?php
-namespace App\Http\Controllers\Peer;
+namespace App\Http\Controllers\Api\Device;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Server\Device;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\GlobalController;
+use App\Http\Controllers\ApiController;
 
-
-class DeviceController extends GlobalController
+class VpnDeviceController extends ApiController
 {
-
-    public function __construct()
-    {
-        $this->middleware('server');
-    }
-
     /**
      * Show devices
      * @param \Illuminate\Http\Request $request

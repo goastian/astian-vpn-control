@@ -1,13 +1,12 @@
 <?php
-
-namespace App\Http\Controllers\Setting;
+namespace App\Http\Controllers\Api\Setting;
 
 use Illuminate\Http\Request;
 use App\Models\Setting\Setting;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\GlobalController as Controller;
+use Illuminate\Support\Facades\DB; 
+use App\Http\Controllers\ApiController;
 
-class SettingController extends Controller
+class SettingController extends ApiController
 {
 
     public function __construct()

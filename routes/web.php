@@ -1,15 +1,14 @@
 <?php
 
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\WebController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\GlobalController;
-use App\Http\Controllers\Setting\SettingController;
 use Elyerr\Passport\Connect\Controllers\CodeController;
 
-Route::get('/redirect', [CodeController::class, 'redirect'])->name('login');
+Route::get('/redirect', [CodeController::class, 'redirect'])->name('redirect');
 Route::get('/callback', [CodeController::class, 'callback'])->name('callback');
-Route::get('/user', [GlobalController::class, 'user']);
-Route::post('/logout', [GlobalController::class, 'logout']);
 
-Route::get("/{any}", function () {
-    return view('layouts.app');
-})->where('any', '^(?!api).*$');
+
+Route::get("/", [WebController::class, 'home'])->name('home');
+Route::get("/dashboard", [DashboardController::class, 'dashboard'])->name('dashboard');

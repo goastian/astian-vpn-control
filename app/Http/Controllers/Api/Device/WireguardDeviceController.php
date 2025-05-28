@@ -1,22 +1,16 @@
 <?php
-
-namespace App\Http\Controllers\Peer;
+namespace App\Http\Controllers\Api\Device;
 
 use App\Wrapper\Core;
 use App\Models\Server\Wg;
 use App\Models\Server\Peer;
-use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\GlobalController as Controller;
+use Illuminate\Support\Facades\DB; 
+use App\Http\Controllers\ApiController;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 
-class PeerController extends Controller
+class WireguardDeviceController extends ApiController
 {
-    public function __construct()
-    {
-        $this->middleware('server');
-    }
-
     /**
      * Show all resources
      * @param \App\Models\Server\Peer $peer
@@ -35,7 +29,7 @@ class PeerController extends Controller
 
         return $this->showAllByBuilder($data, $peer->transformer);
     }
-    
+
     /**
      * Store a new resource
      * @param \Illuminate\Http\Request $request

@@ -1,18 +1,14 @@
 <?php
+namespace App\Http\Controllers\Api\Server;
 
-namespace App\Http\Controllers\Server;
-
-use App\Http\Controllers\Socks\ShadowsocksController;
-use App\Rules\BooleanRule;
-use App\Wrapper\Core;
-use Illuminate\Support\Str;
+use App\Wrapper\Core; 
 use Illuminate\Http\Request;
 use App\Models\Server\Server;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\GlobalController;
+use App\Http\Controllers\ApiController;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 
-class ServerController extends GlobalController
+class ServerController extends ApiController
 {
     public function __construct()
     {

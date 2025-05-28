@@ -99,7 +99,7 @@ abstract class Controller extends RoutingController
     /**
      * Verify the 
      * @param mixed $ip
-     * @return bool|TModel|TValue
+     * @return bool
      */
     public function verifyIpExists($ip)
     {

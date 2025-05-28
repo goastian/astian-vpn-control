@@ -1,16 +1,15 @@
 <?php
-
-namespace App\Http\Controllers\Security;
+namespace App\Http\Controllers\Api\Gateway;
 
 use Illuminate\Http\Request;
 use App\Models\Server\Device;
-use Illuminate\Http\Response; 
-use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log; 
 use App\Models\Security\KeyGenerator;
+use App\Http\Controllers\ApiController;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 
-class GatewayController extends Controller
+class GatewayController extends ApiController
 {
 
     public function __construct()
@@ -47,7 +46,7 @@ class GatewayController extends Controller
     {
         $device = $device->find($request->header('X-Device-ID') ?? null);
         Log::info("request : {$request->header('Authorization')}  |   id {$request->header('X-Device-ID')}");
-        if ($device && $device->id) { 
+        if ($device && $device->id) {
             return response("", 200);
         }
 

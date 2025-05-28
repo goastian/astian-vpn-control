@@ -1,18 +1,17 @@
 <?php
+namespace App\Http\Controllers\Api\Wireguard;
 
-namespace App\Http\Controllers\Wg;
-
-use App\Rules\BooleanRule;
 use App\Wrapper\Core;
 use App\Models\Server\Wg;
+use App\Rules\BooleanRule;
 use App\Models\Server\Peer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Elyerr\ApiResponse\Exceptions\ReportError;
-use App\Http\Controllers\GlobalController as Controller;
+use App\Http\Controllers\ApiController;
+use Elyerr\ApiResponse\Exceptions\ReportError; 
 
-class WgController extends Controller
+class WireguardController extends ApiController
 {
     public function __construct()
     {
@@ -149,7 +148,7 @@ class WgController extends Controller
 
         DB::transaction(function () use ($request, $wg) {
 
-            $wg->dns = $request->dns; 
+            $wg->dns = $request->dns;
             $wg->enable_dns = $request->enable_dns;
 
             $wg->push();
