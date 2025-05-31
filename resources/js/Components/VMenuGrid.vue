@@ -1,39 +1,31 @@
 <template>
-    <v-icon
-        color="grey-darken-1"
-        :icon="$utils.toKebabCase('mdiViewGrid')"
-    >
-    </v-icon>
+    <v-icon color="grey-darken-1" icon="mdi-viewGrid"> </v-icon>
     <v-menu activator="parent" location="end">
-            <v-list class="MenuGrid" rounded>
-                <v-list-item
-                    class="MGitem"
-                    v-for="(item, index) in menus"
-                    :key="index"
-                    :value="item.name"
-                >
-                    <template v-slot:default>
-                        <v-card :subtitle="item.name" >
-                            <template v-slot:default>
-                                <v-icon
-                                    :icon="$utils.toKebabCase(item.icon)"
-                                    size="50"
-                                    color="blue-accent-2"
-                                ></v-icon>
-                            </template>
-                        </v-card>
-                    </template> 
-                </v-list-item>
-            </v-list>
-        </v-menu>
-    <v-menu
-        activator="parent"
-    >
+        <v-list class="MenuGrid" rounded>
+            <v-list-item
+                class="MGitem"
+                v-for="(item, index) in menus"
+                :key="index"
+                :value="item.name"
+            >
+                <template v-slot:default>
+                    <v-card :subtitle="item.name">
+                        <template v-slot:default>
+                            <v-icon
+                                :icon="item.icon"
+                                size="50"
+                                color="blue-accent-2"
+                            ></v-icon>
+                        </template>
+                    </v-card>
+                </template>
+            </v-list-item>
+        </v-list>
     </v-menu>
+    <v-menu activator="parent"> </v-menu>
 </template>
 <script>
 export default {
-
     data() {
         return {
             drawer: false,

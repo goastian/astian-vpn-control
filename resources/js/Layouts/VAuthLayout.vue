@@ -2,15 +2,31 @@
     <q-layout view="lHh Lpr lff" class="app">
         <q-header elevated class="q-px-md q-py-sm">
             <q-toolbar class="flex items-center justify-between">
+                <q-btn
+                    flat
+                    dense
+                    round
+                    icon="menu"
+                    class="q-mr-sm q-md-none"
+                    @click="leftDrawerOpen = !leftDrawerOpen"
+                />
+
                 <q-toolbar-title class="text-h6 text-weight-bold">
                     {{ app_name }}
                 </q-toolbar-title>
+
                 <v-theme />
                 <v-logout />
             </q-toolbar>
         </q-header>
 
-        <q-drawer show-if-above :width="112" class="nav-container" bordered>
+        <q-drawer
+            v-model="leftDrawerOpen"
+            :show-if-above="true"
+            :width="112"
+            class="nav-container"
+            bordered
+        >
             <q-list class="nav-list">
                 <q-item>
                     <q-item-section class="flex justify-center">
@@ -76,6 +92,7 @@ export default {
             user: {},
             routes: [],
             admin_dashboard: {},
+            leftDrawerOpen: true, // control del drawer
         };
     },
 
@@ -95,7 +112,6 @@ export default {
 </script>
 
 <style scoped>
-/* Logo */
 .logo {
     width: 56px;
     height: 56px;

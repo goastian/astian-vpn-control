@@ -1,113 +1,94 @@
 <template>
     <v-auth-layout>
-        <q-page class="q-pa-md column q-gutter-y-sm">
+        <q-page class="q-pa-md column q-gutter-y-lg">
             <v-nav-bar />
-            <div>
-                <q-toolbar>
-                    <q-toolbar-title>Dashboard</q-toolbar-title>
-                </q-toolbar>
 
-                <div class="containerHome row">
-                    <q-card
-                        class="cardHome col-7 q-mb-lg row justify-center items-center"
-                    >
-                        <q-card-section
-                            class="containerInfo col row justify-between items-start"
-                        >
-                            <div class="column items-start q-gutter-y-lg">
-                                <div>
-                                    <h2 class="title">Hi, {{ user.name }}</h2>
-                                    <p class="text-grey">
-                                        What are you doing today?
-                                    </p>
-                                </div>
-                                <q-btn color="primary" @click="goToPeers">
-                                    Add new device
-                                    <q-icon name="mdi-key" class="q-ml-sm" />
-                                </q-btn>
-                            </div>
-                            <div class="containerInfoTag row q-gutter-x-lg">
-                                <div class="row q-gutter-x-sm items-center">
-                                    <span>
-                                        <q-icon name="mdi-remote-desktop" />
-                                        Peers
-                                    </span>
-                                    <div>
-                                        <span>{{ count }}</span>
-                                        <span>/</span>
-                                        <template v-if="user.id">
-                                            <span
-                                                v-if="hasGroup('administrator')"
-                                                >2</span
-                                            >
-                                            <span
-                                                v-if="hasGroup('administrator')"
-                                                >10</span
-                                            >
-                                        </template>
-                                    </div>
-                                </div>
-                                <div class="tag-access">
-                                    <span>Free Access</span>
-                                </div>
-                            </div>
-                        </q-card-section>
-                    </q-card>
-
-                    <div class="Peer col column q-gutter-y-md q-pa-md">
-                        <div class="row justify-between">
-                            <h3 class="text-h6">
-                                <q-icon name="mdi-remote-desktop" /> Peers
-                            </h3>
-                            <span>
-                                <a href=""> See all </a>
-                            </span>
+            <q-card class="cardHome q-mb-md">
+                <q-card-section class="row justify-between items-start">
+                    <div class="column items-start q-gutter-y-lg">
+                        <div>
+                            <h2 class="title">Hi, {{ user.name }}</h2>
+                            <p class="text-grey">What are you doing today?</p>
                         </div>
-                        <div v-if="peers.length === 0" class="text-grey">
-                            No VPN devices connected yet! 🌐 Stay private and
-                            secure—click
-                            <a href=""> here </a>
-                            to add your first device and unlock your private
-                            network!
-                        </div>
-                        <div v-else class="peers q-gutter-y-md">
-                            <v-card-peer
-                                v-for="(item, index) in peers"
-                                key="index"
-                                :title="item.name"
-                                :server="item.network.server_name"
-                                :network="item.network.name"
-                                :port="item.network.listen_port"
-                                :state="item.active"
-                                :peer="item"
-                            />
-                        </div>
+                        <q-btn color="primary" @click="goToPeers">
+                            Add new device
+                            <q-icon name="mdi-key" class="q-ml-sm" />
+                        </q-btn>
                     </div>
+
+                    <!-- RIGHT STATS -->
+                    <div
+                        class="containerInfoTag row q-gutter-x-lg items-center"
+                    >
+                        <div class="row q-gutter-x-sm items-center">
+                            <q-icon name="mdi-remote-desktop" />
+                            <span>Peers</span>
+                            <div class="text-weight-bold">
+                                <span>{{ count }}</span
+                                >/<span v-if="user.id">
+                                    <span v-if="hasGroup('administrator')"
+                                        >10</span
+                                    >
+                                </span>
+                            </div>
+                        </div>
+                        <div class="tag-access">Free Access</div>
+                    </div>
+                </q-card-section>
+            </q-card>
+
+            <!-- PEERS -->
+            <div class="Peer column q-gutter-y-md">
+                <div class="row justify-between items-center">
+                    <h3 class="text-h6">
+                        <q-icon name="mdi-remote-desktop" /> Peers
+                    </h3>
+                    <a href="">See all</a>
+                </div>
+
+                <div v-if="peers.length === 0" class="text-grey">
+                    No VPN devices connected yet! 🌐 Stay private and secure —
+                    click
+                    <a href="">here</a> to add your first device and unlock your
+                    private network!
+                </div>
+
+                <div v-else class="peers q-gutter-y-md">
+                    <v-card-peer
+                        v-for="(item, index) in peers"
+                        :key="index"
+                        :title="item.name"
+                        :server="item.network.server_name"
+                        :network="item.network.name"
+                        :port="item.network.listen_port"
+                        :state="item.active"
+                        :peer="item"
+                    />
                 </div>
             </div>
+
+            <!-- INSTRUCTIONS -->
             <div class="Instructions column q-gutter-y-lg">
                 <div class="row justify-between instructionsTitle">
                     <h3>
-                        <q-icon name="mdi-information-variant" />
-                        instructions
+                        <q-icon name="mdi-information-variant" /> Instructions
                     </h3>
-                    <span>
-                        <a href=""> See All </a>
-                    </span>
+                    <a href="">See all</a>
                 </div>
+
                 <div
                     class="instructionsCards grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
                 >
-                    <div v-for="(item, index) in instructions" :key="index">
-                        <v-card-instruction
-                            :title="item.title"
-                            :description="item.description"
-                            :number="item.number"
-                            :image="item.image"
-                            :btnTitle="item.btnTitle"
-                            :btnUrl="item.btnUrl"
-                        />
-                    </div>
+                    <v-card-instruction
+                        v-for="(item, index) in instructions"
+                        :key="index"
+                        :title="item.title"
+                        :description="item.description"
+                        :number="item.number"
+                        :image="item.image"
+                        :btnTitle="item.btnTitle"
+                        :btnUrl="item.btnUrl"
+                    />
                 </div>
             </div>
         </q-page>
@@ -147,21 +128,18 @@ export default {
             ],
         };
     },
-
     created() {
         this.user = this.$page.props.user;
     },
-
     mounted() {
         this.getPeers();
     },
     methods: {
         hasGroup(name) {
             return this.user.groups.some(
-                (item) => item.slug == name || item.slug == "administrator"
+                (item) => item.slug === name || item.slug === "administrator"
             );
         },
-
         goToPeers() {
             this.$router.push({ name: "peers" });
         },
@@ -170,15 +148,12 @@ export default {
                 const res = await this.$api.get(this.$props.links["peers"]);
                 if (res.status === 200) {
                     this.count = res.data.data.length;
-                    if (res.data.data.length != 0) {
-                        let count =
-                            res.data.data.length < 2 ? res.data.data.length : 2;
-                        for (let i = 0; i < count; i++) {
-                            this.peers.push(res.data.data[i]);
-                        }
-                    }
+                    const visiblePeers = res.data.data.slice(0, 2);
+                    this.peers = [...visiblePeers];
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.error("Error fetching peers:", err);
+            }
         },
     },
 };
@@ -188,101 +163,29 @@ export default {
 .q-card {
     border-radius: 2rem;
 }
-
-.containerHome {
-    height: 100%;
-    min-height: 280px;
-    max-height: 400px;
-    gap: 5rem;
-}
-
-.containerInfo {
-    width: 100%;
-    min-width: 100px;
-    max-width: 600px;
-}
-
 .title {
-    width: 340px;
+    font-size: 2.8rem;
+    line-height: 1.1;
+    max-width: 340px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
-    font-size: 2.8rem;
-    line-height: 1.1;
 }
-
 .tag-access {
     background-color: var(--green);
     padding: 0.2rem 0.5rem;
     border-radius: 0.4rem;
 }
-
-.instructions {
-    display: flex;
-    flex-direction: column;
+.containerInfoTag {
+    align-self: end;
 }
-
-.instructionsTitle > h3 {
+.instructionsTitle h3 {
     font-size: 1rem;
 }
-
-.peers {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: no-wrap;
-}
-
-.enlace {
-    color: var(--blue);
-}
-
-@media (max-width: 1200px) {
-    .cardHome {
-        min-width: 200px;
-        max-width: 500px;
-    }
-
-    .peers {
-        min-width: 300px;
-    }
-}
-
-@media (max-width: 1080px) {
-    .cardHome {
-        width: 100%;
-        min-width: 200px;
-        max-width: 400px;
-    }
-
-    .peers {
-        min-width: auto;
-    }
-}
-
 @media (max-width: 900px) {
-    .containerHome {
-        display: flex;
-        gap: 0;
-        max-height: none;
-    }
-
-    .cardHome {
-        width: 100%;
-        max-width: 100%;
-        min-height: 300px;
-    }
-
-    .containerInfo {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 1rem;
-        height: 100%;
-    }
-
     .containerInfoTag {
-        align-self: end;
+        align-self: start;
+        margin-top: 1rem;
     }
 }
 </style>

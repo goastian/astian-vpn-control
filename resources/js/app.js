@@ -3,9 +3,7 @@ import { createInertiaApp } from "@inertiajs/vue3";
 
 import { custom_components } from "./Config/globalComponents";
 import { layouts } from "./Config/layouts";
-import { utils } from "./Config/utils";
 import { $api, $server } from "./Config/axios";
-import { notyf } from "./Config/notification";
 
 //Quasar
 import { Quasar, Ripple, ClosePopup, Notify, Dialog, Loading } from "quasar";
@@ -48,10 +46,8 @@ createInertiaApp({
         });
 
         //Global properties
-        app.config.globalProperties.$utils = utils;
         app.config.globalProperties.$server = $server;
         app.config.globalProperties.$api = $api;
-        app.config.globalProperties.$notification = notyf;
 
         app.use(plugin);
         app.mount(el);

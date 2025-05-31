@@ -4,50 +4,72 @@
             <v-nav-bar />
 
             <div class="flex space-x-4">
-                <h6>My devices</h6>
+                <h6>My Devices</h6>
                 <q-space />
                 <v-create @created="getPeers" />
             </div>
 
-            <div class="row q-gutter-md q-mt-md justify-center">
-                <q-card
-                    v-for="peer in peers"
-                    :key="peer.id"
-                    class="q-ma-sm q-pa-sm peer-card"
+            <!-- Cards or Empty Message -->
+            <div class="q-mt-md">
+                <div
+                    v-if="peers.length > 0"
+                    class="row q-gutter-md justify-center"
                 >
-                    <q-card-section class="row justify-between items-center">
-                        <div>
-                            <q-icon
-                                :name="peer.active ? 'check_circle' : 'cancel'"
-                                :color="peer.active ? 'green' : 'red'"
-                                size="20px"
-                            />
-                            <span class="q-ml-sm">
-                                {{ peer.active ? "Active" : "Inactive" }}
-                            </span>
-                        </div>
-                        <v-delete @deleted="getPeers" :peer="peer" />
-                    </q-card-section>
+                    <q-card
+                        v-for="peer in peers"
+                        :key="peer.id"
+                        class="q-ma-sm q-pa-sm peer-card"
+                    >
+                        <q-card-section
+                            class="row justify-between items-center"
+                        >
+                            <div>
+                                <q-icon
+                                    :name="
+                                        peer.active ? 'check_circle' : 'cancel'
+                                    "
+                                    :color="peer.active ? 'green' : 'red'"
+                                    size="20px"
+                                />
+                                <span class="q-ml-sm">
+                                    {{ peer.active ? "Active" : "Inactive" }}
+                                </span>
+                            </div>
+                            <v-delete @deleted="getPeers" :peer="peer" />
+                        </q-card-section>
 
-                    <q-card-section class="column items-center">
-                        <div class="text-h5">
-                            {{ peer.name }}
-                        </div>
-                        <div>
-                            <strong>Country:</strong>
-                            {{ peer.network.server_name }} -
-                            <strong>Interface:</strong> {{ peer.network.name }}
-                        </div>
-                    </q-card-section>
+                        <q-card-section class="column items-center">
+                            <div class="text-h5">
+                                {{ peer.name }}
+                            </div>
+                            <div>
+                                <strong>Country:</strong>
+                                {{ peer.network.server_name }} -
+                                <strong>Interface:</strong>
+                                {{ peer.network.name }}
+                            </div>
+                        </q-card-section>
 
-                    <q-card-section class="row justify-between items-center">
-                        <v-toggle @updated="getPeers" :peer="peer" />
-                        <span>{{ peer.created }}</span>
-                    </q-card-section>
-                </q-card>
+                        <q-card-section
+                            class="row justify-between items-center"
+                        >
+                            <v-toggle @updated="getPeers" :peer="peer" />
+                            <span>{{ peer.created }}</span>
+                        </q-card-section>
+                    </q-card>
+                </div>
+
+                <div v-else class="row justify-center q-mt-lg">
+                    <div class="text-grey-7 text-subtitle2">
+                        No devices found yet
+                    </div>
+                </div>
             </div>
 
-            <div class="row justify-center q-mt-md">
+            <div
+                v-if="pages.total_pages > 1"
+                class="row justify-center q-mt-md"
+            >
                 <q-pagination
                     v-model="search.page"
                     color="grey-8"
@@ -94,9 +116,12 @@ export default {
     methods: {
         async getPeers() {
             try {
-                const res = await this.$api.get(this.$page.props.links['peers'], {
-                    params: this.search,
-                });
+                const res = await this.$api.get(
+                    this.$page.props.links["peers"],
+                    {
+                        params: this.search,
+                    }
+                );
                 if (res.status === 200) {
                     this.peers = res.data.data;
                     this.pages = res.data.meta.pagination;

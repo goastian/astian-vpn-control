@@ -3,14 +3,28 @@
         <div class="q-pa-md">
             <v-nav-bar />
 
-            <!-- Header -->
             <div class="row items-center q-mb-sm">
                 <h6 class="text-h6 text-weight-bold">Network devices</h6>
                 <q-space />
             </div>
 
-            <!-- Cards Grid -->
-            <div class="row q-col-gutter-sm">
+            <div
+                v-if="devices.length === 0"
+                class="q-my-md text-grey text-center"
+            >
+                <q-icon
+                    name="mdi-information-outline"
+                    size="32px"
+                    class="q-mb-sm"
+                />
+                <div class="text-subtitle2">No devices found</div>
+                <div class="text-caption">
+                    You haven’t added any network devices yet.
+                </div>
+            </div>
+
+            <!-- DEVICES GRID -->
+            <div v-else class="row q-col-gutter-sm">
                 <q-card
                     v-for="(dv, index) in devices"
                     :key="index"
@@ -52,17 +66,19 @@
                         <div class="text-caption text-grey">
                             Created: {{ dv.created }}
                         </div>
-
                         <div class="text-caption text-grey">
                             Updated: {{ dv.updated }}
                         </div>
-                        <v-delete :item="dv" @deleted="getDevices"></v-delete>
+                        <v-delete :item="dv" @deleted="getDevices" />
                     </q-card-actions>
                 </q-card>
             </div>
 
-            <!-- Pagination -->
-            <div class="row justify-center q-mt-sm">
+            <!-- PAGINATION -->
+            <div
+                v-if="pages.total_pages > 1"
+                class="row justify-center q-mt-sm"
+            >
                 <q-pagination
                     v-model="search.page"
                     color="primary"
@@ -77,6 +93,7 @@
 
 <script>
 import VDelete from "./Delete.vue";
+
 export default {
     components: {
         VDelete,
@@ -97,7 +114,7 @@ export default {
     },
 
     watch: {
-        "search.page"(value) {
+        "search.page"() {
             this.getDevices();
         },
         "search.per_page"(value) {
@@ -120,11 +137,13 @@ export default {
                     params: this.search,
                 });
 
-                if (res.status == 200) {
+                if (res.status === 200) {
                     this.devices = res.data.data;
                     this.pages = res.data.meta.pagination;
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.error("Error fetching devices:", err);
+            }
         },
     },
 };
