@@ -2,15 +2,18 @@
 
 use App\Http\Middleware\CsrfToken;
 use App\Http\Middleware\SecureHeaders;
-use App\Http\Middleware\WantsJsonHeader;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\WantsJsonHeader;
+use App\Http\Middleware\HandleInertiaRequests;
 use Elyerr\Passport\Connect\Middleware\CheckScopes;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Elyerr\Passport\Connect\Middleware\Authorization;
 use Laravel\Passport\Http\Middleware\CheckCredentials;
 use Elyerr\Passport\Connect\Middleware\CheckForAnyScope;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -32,16 +35,34 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(
             remove: [
                 \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
-                Illuminate\Cookie\Middleware\EncryptCookies::class,
+                \Illuminate\Cookie\Middleware\EncryptCookies::class, 
             ],
             append: [
                 SecureHeaders::class,
                 CsrfToken::class,
-                EncryptCookies::class
+                EncryptCookies::class,
+                HandleInertiaRequests::class,
             ]
         );
 
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->renderable(function (Throwable $e) {
+
+            if ($e->getCode() == 401) {
+                if (request()->wantsJson()) {
+                    return new ReportError(__("Unauthenticated"), 401);
+                }
+
+                return redirect(config('system.home_page', '/'));
+            }
+
+            if ($e->getCode() == 403) {
+                if (request()->wantsJson()) {
+                    return new ReportError(__("forbidden"), 403);
+                }
+
+                return redirect(config('system.redirect_to', '/'));
+            }
+        });
     })->create();

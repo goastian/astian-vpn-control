@@ -10,8 +10,6 @@ class WebController extends Controller
 {
   public function home()
   {
-    return Inertia::render("Guest/Home", [
-      'user' => $this->user(),
-    ]);
+    return Inertia::render("Guest/Home");
   }
 }

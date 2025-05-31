@@ -24,6 +24,7 @@
         "google/protobuf": "^4.30",
         "grpc/grpc": "^1.57",
         "guzzlehttp/guzzle": "^7.0",
+        "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9"
     },

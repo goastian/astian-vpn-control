@@ -3,8 +3,8 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Models\Server\Peer;
-use App\Transformers\Wg\WgTransformer;
+use App\Models\Server\Peer; 
+use App\Transformers\Admin\WgTransformer;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

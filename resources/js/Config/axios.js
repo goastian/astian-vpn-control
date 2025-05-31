@@ -15,7 +15,7 @@ export const $server = axios.create({
 
 export const $api = axios.create({
     timeout: 10000,
-    withCredentials: true, 
+    withCredentials: true,
     httpsAgent: new https.Agent({ keepAlive: true }),
     headers: {
         Accept: "application/json",
@@ -29,16 +29,6 @@ $server.interceptors.response.use(
         return response;
     },
     function (error) {
-        if (
-            error.response.status === 401 &&
-            error.response.request.responseURL.includes("/user")
-        ) {
-            return Promise.reject(error);
-        }
-
-        if (error.response.status === 401) {
-            redirectTo();
-        }
         return Promise.reject(error);
     }
 );
@@ -48,9 +38,6 @@ $api.interceptors.response.use(
         return response;
     },
     function (error) {
-        if (error.response.status === 401) {
-            redirectTo();
-        }
         return Promise.reject(error);
     }
 );

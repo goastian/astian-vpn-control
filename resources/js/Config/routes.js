@@ -86,7 +86,7 @@ const routes = [
             {
                 path: "welcome",
                 name: "welcome",
-                component: () => import("../Pages/Guest/Login.vue"),
+                component: () => import("../Pages/Guest/Home.vue"),
                 meta: {
                     auth: false,
                 },

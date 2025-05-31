@@ -3,8 +3,8 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Models\Server\Wg;
-use App\Transformers\Server\ServerTransformer;
+use App\Models\Server\Wg; 
+use App\Transformers\Admin\ServerTransformer;
 
 class Server extends Master
 {
@@ -24,12 +24,9 @@ class Server extends Master
         'country',
         'url',
         'port',
-        'active',
         'ip',
-        'ss_port',
-        'ss_password',
-        'ss_method',
-        'ss_over_https',
+        'client_port',
+        'socks5_port',
         'dns'
     ];
 
@@ -59,5 +56,5 @@ class Server extends Master
     public function getDomain()
     {
         return parse_url($this->url, PHP_URL_HOST);
-    } 
+    }
 }

@@ -21,7 +21,7 @@ class SecureHeaders
         view()->share('nonce', $nonce);
 
         $response = $next($request);
-        if (config('services.policy')) {
+        if (config('system.csp_enabled', false)) {
             $response->headers->set("Referrer-Policy", "no-referrer");
             $response->headers->set("X-Content-Type-Options", "nosniff");
             $response->headers->set("X-Frame-Options", "DENY");

@@ -3,7 +3,7 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Transformers\Peer\DeviceTransformer;
+use App\Transformers\User\DeviceTransformer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Device extends Master

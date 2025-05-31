@@ -1,129 +1,124 @@
 <template>
-    <q-page class="q-pa-md column q-gutter-y-sm">
-        <v-nav-bar />
-        <div>
-            <q-toolbar>
-                <q-toolbar-title>Dashboard</q-toolbar-title>
-            </q-toolbar>
+    <v-auth-layout>
+        <q-page class="q-pa-md column q-gutter-y-sm">
+            <v-nav-bar />
+            <div>
+                <q-toolbar>
+                    <q-toolbar-title>Dashboard</q-toolbar-title>
+                </q-toolbar>
 
-            <div class="containerHome row">
-                <q-card
-                    class="cardHome col-7 q-mb-lg row justify-center items-center"
-                >
-                    <q-card-section
-                        class="containerInfo col row justify-between items-start"
+                <div class="containerHome row">
+                    <q-card
+                        class="cardHome col-7 q-mb-lg row justify-center items-center"
                     >
-                        <div class="column items-start q-gutter-y-lg">
-                            <div>
-                                <h2 class="title">Hi, {{ $user.name }}</h2>
-                                <p class="text-grey">
-                                    What are you doing today?
-                                </p>
-                            </div>
-                            <q-btn color="primary" @click="goToPeers">
-                                Add new device
-                                <q-icon name="mdi-key" class="q-ml-sm" />
-                            </q-btn>
-                        </div>
-                        <div class="containerInfoTag row q-gutter-x-lg">
-                            <div class="row q-gutter-x-sm items-center">
-                                <span>
-                                    <q-icon name="mdi-remote-desktop" />
-                                    Peers
-                                </span>
+                        <q-card-section
+                            class="containerInfo col row justify-between items-start"
+                        >
+                            <div class="column items-start q-gutter-y-lg">
                                 <div>
-                                    <span>{{ count }}</span>
-                                    <span>/</span>
-                                    <template v-if="$user.id">
-                                        <span v-if="hasGroup('administrator')"
-                                            >2</span
-                                        >
-                                        <span v-if="hasGroup('administrator')"
-                                            >10</span
-                                        >
-                                    </template>
+                                    <h2 class="title">Hi, {{ user.name }}</h2>
+                                    <p class="text-grey">
+                                        What are you doing today?
+                                    </p>
+                                </div>
+                                <q-btn color="primary" @click="goToPeers">
+                                    Add new device
+                                    <q-icon name="mdi-key" class="q-ml-sm" />
+                                </q-btn>
+                            </div>
+                            <div class="containerInfoTag row q-gutter-x-lg">
+                                <div class="row q-gutter-x-sm items-center">
+                                    <span>
+                                        <q-icon name="mdi-remote-desktop" />
+                                        Peers
+                                    </span>
+                                    <div>
+                                        <span>{{ count }}</span>
+                                        <span>/</span>
+                                        <template v-if="user.id">
+                                            <span
+                                                v-if="hasGroup('administrator')"
+                                                >2</span
+                                            >
+                                            <span
+                                                v-if="hasGroup('administrator')"
+                                                >10</span
+                                            >
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="tag-access">
+                                    <span>Free Access</span>
                                 </div>
                             </div>
-                            <div class="tag-access">
-                                <span>Free Access</span>
-                            </div>
-                        </div>
-                    </q-card-section>
-                </q-card>
+                        </q-card-section>
+                    </q-card>
 
-                <div class="Peer col column q-gutter-y-md q-pa-md">
-                    <div class="row justify-between">
-                        <h3 class="text-h6">
-                            <q-icon name="mdi-remote-desktop" /> Peers
-                        </h3>
-                        <span>
-                            <router-link :to="{ name: 'peers' }" class="enlace"
-                                >See All</router-link
-                            >
-                        </span>
+                    <div class="Peer col column q-gutter-y-md q-pa-md">
+                        <div class="row justify-between">
+                            <h3 class="text-h6">
+                                <q-icon name="mdi-remote-desktop" /> Peers
+                            </h3>
+                            <span>
+                                <a href=""> See all </a>
+                            </span>
+                        </div>
+                        <div v-if="peers.length === 0" class="text-grey">
+                            No VPN devices connected yet! 🌐 Stay private and
+                            secure—click
+                            <a href=""> here </a>
+                            to add your first device and unlock your private
+                            network!
+                        </div>
+                        <div v-else class="peers q-gutter-y-md">
+                            <v-card-peer
+                                v-for="(item, index) in peers"
+                                key="index"
+                                :title="item.name"
+                                :server="item.network.server_name"
+                                :network="item.network.name"
+                                :port="item.network.listen_port"
+                                :state="item.active"
+                                :peer="item"
+                            />
+                        </div>
                     </div>
-                    <div v-if="peers.length === 0" class="text-grey">
-                        No VPN devices connected yet! 🌐 Stay private and
-                        secure—click
-                        <router-link
-                            :to="{ name: 'peers' }"
-                            class="text-primary"
-                            >here</router-link
-                        >
-                        to add your first device and unlock your private
-                        network!
-                    </div>
-                    <div v-else class="peers q-gutter-y-md">
-                        <v-card-peer
-                            v-for="(item, index) in peers"
-                            key="index"
-                            :title="item.name"
-                            :server="item.network.server_name"
-                            :network="item.network.name"
-                            :port="item.network.listen_port"
-                            :state="item.active"
-                            :peer="item"
-                            class=""
+                </div>
+            </div>
+            <div class="Instructions column q-gutter-y-lg">
+                <div class="row justify-between instructionsTitle">
+                    <h3>
+                        <q-icon name="mdi-information-variant" />
+                        instructions
+                    </h3>
+                    <span>
+                        <a href=""> See All </a>
+                    </span>
+                </div>
+                <div
+                    class="instructionsCards grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                >
+                    <div v-for="(item, index) in instructions" :key="index">
+                        <v-card-instruction
+                            :title="item.title"
+                            :description="item.description"
+                            :number="item.number"
+                            :image="item.image"
+                            :btnTitle="item.btnTitle"
+                            :btnUrl="item.btnUrl"
                         />
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="Instructions column q-gutter-y-lg">
-            <div class="row justify-between instructionsTitle">
-                <h3>
-                    <q-icon name="mdi-information-variant" />
-                    instructions
-                </h3>
-                <span>
-                    <router-link :to="{ name: 'instructions' }" class="enlace"
-                        >See All</router-link
-                    >
-                </span>
-            </div>
-            <div
-                class="instructionsCards grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-            >
-                <div v-for="(item, index) in instructions" :key="index">
-                    <v-card-instruction
-                        :title="item.title"
-                        :description="item.description"
-                        :number="item.number"
-                        :image="item.image"
-                        :btnTitle="item.btnTitle"
-                        :btnUrl="item.btnUrl"
-                    />
-                </div>
-            </div>
-        </div>
-    </q-page>
+        </q-page>
+    </v-auth-layout>
 </template>
 
 <script>
 export default {
-    inject: ["$user"],
     data() {
         return {
+            user: {},
             peers: [],
             count: 0,
             instructions: [
@@ -131,13 +126,13 @@ export default {
                     title: "Create a Peer",
                     description:
                         'Go to the "Peers" section and create a new peer.',
-                    image: "img/key.png",
+                    image: "/img/key.png",
                     number: 1,
                 },
                 {
                     title: "Download WireGuard",
                     description: "Get WireGuard from its official website.",
-                    image: "img/WireGuard.png",
+                    image: "/img/WireGuard.png",
                     number: 2,
                     btnTitle: "Download WireGuard",
                     btnUrl: "https://www.wireguard.com/install/",
@@ -146,18 +141,23 @@ export default {
                     title: "Scan QR code",
                     description:
                         "Download or scan the QR code to configure WireGuard.",
-                    image: "img/QR.png",
+                    image: "/img/QR.png",
                     number: 3,
                 },
             ],
         };
     },
+
+    created() {
+        this.user = this.$page.props.user;
+    },
+
     mounted() {
         this.getPeers();
     },
     methods: {
         hasGroup(name) {
-            return this.$user.groups.some(
+            return this.user.groups.some(
                 (item) => item.slug == name || item.slug == "administrator"
             );
         },
@@ -167,7 +167,7 @@ export default {
         },
         async getPeers() {
             try {
-                const res = await this.$api.get("/api/peers");
+                const res = await this.$api.get(this.$props.links["peers"]);
                 if (res.status === 200) {
                     this.count = res.data.data.length;
                     if (res.data.data.length != 0) {

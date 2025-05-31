@@ -20,6 +20,6 @@ class WantsJsonHeader
             return $next($request);
         }
 
-        throw new ReportError(__("Request is missing the required 'Content-Type: application/json' header"), 404);
+        return redirect()->route('user.dashboard');
     }
 }
