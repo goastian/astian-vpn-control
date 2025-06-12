@@ -3,8 +3,8 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Models\Server\Peer;
-use App\Transformers\Wg\WgTransformer;
+use App\Models\Server\Peer; 
+use App\Transformers\Admin\WgTransformer;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -28,11 +28,16 @@ class Wg extends Master
         'private_key',
         'listen_port',
         'subnet',
-        'gateway', 
+        'gateway',
         'dns',
         'active',
         'interface',
         'server_id',
+        'enable_dns'
+    ];
+
+    public $cast = [
+        'enable_dns' => 'bool'
     ];
 
     public $append = [
@@ -83,7 +88,7 @@ class Wg extends Master
      */
     public function getServer()
     {
-        return "{$this->server->url}:{$this->listen_port}";
+        return "{$this->server->ip}:{$this->listen_port}";
     }
 
     /**
@@ -92,6 +97,7 @@ class Wg extends Master
      */
     public function getEndpoint()
     {
-        return "{$this->server->ip}:{$this->listen_port}";
+        $domain = $this->server->ip;
+        return "{$domain}:{$this->listen_port}";
     }
 }

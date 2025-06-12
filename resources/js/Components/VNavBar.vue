@@ -16,14 +16,8 @@
                         :key="index"
                         v-show="item.show"
                     >
-                        <router-link
-                            :to="{ name: item.route }"
-                            class="enlace"
-                            :class="{ active: isActive(item.route) }"
-                        >
-                            <span :class="item.icon" />
-                            <span>{{ item.name }}</span>
-                        </router-link>
+                        <span :class="item.icon" />
+                        <span>{{ item.name }}</span>
                     </li>
                 </ul>
             </nav>
@@ -41,7 +35,6 @@
 
 <script>
 export default {
-    inject: ["$user"],
     data() {
         return {
             showLeftArrow: false,
@@ -88,6 +81,10 @@ export default {
                 },
             ],
         };
+    },
+
+    created() {
+        this.user = this.$page.props.user;
     },
 
     beforeUnmount() {

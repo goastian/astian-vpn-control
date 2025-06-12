@@ -14,18 +14,21 @@ if (!function_exists('settingLoad')) {
      */
     function settingLoad($key, $value, $group = null, $userId = null)
     {
-        Setting::firstOrCreate(
-            [
-                'key' => $key,
-                'user_id' => $userId,
-                'group' => $group
-            ],
-            [
-                'key' => $key,
-                'value' => $value,
-                'group' => $group ? Str::slug($group, '_') : null
-            ]
-        );
+        try {
+            Setting::firstOrCreate(
+                [
+                    'key' => $key,
+                    'user_id' => $userId,
+                    'group' => $group
+                ],
+                [
+                    'key' => $key,
+                    'value' => $value,
+                    'group' => $group ? Str::slug($group, '_') : null
+                ]
+            );
+        } catch (\Throwable $th) {
+        }
     }
 }
 
@@ -41,18 +44,21 @@ if (!function_exists('settingAdd')) {
      */
     function settingAdd($key, $value, $group = null, $userId = null)
     {
-        Setting::updateOrCreate(
-            [
-                'key' => $key,
-                'user_id' => $userId,
-                'group' => $group
-            ],
-            [
-                'key' => $key,
-                'value' => $value,
-                'group' => $group ? Str::slug($group, '_') : null
-            ]
-        );
+        try {
+            Setting::updateOrCreate(
+                [
+                    'key' => $key,
+                    'user_id' => $userId,
+                    'group' => $group
+                ],
+                [
+                    'key' => $key,
+                    'value' => $value,
+                    'group' => $group ? Str::slug($group, '_') : null
+                ]
+            );
+        } catch (\Throwable $th) {
+        }
     }
 }
 

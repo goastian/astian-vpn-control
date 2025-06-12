@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Elyerr\ApiResponse\Exceptions\ReportError;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,6 +16,10 @@ class WantsJsonHeader
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return $next($request);
+        if ($request->wantsJson()) {
+            return $next($request);
+        }
+
+        return redirect()->route('user.dashboard');
     }
 }

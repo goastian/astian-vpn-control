@@ -38,7 +38,8 @@ import {
     QBtnGroup,
     QBanner,
     QScrollArea,
-    QSpinner
+    QSpinner,
+    QCheckbox
 } from "quasar";
 
 export const QComponents = [
@@ -81,5 +82,6 @@ export const QComponents = [
     QBtnGroup,
     QBanner,
     QScrollArea,
-    QSpinner
+    QSpinner,
+    QCheckbox
 ];

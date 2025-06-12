@@ -5,10 +5,10 @@
                 <q-list>
                     <q-item>
                         <q-item-section>
-                            <q-item-label>{{ $user.email }}</q-item-label>
+                            <q-item-label>{{ user.email }}</q-item-label>
                             <q-item-label caption
-                                >{{ $user.name }}
-                                {{ $user.last_name }}</q-item-label
+                                >{{ user.name }}
+                                {{ user.last_name }}</q-item-label
                             >
                         </q-item-section>
                     </q-item>
@@ -17,15 +17,21 @@
                 <q-separator />
 
                 <q-list>
-                    <q-item clickable v-ripple @click="myAccount">
+                    <q-item clickable v-ripple @click="dashboard">
                         <q-item-section avatar>
                             <q-icon name="mdi-account-key" />
                         </q-item-section>
                         <q-item-section>
-                            <q-item-label
-                                >Administration information</q-item-label
-                            >
-                            <q-item-label caption>My Account</q-item-label>
+                            <q-item-label>Dashboard</q-item-label>
+                        </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-ripple @click="myAccount">
+                        <q-item-section avatar>
+                            <q-icon name="mdi-home" />
+                        </q-item-section>
+                        <q-item-section>
+                            <q-item-label>My Account</q-item-label>
                         </q-item-section>
                     </q-item>
 
@@ -47,18 +53,29 @@
 
 <script>
 export default {
-    inject: ["$user"],
+    data() {
+        return {
+            user: {},
+        };
+    },
 
+    created() {
+        this.user = this.$page.props.user;
+    },
     methods: {
         async logout() {
             try {
-                const res = await this.$api.post("/logout");
+                const res = await this.$api.post(
+                    this.$page.props.routes["logout"]
+                );
                 if (res.status === 200) {
-                    this.$router.push({ name: "welcome" });
+                    window.location.href = this.$page.props.routes["home"];
                 }
-            } catch (err) {
-                console.log(err);
-            }
+            } catch (err) {}
+        },
+
+        dashboard() {
+            window.location.href = this.$page.props.routes["dashboard"];
         },
 
         myAccount() {

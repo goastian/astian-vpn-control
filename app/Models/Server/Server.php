@@ -3,8 +3,8 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Models\Server\Wg;
-use App\Transformers\Server\ServerTransformer;
+use App\Models\Server\Wg; 
+use App\Transformers\Admin\ServerTransformer;
 
 class Server extends Master
 {
@@ -24,8 +24,10 @@ class Server extends Master
         'country',
         'url',
         'port',
-        'active',
-        'ip'
+        'ip',
+        'client_port',
+        'socks5_port',
+        'dns'
     ];
 
     /**
@@ -37,4 +39,22 @@ class Server extends Master
         return $this->hasMany(Wg::class);
     }
 
+    /**
+     * Show the IP Address 
+     * @return string
+     */
+    public function getIpAddress()
+    {
+        $domain = parse_url($this->url, PHP_URL_HOST);
+        return gethostbyname($domain);
+    }
+
+    /**
+     * get domain
+     * @return array|bool|int|string|null
+     */
+    public function getDomain()
+    {
+        return parse_url($this->url, PHP_URL_HOST);
+    }
 }

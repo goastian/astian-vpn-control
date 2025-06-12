@@ -32,7 +32,9 @@ RUN apk add --no-cache \
     npm \
     curl \
     wireguard-tools \
-    unzip
+    unzip \
+    php83-pecl-grpc \
+    grpc
 
 RUN getent passwd www-data || adduser -S -G www-data -s /usr/sbin/nologin www-data
 

@@ -2,31 +2,26 @@
 
 namespace App\Wrapper;
 
-use GuzzleHttp\Client;
-use Illuminate\Http\Response;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Exception\ConnectException;
+use App\Wrapper\System;
+use Proto\Wireguard\DnsRequest;
+use Proto\Wireguard\EmptyRequest;
+use Proto\Wireguard\MountRequest;
+use Proto\Wireguard\AddPeerRequest;
+use Proto\Wireguard\InterfaceRequest;
+use Proto\Wireguard\DeletePeerRequest; 
+use Proto\Wireguard\WireguardServiceClient;
 use Elyerr\ApiResponse\Exceptions\ReportError;
 
-final class Core
+class Core extends System
 {
-    /**
-     * Client HTTP
-     * @var Client
-     */
-    public $client;
 
-    public function __construct($endpoint, $port = 8000)
+    public function __construct(string $endpoint, int $port = 50051)
     {
-        $this->client = new Client([
-            'base_uri' => "{$endpoint}:{$port}",
-            'timeout' => 2.0,
-            'verify' => false,
-            'headers' => [
-                'Authorization' => "Bearer " . request()->cookie(config('passport_connect.jwt_token')),
-            ],
-        ]);
+        parent::__construct(
+            $endpoint,
+            $port,
+            WireguardServiceClient::class
+        );
     }
 
     /**
@@ -36,221 +31,216 @@ final class Core
      * @param mixed $gateway
      * @param mixed $private_key
      * @param mixed $physical_interface
-     * @param mixed $listen_port
+     * @param mixed $listen_port 
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
-     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
      */
-    public function mountInterface($interface_name, $subnet, $gateway, $private_key, $physical_interface, $listen_port = 51820)
-    {
-        try {
-            $response = $this->client->request("POST", "/api/wireguard/mount", [
-                'json' => [
-                    'interface_name' => $interface_name,
-                    'private_key' => $private_key,
-                    'physical_interface' => $physical_interface,
-                    'listen_port' => $listen_port,
-                    'subnet' => $subnet,
-                    'address' => $gateway
-                ]
-            ]);
+    public function mountInterface(
+        $interface_name,
+        $subnet,
+        $gateway,
+        $private_key,
+        $physical_interface,
+        $listen_port = 51820,
+    ) {
+        $request = new MountRequest();
+        $request->setInterfaceName($interface_name);
+        $request->setSubnet($subnet);
+        $request->setAddress($gateway);
+        $request->setPrivateKey($private_key);
+        $request->setPhysicalInterface($physical_interface);
+        $request->setListenPort($listen_port);
+        
+        list($response, $status) = $this->getClient()->mount(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
-            if ($response->getStatusCode() == 201) {
-                return response(null, 201);
-            }
-
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        return $response->getMessage();
     }
 
     /**
      * Remove the Wireguard Network Interface
      * @param mixed $interface_name
-     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      */
     public function removeInterface($interface_name)
     {
-        try {
-            $response = $this->client->request("DELETE", "/api/wireguard/umount", [
-                'json' => [
-                    "interface_name" => $interface_name
-                ]
-            ]);
+        $request = new InterfaceRequest();
+        $request->setInterfaceName($interface_name);
 
-            if ($response->getStatusCode() == 201) {
-                return response(null, 201);
-            }
+        list($response, $status) = $this->getClient()->umount(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        return $response->getMessage();
     }
 
     /**
      * Shutdown the Wireguard Network Interface
      * @param mixed $interface_name
-     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      */
     public function shutdownInterface($interface_name)
     {
-        try {
-            $response = $this->client->request("GET", "/api/wireguard/down/$interface_name");
+        $request = new InterfaceRequest();
+        $request->setInterfaceName($interface_name);
 
-            if ($response->getStatusCode() == 200) {
-                return response(null, 200);
-            }
+        list($response, $status) = $this->getClient()->down(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        return $response->getMessage();
     }
 
     /**
      * Start the wireguard network interface
      * @param mixed $interface_name
-     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      */
     public function startInterface($interface_name)
     {
-        try {
-            $response = $this->client->request("GET", "/api/wireguard/up/$interface_name");
+        $request = new InterfaceRequest();
+        $request->setInterfaceName($interface_name);
 
-            if ($response->getStatusCode() == 200) {
-                return response(null, 200);
-            }
+        list($response, $status) = $this->getClient()->up(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        return $response->getMessage();
     }
 
     /**
      * Add new peer in the Wireguard Network Interface
+     * @param mixed $userId
      * @param mixed $device_name
      * @param mixed $interface_name
      * @param mixed $public_key
      * @param mixed $allowed_ips
+     * @param mixed $endpoint
      * @param mixed $preshared_key
      * @param mixed $persistent_keepalive
-     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      */
-    public function addPeer($device_name, $interface_name, $public_key, $allowed_ips, $endpoint, $preshared_key, $persistent_keepalive)
-    {
-        try {
-            $response = $this->client->request("POST", "/api/wireguard/peer/add", [
-                'json' => [
-                    "interface_name" => $interface_name,
-                    "public_key" => $public_key,
-                    "allowed_ips" => $allowed_ips,
-                    "preshared_key" => $preshared_key,
-                    "persistent_keepalive" => $persistent_keepalive,
-                    "endpoint" => $endpoint,
-                    "device_name" => $device_name
-                ]
-            ]);
+    public function addPeer(
+        $userId,
+        $device_name,
+        $interface_name,
+        $public_key,
+        $allowed_ips,
+        $endpoint,
+        $preshared_key,
+        $persistent_keepalive
+    ) {
 
-            if ($response->getStatusCode() == 201) {
-                return response(null, 201);
-            }
+        $request = new AddPeerRequest();
+        $request->setUserId($userId);
+        $request->setDeviceName($device_name);
+        $request->setInterfaceName($interface_name);
+        $request->setPublicKey($public_key);
+        $request->setAllowedIps($allowed_ips);
+        $request->setEndpoint($endpoint);
+        $request->setPresharedKey($preshared_key);
+        $request->setPersistentKeepalive($persistent_keepalive);
 
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        list($response, $status) = $this->getClient()->addPeer(
+            $request,
+            $this->getMetadata()
+        )->wait();
+
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        return $response->getMessage();
     }
 
     /**
-     * Delete peers from Wireguard Network Interface
+     * Delete peer
      * @param mixed $interface_name
      * @param mixed $public_key
-     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory|void
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      */
     public function deletePeer($interface_name, $public_key)
     {
-        try {
-            $response = $this->client->request("DELETE", "/api/wireguard/peer/delete", [
-                'json' => [
-                    "interface_name" => $interface_name,
-                    "public_key" => $public_key
-                ]
-            ]);
+        $request = new DeletePeerRequest();
+        $request->setInterfaceName($interface_name);
+        $request->setPublicKey($public_key);
 
-            if ($response->getStatusCode() == 201) {
-                return response(null, 201);
-            }
+        list($response, $status) = $this->getClient()->deletePeer(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        return $response->getMessage();
     }
 
     /**
      * Get the all interface available on the server
-     * @return mixed|\Illuminate\Http\JsonResponse|void
+     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      */
     public function networkInterfaces()
     {
-        try {
-            $response = $this->client->request("GET", "/api/system/network-interfaces");
+        list($response, $status) = $this->getClient()->interfaces(
+            new EmptyRequest(),
+            $this->getMetadata()
+        )->wait();
 
-            if ($response->getStatusCode() == 200) {
-                $data = json_decode($response->getBody(), true);
-                return response()->json($data, 200);
-            }
-
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        $interfaces = [];
+        foreach ($response->getData() as $interface) {
+            $interfaces[] = [
+                'interface' => $interface->getInterface(),
+            ];
+        }
+
+        return $interfaces;
     }
 
     /**
      * Force to reload the wireguard network interface using the config file
      * @param mixed $interface_name
      * @throws \Elyerr\ApiResponse\Exceptions\ReportError
-     * @return mixed|\Illuminate\Http\JsonResponse|void
      */
     public function reloadNetwork($interface_name)
     {
-        try {
-            $response = $this->client->request(
-                "POST",
-                "/api/system/reload-networks",
-                [
-                    'json' => [
-                        "name" => $interface_name,
-                    ]
-                ]
-            );
+        $request = new InterfaceRequest();
+        $request->setInterfaceName($interface_name);
 
-            if ($response->getStatusCode() == 201) {
-                return response()->json(__("Wireguard Network Interface started successfully"), 200);
-            }
+        list($response, $status) = $this->getClient()->restart(
+            $request,
+            $this->getMetadata()
+        )->wait();
 
-        } catch (\Throwable $th) {
-            if (app()->environment(['local', 'dev'])) {
-                throw new ReportError($th->getMessage(), $th->getCode());
-            }
-            throw new ReportError(__('Internal server error. Please contact support if the issue persists.'), 500);
+        if ($status->code != \Grpc\STATUS_OK) {
+            throw new ReportError("gRPC error: " . $status->details, $status->code);
         }
+
+        return $response->getMessage();
     }
 }

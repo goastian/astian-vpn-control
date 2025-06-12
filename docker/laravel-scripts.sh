@@ -7,6 +7,9 @@ cd /var/www || exit 1
 echo "Generating application key..."
 php artisan key:generate
 
+echo "Generating priv and pub key"
+php artisan settings:generate-keys --force
+
 echo "Running migrations..."
 php artisan migrate --force
 echo "Migrations completed successfully."

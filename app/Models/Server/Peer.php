@@ -3,8 +3,8 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Models\Server\Wg;
-use App\Transformers\Peer\PeerTransformer;
+use App\Models\Server\Wg; 
+use App\Transformers\User\PeerTransformer;
 
 class Peer extends Master
 {

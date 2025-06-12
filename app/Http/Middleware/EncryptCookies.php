@@ -20,7 +20,6 @@ class EncryptCookies extends Middleware
         parent::__construct($encrypter);
 
         $passport = [];
-        $passport = config('passport_connect.server_cookie_names');
         $passport[] = config('passport_connect.jwt_token');
 
         $this->except = array(

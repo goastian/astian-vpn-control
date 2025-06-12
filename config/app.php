@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    "org_name" => "Elyerr Org",
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
