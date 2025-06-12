@@ -4,6 +4,7 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { custom_components } from "./Config/globalComponents";
 import { layouts } from "./Config/layouts";
 import { $api } from "./Config/axios";
+import "./Config/matomo";
 
 //Quasar
 import { Quasar, Ripple, ClosePopup, Notify, Dialog, Loading } from "quasar";
