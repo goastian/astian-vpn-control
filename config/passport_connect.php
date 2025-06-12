@@ -5,33 +5,19 @@ use Illuminate\Support\Str;
 return [
 
     /**
-     * Master domain 
-     * Domain host where the server_cookie_names are created.
-     * Used for authentication with module is true.
-     */
-    'domain' => env('PASSPORT_MASTER_DOMAIN', null),
-
-    /**
-     * Host
-     */
-    'host' => env('APP_URL'),
-
-    /**
-     * Determines whether the application behaves as an internal module or a third-party app.
-     */
-    'module' => env('PASSPORT_MODULE', false),
-
-    /**
      * OAuth2 Server URL
      */
     'server' => env('PASSPORT_SERVER'),
 
     /**
-     * These cookie names are required if the application is on the same domain.
-     * When you add these names, the app will behave as a module rather than a 
-     * third-party application.
+     * Client ID generated on the OAUTH 2 Server
      */
-    'server_cookie_names' => array_map('trim', explode(',', env('PASSPORT_MODULE_COOKIES_NAMES'))),
+    'server_id' => env('PASSPORT_SERVER_ID') ?: null,
+
+    /**
+     * Host
+     */
+    'host' => env('APP_URL'),
 
     /**
      * Redirect page after login
@@ -42,14 +28,6 @@ return [
      * Login route
      */
     'login' => env('PASSPORT_LOGIN_TO', '/login'),
-
-    //------------------------------THIRD APPLICATION ---------------------------
-    // These credentials are required only if the app is on a different domain.
-
-    /**
-     * Client ID generated on the OAUTH 2 Server
-     */
-    'server_id' => env('PASSPORT_SERVER_ID') ?: null,
 
     /**
      * Prompt to make request for authorization
@@ -63,12 +41,12 @@ return [
     /**
      * Scopes for this clients to provide to the user
      */
-    'scopes' => env('PASSPORT_CLIENT_SCOPES', '*'),
+    'scopes' => env('PASSPORT_CLIENT_SCOPES', ''),
 
     /**
      * Name of cookies to save token jwt and refresh token
      */
-    'jwt_token' => trim(env('PASSPORT_TOKEN', Str::slug(env('APP_NAME', 'passport'), '_') . '_oauth_server')),
+    'jwt_token' => trim(env('PASSPORT_TOKEN_NAME', "passport_server")),
 
     /**
      * Set config for cookies to OAUTH2 Server

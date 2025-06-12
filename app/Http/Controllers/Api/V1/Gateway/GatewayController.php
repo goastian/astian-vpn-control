@@ -3,8 +3,7 @@ namespace App\Http\Controllers\Api\V1\Gateway;
 
 use Illuminate\Http\Request;
 use App\Models\Server\Device;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Response; 
 use App\Models\Security\KeyGenerator;
 use App\Http\Controllers\ApiController;
 use Elyerr\ApiResponse\Exceptions\ReportError;
@@ -44,7 +43,7 @@ class GatewayController extends ApiController
     public function checkAuth(Request $request, Device $device)
     {
         $device = $device->find($request->header('X-Device-ID') ?? null);
-        Log::info("request : {$request->header('Authorization')}  |   id {$request->header('X-Device-ID')}");
+        
         if ($device && $device->id) {
             return response("", 200);
         }
