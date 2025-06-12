@@ -44,18 +44,6 @@
             </div>
 
             <div class="p-4 border border-blue-300 rounded-lg bg-blue-50 shadow-sm">
-                <div class="mb-2">
-                    <label class="block text-sm font-medium text-gray-700">{{ __('Session Lifetime') }}</label>
-                    <input type="text" name="session[table]"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
-                        value="{{ config('session.table') }}">
-                    <small
-                        class="text-gray-500">{{ __('When using the "database" session driver, you may specify the table we should use to manage the sessions') }}</small>
-                </div>
-            </div>
-
-
-            <div class="p-4 border border-blue-300 rounded-lg bg-blue-50 shadow-sm">
                 <h1 class="mb-2">{{ __('Cookie settings') }}</h1>
                 <div class="mb-2">
                     <label class="block text-sm font-medium text-gray-700">{{ __('Session cookie name') }}</label>
@@ -77,15 +65,6 @@
                     </small>
                 </div>
 
-                <div class="mb-2">
-                    <label class="block text-sm font-medium text-gray-700">{{ __('Session Cookie Path') }}</label>
-                    <input type="text" name="session[path]"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-300"
-                        value="{{ config('session.path') }}">
-                    <small class="text-gray-500">
-                        {{ __('The session cookie path determines the path for which the cookie will be regarded as available') }}
-                    </small>
-                </div>
                 <div class="mb-2">
                     <label for="">HTTPS Only Cookies</label>
                     <select name="session[secure]"

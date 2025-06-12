@@ -126,16 +126,14 @@ class Setting extends Master
         //System settings
         settingLoad('system.schema_mode', "https");
         settingLoad('system.home_page', "/");
-        settingLoad('system.csp_enabled', false);
+        settingLoad('system.csp_enabled', true);
         settingLoad('system.redirect_to', "/account");
 
         //Session settings
         settingLoad('session.driver', 'database');
-        settingLoad('session.encrypt', false);
-        settingLoad('session.table', 'sessions');
+        settingLoad('session.encrypt', false); 
         settingLoad('session.cookie', 'vpn_server_session');
-        settingLoad('session.xcsrf-token', 'vpn_server_csrf');
-        settingLoad('session.path', '/');
+        settingLoad('session.xcsrf-token', 'vpn_server_csrf'); 
         settingLoad('session.secure', true);
         settingLoad('session.http_only', true);
         settingLoad('session.partitioned', false);
@@ -236,10 +234,8 @@ class Setting extends Master
     {
         Config::set('session.driver', settingItem('session.driver', 'database'));
         Config::set('session.encrypt', settingItem('session.encrypt', false));
-        Config::set('session.table', settingItem('session.table', 'sessions'));
         Config::set('session.cookie', settingItem('session.cookie', 'vpn_server_session'));
         Config::set('session.xcsrf-token', settingItem('session.xcsrf-token', 'vpn_server_csrf'));
-        Config::set('session.path', settingItem('session.path', '/'));
         Config::set('session.secure', settingItem('session.secure', true));
         Config::set('session.http_only', settingItem('session.http_only', true));
         Config::set('session.partitioned', settingItem('session.partitioned', false));

@@ -41,8 +41,6 @@ class SecureHeaders
      */
     public function ContentSecurityPolicy($nonce): string
     {
-        $host = request()->getHost();
-
         $policies = [
             "base-uri 'self'",
             "script-src 'self' 'nonce-{$nonce}'",

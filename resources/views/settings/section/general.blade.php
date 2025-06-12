@@ -59,6 +59,23 @@
                 <small
                     class="block mt-1 text-gray-600">{{ __('This field specifies the URL of the home page of the application') }}</small>
             </div>
+
+            <div class="mb-4 px-2 py-2">
+                <label for="home_page" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ __('Content security policy') }}
+                </label>
+                <select name="system[csp_enabled]"
+                    class="block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    <option value="" disabled>{{ __('Choose option') }}</option>
+                    <option value="{{ true }}" {{ config('system.csp_enabled') == true ? 'selected' : '' }}>
+                        {{ __('Yes') }}</option>
+                    <option value="{{ false }}" {{ config('system.csp_enabled') == false ? 'selected' : '' }}>
+                        {{ __('No') }}</option>
+                </select>
+                <small class="block mt-1 text-gray-600">
+                    {{ __('This is a feature that helps to prevent or minimize the risk of certain types of security threats.') }}
+                </small>
+            </div>
         </div>
     </div>
 @endsection
