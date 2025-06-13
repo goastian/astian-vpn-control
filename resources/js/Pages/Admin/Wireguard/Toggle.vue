@@ -84,7 +84,7 @@ export default {
             try {
                 const res = await this.$api.put(item.links.toggle);
 
-                if (res.status === 201) {
+                if (res.status === 200) {
                     this.$emit("updated", res.data);
                     this.$q.notify({
                         type: "positive",
