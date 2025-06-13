@@ -6,10 +6,8 @@
                     <q-item>
                         <q-item-section>
                             <q-item-label>{{ user.email }}</q-item-label>
-                            <q-item-label caption
-                                >{{ user.name }}
-                                {{ user.last_name }}</q-item-label
-                            >
+                            <q-item-label caption>{{ user.name }}
+                                {{ user.last_name }}</q-item-label>
                         </q-item-section>
                     </q-item>
                 </q-list>
@@ -23,15 +21,6 @@
                         </q-item-section>
                         <q-item-section>
                             <q-item-label>Dashboard</q-item-label>
-                        </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-ripple @click="myAccount">
-                        <q-item-section avatar>
-                            <q-icon name="mdi-home" />
-                        </q-item-section>
-                        <q-item-section>
-                            <q-item-label>My Account</q-item-label>
                         </q-item-section>
                     </q-item>
 
@@ -71,15 +60,11 @@ export default {
                 if (res.status === 200) {
                     window.location.href = this.$page.props.routes["home"];
                 }
-            } catch (err) {}
+            } catch (err) { }
         },
 
         dashboard() {
             window.location.href = this.$page.props.routes["dashboard"];
-        },
-
-        myAccount() {
-            window.location.href = process.env.MIX_APP_SERVER;
         },
     },
 };
