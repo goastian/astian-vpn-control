@@ -36,6 +36,7 @@ class UserWireguardTransformer extends TransformerAbstract
             'id' => $wg->id,
             'name' => $wg->name,
             'server_country' => $wg->server->country,
+            'data' => locationData($wg->server->ip)
         ];
     }
 }

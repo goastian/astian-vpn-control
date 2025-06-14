@@ -2,17 +2,33 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Models\Server\Wg;
 use App\Http\Controllers\ApiController;
-use App\Transformers\User\UserWireguardTransformer;
+use App\Repositories\Server\WireguardRepository;
 
 class UserWireguardController extends ApiController
 {
+    /**
+     * Repository
+     * @var 
+     */
+    public $repository;
 
-    public function index(Wg $wg)
+    /**
+     * Constructor
+     * @param \App\Repositories\Server\WireguardRepository $wireguardRepository
+     */
+    public function __construct(WireguardRepository $wireguardRepository)
     {
-        $data = $wg->query();
+        parent::__construct();
+        $this->repository = $wireguardRepository;
+    }
 
-        return $this->showAllByBuilder($data, UserWireguardTransformer::class);
+    /**
+     * Show resources for users
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        return $this->repository->searchForUser();
     }
 }

@@ -17,18 +17,13 @@
                     </div>
 
                     <!-- RIGHT STATS -->
-                    <div
-                        class="containerInfoTag row q-gutter-x-lg items-center"
-                    >
+                    <div class="containerInfoTag row q-gutter-x-lg items-center">
                         <div class="row q-gutter-x-sm items-center">
                             <q-icon name="mdi-remote-desktop" />
                             <span>Peers</span>
                             <div class="text-weight-bold">
-                                <span>{{ count }}</span
-                                >/<span v-if="user.id">
-                                    <span v-if="hasGroup('administrator')"
-                                        >10</span
-                                    >
+                                <span>{{ user_plan?.used_devices }}</span>/<span v-if="user.id">
+                                    <span>{{ user_plan?.total_devices }}</span>
                                 </span>
                             </div>
                         </div>
@@ -54,16 +49,9 @@
                 </div>
 
                 <div v-else class="peers q-gutter-y-md">
-                    <v-card-peer
-                        v-for="(item, index) in peers"
-                        :key="index"
-                        :title="item.name"
-                        :server="item.network.server_name"
-                        :network="item.network.name"
-                        :port="item.network.listen_port"
-                        :state="item.active"
-                        :peer="item"
-                    />
+                    <v-card-peer v-for="(item, index) in peers" :key="index" :title="item.name"
+                        :server="item.network.server_name" :network="item.network.name" :port="item.network.listen_port"
+                        :state="item.active" :peer="item" />
                 </div>
             </div>
 
@@ -76,19 +64,10 @@
                     <a href="">See all</a>
                 </div>
 
-                <div
-                    class="instructionsCards grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-                >
-                    <v-card-instruction
-                        v-for="(item, index) in instructions"
-                        :key="index"
-                        :title="item.title"
-                        :description="item.description"
-                        :number="item.number"
-                        :image="item.image"
-                        :btnTitle="item.btnTitle"
-                        :btnUrl="item.btnUrl"
-                    />
+                <div class="instructionsCards grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <v-card-instruction v-for="(item, index) in instructions" :key="index" :title="item.title"
+                        :description="item.description" :number="item.number" :image="item.image"
+                        :btnTitle="item.btnTitle" :btnUrl="item.btnUrl" />
                 </div>
             </div>
         </q-page>
@@ -129,7 +108,9 @@ export default {
     },
     created() {
         this.user = this.$page.props.user;
+        this.user_plan = this.$page.props.user_plan;
     },
+
     mounted() {
         this.getPeers();
     },
@@ -162,6 +143,7 @@ export default {
 .q-card {
     border-radius: 2rem;
 }
+
 .title {
     font-size: 2.8rem;
     line-height: 1.1;
@@ -170,17 +152,21 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .tag-access {
     background-color: var(--green);
     padding: 0.2rem 0.5rem;
     border-radius: 0.4rem;
 }
+
 .containerInfoTag {
     align-self: end;
 }
+
 .instructionsTitle h3 {
     font-size: 1rem;
 }
+
 @media (max-width: 900px) {
     .containerInfoTag {
         align-self: start;

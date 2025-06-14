@@ -28,8 +28,7 @@ class SettingCommand extends Command
      */
     public function handle()
     {
-        Setting::setDefaultKeys();
         $this->info("Default settings uploaded successfully");
-        Log::info("Default settings uploaded successfully");
+        Setting::setDefaultKeys();
     }
 }

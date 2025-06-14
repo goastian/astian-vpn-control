@@ -8,12 +8,7 @@
                         <div class="q-ml-sm">Add Server</div>
                     </div>
                     <div>
-                        <q-btn
-                            dense
-                            flat
-                            icon="close"
-                            @click="dialog = false"
-                        />
+                        <q-btn dense flat icon="close" @click="dialog = false" />
                     </div>
                 </div>
             </q-bar>
@@ -22,54 +17,29 @@
                 <q-form @submit.prevent="createServer">
                     <div class="row q-col-gutter-md">
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.country"
-                                label="Country"
-                                filled
-                                :error="!!errors.country"
-                            />
+                            <q-input v-model="form.country" label="Country" filled :error="!!errors.country" />
                             <v-error :error="errors.country"></v-error>
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.ip"
-                                label="IP Address"
-                                filled
-                                :error="!!errors.ip"
-                            />
+                            <q-input v-model="form.ip" label="IP Address" filled :error="!!errors.ip" />
                             <v-error :error="errors.ip"></v-error>
                         </div>
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.port"
-                                label="GRPC Port"
-                                filled
-                                type="number"
-                                :error="!!errors.port"
-                            />
+                            <q-input v-model="form.port" label="GRPC Port" filled type="number"
+                                :error="!!errors.port" />
                             <v-error :error="errors.port"></v-error>
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.client_port"
-                                label="Client Port"
-                                filled
-                                type="number"
-                                :error="!!errors.client_port"
-                            />
+                            <q-input v-model="form.client_port" label="Client Port" filled type="number"
+                                :error="!!errors.client_port" />
                             <v-error :error="errors.client_port"></v-error>
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.socks5_port"
-                                label="Socks 5 Port"
-                                filled
-                                type="number"
-                                :error="!!errors.socks5_port"
-                            />
+                            <q-input v-model="form.socks5_port" label="Socks 5 Port" filled type="number"
+                                :error="!!errors.socks5_port" />
                             <v-error :error="errors.socks5_port"></v-error>
                         </div>
                     </div>
@@ -78,20 +48,13 @@
 
             <q-card-actions align="right">
                 <q-btn flat label="Close" @click="dialog = false" />
-                <q-btn
-                    label="Save"
-                    :disable="disabled"
-                    color="primary"
-                    @click="createServer"
-                />
+                <q-btn label="Save" :disable="disabled" color="primary" @click="createServer" />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
     <q-btn icon="mdi-server-plus-outline" color="blue" round @click="open">
-        <q-tooltip class="bg-indigo" :offset="[10, 10]"
-            >Add a new server</q-tooltip
-        >
+        <q-tooltip class="bg-indigo" :offset="[10, 10]">Add a new server</q-tooltip>
     </q-btn>
 </template>
 
@@ -115,7 +78,7 @@ export default {
                 ip: "",
                 port: 50051,
             };
-
+            this.errors = {}
             this.dialog = true;
         },
 

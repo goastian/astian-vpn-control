@@ -2,37 +2,22 @@
     <q-dialog v-model="dialog" persistent>
         <q-card style="width: 500px; max-width: 90vw">
             <q-card-section class="row items-center">
-                <q-icon
-                    name="mdi-vpn"
-                    size="28px"
-                    class="q-mr-md text-primary"
-                />
+                <q-icon name="mdi-vpn" size="28px" class="q-mr-md text-primary" />
                 <div class="text-h5">Update WireGuard Interface</div>
             </q-card-section>
 
             <q-separator />
 
             <q-card-section>
-                <q-input
-                    v-model="form.dns"
-                    label="DNS Server"
-                    placeholder="1.1.1.1, 2.3.3.3"
-                    outlined
-                    dense
-                    :error="!!errors.dns"
-                >
+                <q-input v-model="form.dns" label="DNS Server" placeholder="1.1.1.1, 2.3.3.3" outlined dense
+                    :error="!!errors.dns">
                     <template v-slot:error>
                         <v-error :error="errors.dns"></v-error>
                     </template>
                 </q-input>
 
-                <q-checkbox
-                    v-model="form.enable_dns"
-                    label="Enable DNS"
-                    color="orange"
-                    class="col-12"
-                    :error="!!errors.enable_dns"
-                >
+                <q-checkbox v-model="form.enable_dns" label="Enable DNS" color="orange" class="col-12"
+                    :error="!!errors.enable_dns">
                     <template v-slot:error>
                         <v-error :error="errors.enable_dns"></v-error>
                     </template>
@@ -46,9 +31,9 @@
         </q-card>
     </q-dialog>
 
-    <q-btn outline rounded color="primary" icon="mdi-file-edit" @click="open" >
+    <q-btn outline rounded color="primary" icon="mdi-file-edit" @click="open">
         <q-tooltip class="bg-purple text-body2" :offset="[10, 10]">
-          Update DNS
+            Update DNS
         </q-tooltip>
     </q-btn>
 </template>
@@ -76,12 +61,7 @@ export default {
             try {
                 const res = await this.$api.put(
                     this.wg.links.update,
-                    this.form,
-                    {
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded",
-                        },
-                    }
+                    this.form
                 );
 
                 if (res.status === 200) {

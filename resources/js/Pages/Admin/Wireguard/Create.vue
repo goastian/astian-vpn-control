@@ -2,11 +2,7 @@
     <q-dialog v-model="dialog" persistent>
         <q-card style="width: 500px; max-width: 90vw">
             <q-card-section class="row items-center">
-                <q-icon
-                    name="mdi-vpn"
-                    size="28px"
-                    class="q-mr-md text-primary"
-                />
+                <q-icon name="mdi-vpn" size="28px" class="q-mr-md text-primary" />
                 <div class="text-h5">Add WireGuard Interface</div>
             </q-card-section>
 
@@ -15,73 +11,34 @@
             <q-card-section>
                 <div class="row">
                     <div class="col-12 mb-3">
-                        <q-input
-                            v-model="form.name"
-                            label="Name"
-                            outlined
-                            dense
-                        />
+                        <q-input v-model="form.name" label="Name" outlined dense />
                         <v-error :error="errors.name"></v-error>
                     </div>
 
                     <div class="col-12 mb-3">
-                        <q-input
-                            v-model="form.listen_port"
-                            label="Listen Port"
-                            type="number"
-                            outlined
-                            dense
-                        />
+                        <q-input v-model="form.listen_port" label="Listen Port" type="number" outlined dense />
                         <v-error :error="errors.listen_port"></v-error>
                     </div>
 
                     <div class="col-12 mb-3">
-                        <q-input
-                            v-model="form.dns"
-                            label="DNS Server"
-                            placeholder="1.1.1.1, 2.3.3.3"
-                            outlined
-                            dense
-                        />
+                        <q-input v-model="form.dns" label="DNS Server" placeholder="1.1.1.1, 2.3.3.3" outlined dense />
                         <v-error :error="errors.dns"></v-error>
                     </div>
 
                     <div class="col-12 mb-3">
-                        <q-checkbox
-                            v-model="form.enable_dns"
-                            label="Enable DNS"
-                            color="orange"
-                        />
+                        <q-checkbox v-model="form.enable_dns" label="Enable DNS" color="orange" />
                         <v-error :error="errors.enable_dns"></v-error>
                     </div>
 
                     <div class="col-12 mb-3">
-                        <q-select
-                            v-model="form.server_id"
-                            :options="servers"
-                            label="Servers"
-                            option-label="country"
-                            option-value="id"
-                            emit-value
-                            map-options
-                            outlined
-                            dense
-                        />
+                        <q-select v-model="form.server_id" :options="servers" label="Servers" option-label="country"
+                            option-value="id" emit-value map-options outlined dense />
                         <v-error :error="errors.server_id"></v-error>
                     </div>
 
                     <div class="col-12 mb-3">
-                        <q-select
-                            v-model="form.interface"
-                            :options="interfaces"
-                            label="Network Interfaces"
-                            option-label="interface"
-                            option-value="interface"
-                            emit-value
-                            map-options
-                            outlined
-                            dense
-                        />
+                        <q-select v-model="form.interface" :options="interfaces" label="Network Interfaces"
+                            option-label="interface" option-value="interface" emit-value map-options outlined dense />
                         <v-error :error="errors.interface"></v-error>
                     </div>
                 </div>
@@ -89,22 +46,12 @@
 
             <q-card-actions align="right">
                 <q-btn flat label="Close" v-close-popup />
-                <q-btn
-                    color="primary"
-                    label="Save"
-                    @click="createWireguardInterface"
-                />
+                <q-btn color="primary" label="Save" @click="createWireguardInterface" />
             </q-card-actions>
         </q-card>
     </q-dialog>
 
-    <q-btn
-        color="positive"
-        icon="mdi-vpn"
-        class="q-mt-md"
-        @click="openDialog"
-        outline
-    >
+    <q-btn color="positive" icon="mdi-vpn" class="q-mt-md" @click="openDialog" outline>
         <q-tooltip class="bg-purple text-body2" :offset="[10, 10]">
             Add new network
         </q-tooltip>
@@ -157,12 +104,22 @@ export default {
                 if (res.status === 201) {
                     this.dialog = false;
                     this.cleanForm();
+                    this.$q.notify({
+                        type: "positive",
+                        message: "Wireguard network interface created successfully",
+                    });
                     this.$emit("created", res.data.data);
                 }
             } catch (err) {
                 if (err.response && err.response.status == 422) {
                     this.errors = err.response.data.errors;
-                } else {
+                }
+
+                if (err.response?.status == 403 && err.response?.data?.message) {
+                    this.$q.notify({
+                        type: "negative",
+                        message: err.response.data.message
+                    });
                 }
             }
         },
@@ -174,7 +131,7 @@ export default {
                 if (res.status === 200) {
                     this.interfaces = res.data;
                 }
-            } catch (error) {}
+            } catch (error) { }
         },
         async getServers() {
             try {
@@ -184,7 +141,7 @@ export default {
                 if (res.status === 200) {
                     this.servers = res.data.data;
                 }
-            } catch (err) {}
+            } catch (err) { }
         },
     },
 };

@@ -2,52 +2,52 @@
 namespace App\Http\Controllers\Api\V1\Gateway;
 
 use Illuminate\Http\Request;
-use App\Models\Server\Device;
-use Illuminate\Http\Response; 
-use App\Models\Security\KeyGenerator;
 use App\Http\Controllers\ApiController;
-use Elyerr\ApiResponse\Exceptions\ReportError;
+use App\Repositories\Server\DeviceRepository;
+use App\Repositories\Security\KeyGeneratorRepository;
 
 class GatewayController extends ApiController
 {
+    /**
+     * Generator repository
+     */
+    public $key_generator_repository;
 
-    public function __construct()
+    /**
+     * Device repository
+     * @var 
+     */
+    public $device_repository;
+
+    /**
+     * constructor
+     * @param \App\Repositories\Security\KeyGeneratorRepository $keyGeneratorRepository
+     * @param \App\Repositories\Server\DeviceRepository $deviceRepository
+     */
+    public function __construct(KeyGeneratorRepository $keyGeneratorRepository, DeviceRepository $deviceRepository)
     {
-        $this->middleware('server')->only('checkAuth');
+        $this->middleware('server')->except('checkCredentials');
+        $this->key_generator_repository = $keyGeneratorRepository;
+        $this->device_repository = $deviceRepository;
     }
 
     /**
-     * checkCredentials
+     * Validate token authorization
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Security\KeyGenerator $keyGenerator
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
      * @return mixed|\Illuminate\Http\JsonResponse
      */
-    public function checkCredentials(Request $request, KeyGenerator $keyGenerator)
+    public function checkCredentials(Request $request)
     {
-        $token = $request->header('Authorization');
-        if (!empty($token) && $keyGenerator->decrypt($token)) {
-            return $this->message(__("Credentials han been verified successfully"), 200);
-        }
-
-        throw new ReportError(__("Invalid credentials"), 401);
+        return $this->key_generator_repository->validateToken($request);
     }
 
     /**
-     * check auth
+     * Validate device
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Server\Device $device
-     * @throws \Elyerr\ApiResponse\Exceptions\ReportError
-     * @return Response|\Illuminate\Contracts\Routing\ResponseFactory
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
      */
-    public function checkAuth(Request $request, Device $device)
+    public function checkAuth(Request $request)
     {
-        $device = $device->find($request->header('X-Device-ID') ?? null);
-        
-        if ($device && $device->id) {
-            return response("", 200);
-        }
-
-        throw new ReportError("Unauthorized", 401);
+        return $this->device_repository->validateDevice($request);
     }
 }

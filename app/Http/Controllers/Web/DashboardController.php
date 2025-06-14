@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers\Web;
 
+use App\Repositories\Traits\Generic;
 use Inertia\Inertia;
 use App\Models\Setting\Menu;
 use App\Http\Controllers\WebController;
 
 class DashboardController extends WebController
 {
+    use Generic;
     /**
      * Set the user routes for dashboard
      * @var array
@@ -27,6 +29,7 @@ class DashboardController extends WebController
     {
         return Inertia::render("Auth/Home/Dashboard", [
             'user_dashboard_routes' => $this->user_dashboard_routes,
+            'user_plan' => $this->userPlan(),
             'links' => [
                 "peers" => route('api.v1.users.wireguard.peers.index')
             ]
