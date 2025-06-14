@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\Auth\LogoutController;
 
 Route::group([
     "prefix" => "user",
@@ -12,5 +12,5 @@ Route::group([
     Route::get("/wireguard/generator", [DashboardController::class, 'wireguardGenerator'])->name('wireguard.generator');
     Route::get("/wireguard/instruction", [DashboardController::class, 'Instructions'])->name('wireguard.instructions');
 
-    Route::post('/logout', [ApiController::class, 'logout'])->name('logout');
+    Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 });
