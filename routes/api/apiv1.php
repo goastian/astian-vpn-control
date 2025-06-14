@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\User\VpnDeviceController;
 use App\Http\Controllers\Api\V1\Gateway\GatewayController;
 use App\Http\Controllers\Api\V1\User\UserServerController;
+use App\Http\Controllers\Api\V1\User\UserWireguardController;
 use App\Http\Controllers\Api\V1\Admin\Server\ServerController;
 use App\Http\Controllers\Api\V1\User\WireguardDeviceController;
 use App\Http\Controllers\Api\V1\Admin\Wireguard\WireguardController;
