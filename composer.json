@@ -46,7 +46,8 @@
             "Proto\\": "Proto/"
         },
         "files": [
-            "app/Helpers/Settings.php"
+            "app/Helpers/Settings.php",
+             "app/Helpers/GeoHelper.php"
         ]
     },
     "autoload-dev": {
