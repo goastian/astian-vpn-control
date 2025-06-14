@@ -98,7 +98,13 @@ class PeerRepository implements Contracts
          */
         $config[] = "[Interface]";
         $config[] = "PrivateKey = {$keys['private_key']}";
-        $config[] = "ListenPort = {$wireguard_server->listen_port}";
+        /**
+         * Note: The 'ListenPort' directive has been commented out because it is not supported on some platforms.
+         * Certain systems do not allow explicitly setting this parameter in the WireGuard configuration.
+         * Therefore, it is omitted to ensure broader compatibility.
+         */
+        // $config[] = "ListenPort = {$wireguard_server->listen_port}";
+        
         $config[] = "Address =  {$ip_allowed}/32";
         if ($wireguard_server->enable_dns) {
             $config[] = "DNS =  {$dns}";
