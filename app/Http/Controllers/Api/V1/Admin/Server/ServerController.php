@@ -1,17 +1,26 @@
 <?php
 namespace App\Http\Controllers\Api\V1\Admin\Server;
 
-use App\Wrapper\Core;
+use App\Http\Requests\Server\StoreRequest;
+use App\Http\Requests\Server\UpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Server\Server;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ApiController;
-use Elyerr\ApiResponse\Exceptions\ReportError;
+use App\Repositories\Server\ServerRepository;
 
 class ServerController extends ApiController
 {
-    public function __construct()
+    /**
+     * Server repository
+     */
+    public $repository;
+
+    /**
+     * 
+     */
+    public function __construct(ServerRepository $serverRepository)
     {
+        $this->repository = $serverRepository;
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index', 'interfaces');
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index', 'interfaces');
         $this->middleware('scope:administrator_vpn_full,administrator_vpn_create')->only('store');
@@ -21,122 +30,66 @@ class ServerController extends ApiController
     }
 
     /**
-     * Display a listing of the resource.
+     * Display the all resources
+     * @param \Illuminate\Http\Request $request
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
      */
-    public function index(Server $server)
+    public function index(Request $request)
     {
-        //filter params
-        $params = $this->filter_transform($server->transformer);
-
-        $data = $server->query();
-
-        $data = $this->searchByBuilder($data, $params);
-
-        $data = $this->orderByBuilder($data, $server->transformer);
-
-        return $this->showAllByBuilder($data, $server->transformer);
+        return $this->repository->search($request);
     }
 
     /**
-     * create a new resource
+     * Create new resource
+     * @param \Illuminate\Http\Request $request
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
+     */
+    public function store(StoreRequest $request)
+    {
+        return $this->repository->create($request->toArray());
+    }
+
+    /**
+     * Show one resource
+     * @param string $id
+     * @return Server
+     */
+    public function show(string $id)
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
+     * Update resource information
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\Server\Server $server
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @param \App\Repositories\Server\ServerRepository $serverRepository
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
      */
-    public function store(Request $request, Server $server)
+    public function update(UpdateRequest $request, string $id, ServerRepository $serverRepository)
     {
-        $request->validate([
-            'country' => ['required', 'max:190'],
-            'ip' => ['required', 'ipv4'],
-            'port' => ['required', 'max:6'],
-            'client_port' => ['nullable', 'max:5'],
-            'socks5_port' => ['nullable', 'max:5']
-        ]);
-
-        DB::transaction(function () use ($request, $server) {
-
-            $server = $server->fill($request->all());
-
-            $server->save();
-        });
-
-        return $this->showOne($server, $server->transformer, 201);
+        return $serverRepository->update($id, $request->toArray());
     }
 
     /**
-     * show details
+     * Destroy a specific resource
      * @param \App\Models\Server\Server $server
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @param \App\Repositories\Server\ServerRepository $serverRepository
+     * @return \Elyerr\ApiResponse\Assets\JsonResponser
      */
-    public function show(Server $server)
+    public function destroy(Server $server, ServerRepository $serverRepository)
     {
-        return $this->showOne($server, $server->transformer);
+        return $serverRepository->delete($server->id);
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Server $server)
-    {
-        $request->validate([
-            'country' => ['nullable', 'max:190'],
-            'ip' => ['required', 'ipv4'],
-            'port' => ['nullable', 'max:6'],
-            'client_port' => ['nullable', 'max:5'],
-            'socks5_port' => ['nullable', 'max:5']
-        ]);
-
-        DB::transaction(function () use ($request, $server) {
-
-            if (!empty($request->ip)) {
-                $server->ip = $request->ip;
-            }
-
-            if (!empty($request->country)) {
-                $server->country = $request->country;
-            }
-
-            if (!empty($request->port)) {
-                $server->port = $request->port;
-            }
-
-            if (!empty($request->client_port)) {
-                $server->client_port = $request->client_port;
-            }
-
-            if ($request->socks5_port) {
-                $server->socks5_port = $request->socks5_port;
-            }
-            $server->push();
-        });
-
-        return $this->showOne($server, $server->transformer, 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Server $server)
-    {
-        throw_if($server->wgs()->count() > 0, new ReportError(__('Unable to delete this resource because it has assigned dependencies. Please remove any associated resources first.'), 403));
-
-        $server->delete();
-
-        return $this->showOne($server, $server->transformer);
-    }
-
-    /**
-     * show interfaces of interfaces
+     * Show the all physical network interface of the server
      * @param mixed $id
      * @param \App\Models\Server\Server $server
      * @return array{interface: mixed[]}
      */
-    public function interfaces($id, Server $server)
+    public function interfaces($id)
     {
-        $host = $server->findOrFail($id);
-        $core = new Core($host->ip, $host->port);
-
-        $data = $core->networkInterfaces();
-        return $data;
+        return $this->repository->hostNetworkInterfaces($id);
     }
 }

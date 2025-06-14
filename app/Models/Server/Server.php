@@ -3,7 +3,7 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Models\Server\Wg; 
+use App\Models\Server\Wg;
 use App\Transformers\Admin\ServerTransformer;
 
 class Server extends Master
@@ -22,7 +22,6 @@ class Server extends Master
 
     public $fillable = [
         'country',
-        'url',
         'port',
         'ip',
         'client_port',
@@ -37,24 +36,5 @@ class Server extends Master
     public function wgs()
     {
         return $this->hasMany(Wg::class);
-    }
-
-    /**
-     * Show the IP Address 
-     * @return string
-     */
-    public function getIpAddress()
-    {
-        $domain = parse_url($this->url, PHP_URL_HOST);
-        return gethostbyname($domain);
-    }
-
-    /**
-     * get domain
-     * @return array|bool|int|string|null
-     */
-    public function getDomain()
-    {
-        return parse_url($this->url, PHP_URL_HOST);
     }
 }

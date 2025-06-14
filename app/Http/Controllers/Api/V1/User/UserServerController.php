@@ -1,17 +1,35 @@
 <?php
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Models\Server\Server;
-use App\Http\Controllers\ApiController; 
-use App\Transformers\User\UserServerTransformer;
+use App\Http\Controllers\ApiController;
+use App\Repositories\Server\ServerRepository;
 
 
 class UserServerController extends ApiController
 {
-    public function index(Server $server)
-    {
-        $data = $server->query();
 
-        return $this->showAllByBuilder($data, UserServerTransformer::class);
+    /**
+     * Repository
+     * @var 
+     */
+    public $repository;
+
+    /**
+     * constructor
+     * @param \App\Repositories\Server\ServerRepository $serverRepository
+     */
+    public function __construct(ServerRepository $serverRepository)
+    {
+        parent::__construct();
+        $this->repository = $serverRepository;
+    }
+
+    /**
+     * Search server for current user
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    public function index()
+    {
+        return $this->repository->searchForUser();
     }
 }

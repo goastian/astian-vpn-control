@@ -3,7 +3,7 @@
 namespace App\Models\Server;
 
 use App\Models\Master;
-use App\Models\Server\Peer; 
+use App\Models\Server\Peer;
 use App\Transformers\Admin\WgTransformer;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -61,24 +61,6 @@ class Wg extends Master
     public function peers()
     {
         return $this->hasMany(Peer::class);
-    }
-
-    /**
-     * Generate PrivKey
-     * @return string
-     */
-    public function generatePrivKey()
-    {
-        return trim(shell_exec('wg genkey'));
-    }
-
-    /**
-     * Generate a public key
-     * @return string
-     */
-    public function generatePubKey()
-    {
-        return trim(shell_exec("echo {$this->private_key} | wg pubkey"));
     }
 
     /**

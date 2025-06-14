@@ -2,14 +2,28 @@
 
 namespace App\Models\Security;
 
-use Log;
-
 class KeyGenerator
 {
-    public string $path;
+    /**
+     * Path for the key
+     * @var string
+     */
+    private string $path;
+
+    /**
+     * Private key path
+     * @var string
+     */
     private string $privateKeyPath;
+
+    /**
+     * Public key path
+     */
     private string $publicKeyPath;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->path = base_path(config("generator.path", "storage/keys"));
@@ -21,6 +35,11 @@ class KeyGenerator
         }
     }
 
+    /**
+     * Generate pair keys
+     * @param bool $overwrite
+     * @return bool
+     */
     public function generateKeys(bool $overwrite = false): bool
     {
         if (!$overwrite && file_exists($this->privateKeyPath) && file_exists($this->publicKeyPath)) {
@@ -42,6 +61,11 @@ class KeyGenerator
         return true;
     }
 
+    /**
+     * Encrypt data
+     * @param string $data
+     * @return bool|string
+     */
     public function encrypt(string $data): string|false
     {
         if (!file_exists($this->publicKeyPath)) {
@@ -51,7 +75,8 @@ class KeyGenerator
         $publicKey = file_get_contents($this->publicKeyPath);
         $key = openssl_pkey_get_public($publicKey);
 
-        if (!$key) return false;
+        if (!$key)
+            return false;
 
         if (openssl_public_encrypt($data, $encrypted, $key)) {
             return base64_encode($encrypted);
@@ -60,6 +85,11 @@ class KeyGenerator
         return false;
     }
 
+    /**
+     * Decrypt data
+     * @param string $base64Data
+     * @return bool|string
+     */
     public function decrypt(string $base64Data): string|false
     {
         if (!file_exists($this->privateKeyPath)) {
@@ -69,7 +99,8 @@ class KeyGenerator
         $privateKey = file_get_contents($this->privateKeyPath);
         $key = openssl_pkey_get_private($privateKey);
 
-        if (!$key) return false;
+        if (!$key)
+            return false;
 
         if (openssl_private_decrypt(base64_decode($base64Data), $decrypted, $key)) {
             return $decrypted;
@@ -78,13 +109,21 @@ class KeyGenerator
         return false;
     }
 
+    /**
+     * Generate a random token
+     * @return bool|string
+     */
     public function generateToken(): string|false
     {
         $data = json_encode(["iat" => time()]);
-        Log::info($data);
         return $this->encrypt($data);
     }
 
+    /**
+     * Validate token
+     * @param string $encryptedToken
+     * @return bool
+     */
     public function validateToken(string $encryptedToken): bool
     {
         $decrypted = $this->decrypt($encryptedToken);
