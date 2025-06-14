@@ -8,12 +8,7 @@
                         <div class="q-ml-sm">Update Server</div>
                     </div>
                     <div>
-                        <q-btn
-                            dense
-                            flat
-                            icon="close"
-                            @click="dialog = false"
-                        />
+                        <q-btn dense flat icon="close" @click="dialog = false" />
                     </div>
                 </div>
             </q-bar>
@@ -22,55 +17,30 @@
                 <q-form @submit.prevent="updateServer">
                     <div class="row q-col-gutter-md">
                         <div class="row q-col-gutter-md">
-                            <q-input
-                                v-model="form.country"
-                                label="Country"
-                                filled
-                                :error="!!errors.country"
-                            />
+                            <q-input v-model="form.country" label="Country" filled :error="!!errors.country" />
                             <v-error :error="errors.country"></v-error>
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.ip"
-                                label="IP Address"
-                                filled
-                                :error="!!errors.ip"
-                            />
+                            <q-input v-model="form.ip" label="IP Address" filled :error="!!errors.ip" />
                             <v-error :error="errors.ip"></v-error>
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.port"
-                                label="GRPC Port"
-                                filled
-                                type="number"
-                                :error="!!errors.port"
-                            />
+                            <q-input v-model="form.port" label="GRPC Port" filled type="number"
+                                :error="!!errors.port" />
                             <v-error :error="errors.port"></v-error>
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.client_port"
-                                label="Client Port"
-                                filled
-                                type="number"
-                                :error="!!errors.client_port"
-                            />
+                            <q-input v-model="form.client_port" label="Client Port" filled type="number"
+                                :error="!!errors.client_port" />
                             <v-error :error="errors.client_port"></v-error>
                         </div>
 
                         <div class="mb-4 col-12 col-md-6">
-                            <q-input
-                                v-model="form.socks5_port"
-                                label="Port"
-                                filled
-                                type="number"
-                                :error="!!errors.socks5_port"
-                            />
+                            <q-input v-model="form.socks5_port" label="Port" filled type="number"
+                                :error="!!errors.socks5_port" />
                             <v-error :error="errors.socks5_port"></v-error>
                         </div>
                     </div>
@@ -79,12 +49,7 @@
 
             <q-card-actions align="right">
                 <q-btn flat label="Close" @click="dialog = false" />
-                <q-btn
-                    label="Update"
-                    :disable="disabled"
-                    color="primary"
-                    @click="updateServer"
-                />
+                <q-btn label="Update" :disable="disabled" color="primary" @click="updateServer" />
             </q-card-actions>
         </q-card>
     </q-dialog>
@@ -122,7 +87,7 @@ export default {
                     this.form
                 );
 
-                if (res.status === 201) {
+                if (res.status === 200) {
                     this.dialog = false;
                     this.errors = {};
                     this.$emit("updated", res.data.data);
