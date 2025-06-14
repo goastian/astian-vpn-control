@@ -8,7 +8,7 @@ class KeyGenerator
      * Path for the key
      * @var string
      */
-    private string $path;
+    public string $path;
 
     /**
      * Private key path
