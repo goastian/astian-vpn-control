@@ -40,16 +40,23 @@ class WireguardRepository implements Contracts
      */
     public function search(Request $request)
     {
-        $request->merge([
-            'order_type' => 'desc'
-        ]);
-
         $params = $this->filter_transform($this->model->transformer);
 
         $data = $this->model->query();
-        $data = $data->with(['server', 'peers']);
-        $data = $this->searchByBuilder($data, $params);
-        $data = $this->orderByBuilder($data, $this->model->transformer);
+        $data->with(['server', 'peers']);
+
+        // Filter by server
+        if ($request->has('server_id')) {
+            $data->whereHas(
+                'server',
+                function ($query) use ($request) {
+                    $query->where('id', $request->server_id);
+                }
+            );
+        }
+
+        $this->searchByBuilder($data, $params);
+        $this->orderByBuilder($data, $this->model->transformer);
 
         return $this->showAllByBuilder($data, $this->model->transformer);
     }
@@ -61,14 +68,31 @@ class WireguardRepository implements Contracts
      */
     public function create(array $data)
     {
-        $last_subnet = $this->model->latest()->first();
+        // Create query
+        $nets = $this->model->query();
+
+        // Search the all subnets for this server
+        $nets->whereHas(
+            'server',
+            function ($query) use ($data) {
+                $query->where('id', $data['server_id']);
+            }
+        );
+
+        // Retrieve the las subnet registered
+        $last_subnet = $nets->latest()->first();
 
         $network = $this->generateNextSubnet($last_subnet ? $last_subnet->subnet : null);
         $subnet = "{$network['subnet']}/{$network['prefix']}";
         $gateway = "{$network['gateway']}/{$network['prefix']}";
 
-        throw_if($this->model->count() >= 10, new ReportError(__('The limit has been exceeded'), 403));
+        //Limit to 10 subnets to create by server
+        throw_if(
+            $nets->count() >= 10,
+            new ReportError(__('The limit has been exceeded'), 403)
+        );
 
+        // Create subnet
         $model = $this->model->create([
             'name' => $data['name'],
             'slug' => Str::slug($data['name'], "-"),
@@ -83,6 +107,7 @@ class WireguardRepository implements Contracts
             'enable_dns' => $data['enable_dns'],
         ]);
 
+        // Open connectio  with core to mount interface
         $core = new Core($model->server->ip, $model->server->port);
         $core->mountInterface(
             $model->slug,
@@ -93,17 +118,16 @@ class WireguardRepository implements Contracts
             $model->listen_port
         );
 
-
         return $this->showOne($model, $this->model->transformer, 201);
     }
 
     /**
      * Update new resource
      * @param string $id
-     * @param mixed $data
+     * @param array $data
      * @return JsonResponser
      */
-    public function update(string $id, $data)
+    public function update(string $id, array $data)
     {
         $model = $this->model->find($id);
         $model->dns = $data['dns'];

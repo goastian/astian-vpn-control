@@ -1,18 +1,11 @@
 <?php
 namespace App\Http\Controllers\Api\V1\Admin\Wireguard;
 
+use Illuminate\Http\Request; 
+use App\Http\Controllers\ApiController; 
 use App\Http\Requests\Wireguard\StoreRequest;
 use App\Http\Requests\Wireguard\UpdateRequest;
-use App\Repositories\Server\WireguardRepository;
-use App\Wrapper\Core;
-use App\Models\Server\Wg;
-use App\Rules\BooleanRule;
-use App\Models\Server\Peer;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\ApiController;
-use Elyerr\ApiResponse\Exceptions\ReportError;
+use App\Repositories\Server\WireguardRepository;  
 
 class WireguardController extends ApiController
 {
