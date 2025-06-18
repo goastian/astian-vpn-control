@@ -26,7 +26,7 @@ class Server extends Master
         'ip',
         'client_port',
         'socks5_port',
-        'dns'
+        'url'
     ];
 
     /**

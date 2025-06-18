@@ -35,6 +35,7 @@ class UserServerTransformer extends TransformerAbstract
         return [
             "ip" => $server->ip,
             "port" => $server->client_port,
+            'url' => $server->url,
             "data" => locationData($server->ip)
         ];
     }
