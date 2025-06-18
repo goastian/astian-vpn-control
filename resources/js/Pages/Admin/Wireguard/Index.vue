@@ -4,85 +4,143 @@
             <v-nav-bar />
 
             <!-- Header -->
-            <div class="row items-center q-mb-sm">
+            <div class="row items-center q-mb-md">
                 <h6 class="text-h6 text-weight-bold">Network Interfaces</h6>
                 <q-space />
+
+                <!-- Filter by server-->
+                <q-select
+                    v-model="search.server_id"
+                    :options="serverOptions"
+                    option-label="label"
+                    option-value="value"
+                    emit-value
+                    map-options
+                    filled
+                    dense
+                    clearable
+                    use-input
+                    input-debounce="300"
+                    @filter="filterServers"
+                    label="Filter by server"
+                    style="min-width: 250px; max-width: 350px"
+                    class="q-mr-md"
+                >
+                    <template v-slot:prepend>
+                        <q-icon name="mdi-server" />
+                    </template>
+                    <template v-slot:option="scope">
+                        <q-item v-bind="scope.itemProps">
+                            <q-item-section avatar>
+                                <q-icon name="mdi-server-network" />
+                            </q-item-section>
+                            <q-item-section>
+                                <q-item-label>{{
+                                    scope.opt.label
+                                }}</q-item-label>
+                                <q-item-label caption
+                                    >{{ scope.opt.ip }}:{{
+                                        scope.opt.port
+                                    }}</q-item-label
+                                >
+                            </q-item-section>
+                        </q-item>
+                    </template>
+                    <template v-slot:no-option>
+                        <q-item>
+                            <q-item-section class="text-grey">
+                                No servers found
+                            </q-item-section>
+                        </q-item>
+                    </template>
+                </q-select>
+
                 <v-create @created="getWgs" />
             </div>
 
             <!-- Cards Grid -->
-            <div class="row q-col-gutter-sm">
+            <div class="row q-my-sm q-col-gutter-lg">
                 <q-card
                     v-for="(wg, index) in interfaces"
                     :key="index"
-                    class="col-xs-12 col-sm-6 col-md-4"
-                    bordered
+                    class="col-xs-12 col-sm-6 col-md-4 col-lg-3"
                     flat
-                    style="
-                        border-radius: 12px;
-                        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.08);
-                    "
                 >
-                    <q-card-section class="q-pa-sm">
-                        <div class="row items-center">
+                    <!-- Header with gradient -->
+                    <q-card-section class="bg-primary text-white q-pa-sm">
+                        <div class="row items-center no-wrap">
                             <q-icon
                                 name="mdi-server-network"
-                                color="primary"
-                                size="24px"
+                                size="28px"
                                 class="q-mr-sm"
                             />
-                            <div>
-                                <div class="text-subtitle1 text-weight-medium">
-                                    {{ wg.server_country }} ({{ wg.name }})
+                            <div class="ellipsis">
+                                <div
+                                    class="text-subtitle1 text-weight-bold ellipsis"
+                                >
+                                    {{ wg.server_country }}
                                 </div>
-                                <div class="text-caption text-grey-7">
-                                    {{ wg.server_url }}
+                                <div class="text-caption ellipsis">
+                                    {{ wg.name }} • {{ wg.server_url }}
                                 </div>
                             </div>
                         </div>
                     </q-card-section>
 
-                    <q-separator />
-
-                    <q-card-section class="q-pa-sm">
-                        <q-chip
-                            :color="wg.active ? 'green' : 'red'"
-                            text-color="white"
-                            icon="mdi-wifi"
-                            dense
+                    <!-- Status -->
+                    <q-card-section class="q-px-md q-py-sm">
+                        <q-badge
+                            :color="wg.active ? 'positive' : 'negative'"
+                            class="full-width text-center q-py-xs"
+                            :icon="wg.active ? 'mdi-wifi' : 'mdi-wifi-off'"
                         >
-                            {{ wg.active ? "Active" : "Inactive" }}
-                        </q-chip>
+                            {{ wg.active ? "ACTIVE" : "INACTIVE" }}
+                        </q-badge>
                     </q-card-section>
 
-                    <q-card-section class="q-pa-sm">
-                        <div class="row items-center q-gutter-x-sm">
-                            <q-chip color="orange-5" text-color="white" dense>
-                                <q-icon
-                                    name="mdi-portable-network"
-                                    class="q-mr-xs"
-                                />
-                                Port: {{ wg.listen_port }}
-                            </q-chip>
-                            <q-chip color="purple-5" text-color="white" dense>
-                                <q-icon name="mdi-ethernet" class="q-mr-xs" />
-                                {{ wg.interface }}
-                            </q-chip>
-                            <q-chip color="green-5" text-color="white" dense>
-                                <q-icon
-                                    name="mdi-monitor-cellphone-star"
-                                    class="q-mr-xs"
-                                />
-                                Devices {{ wg.devices }}
+                    <!-- Chips information -->
+                    <q-card-section class="q-px-md q-pt-none q-pb-md">
+                        <div class="row q-col-gutter-xs q-mb-sm">
+                            <div class="col-6">
+                                <q-chip
+                                    icon="mdi-portable-network"
+                                    color="orange-5"
+                                    text-color="white"
+                                    class="full-width justify-center"
+                                >
+                                    Port: {{ wg.listen_port }}
+                                </q-chip>
+                            </div>
+                            <div class="col-6">
+                                <q-chip
+                                    icon="mdi-ethernet"
+                                    color="purple-5"
+                                    text-color="white"
+                                    class="full-width justify-center"
+                                >
+                                    {{ wg.interface }}
+                                </q-chip>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <q-chip
+                                icon="mdi-monitor-cellphone-star"
+                                color="green-5"
+                                text-color="white"
+                                class="full-width justify-center"
+                            >
+                                {{ wg.devices }} Device{{
+                                    wg.devices !== 1 ? "s" : ""
+                                }}
                             </q-chip>
                         </div>
                     </q-card-section>
 
-                    <q-separator />
-
-                    <q-card-section class="q-pa-sm">
-                        <q-list dense>
-                            <q-item>
+                    <!-- actions -->
+                    <q-card-section class="q-px-md q-py-sm bg-grey-2">
+                        <q-list dense class="rounded-borders">
+                            <q-item class="q-px-none">
                                 <q-item-section avatar>
                                     <q-icon
                                         name="mdi-ip-network"
@@ -90,13 +148,16 @@
                                     />
                                 </q-item-section>
                                 <q-item-section>
-                                    <q-item-label>Subnet</q-item-label>
-                                    <q-item-label caption>{{
-                                        wg.subnet
-                                    }}</q-item-label>
+                                    <q-item-label class="text-weight-medium"
+                                        >Subnet</q-item-label
+                                    >
+                                    <q-item-label caption class="text-grey-8">
+                                        {{ wg.subnet }}
+                                    </q-item-label>
                                 </q-item-section>
                             </q-item>
-                            <q-item>
+
+                            <q-item class="q-px-none">
                                 <q-item-section avatar>
                                     <q-icon
                                         name="mdi-router-network"
@@ -104,51 +165,68 @@
                                     />
                                 </q-item-section>
                                 <q-item-section>
-                                    <q-item-label>Gateway</q-item-label>
-                                    <q-item-label caption>{{
-                                        wg.gateway
-                                    }}</q-item-label>
+                                    <q-item-label class="text-weight-medium"
+                                        >Gateway</q-item-label
+                                    >
+                                    <q-item-label caption class="text-grey-8">
+                                        {{ wg.gateway }}
+                                    </q-item-label>
                                 </q-item-section>
                             </q-item>
-                            <q-item>
+
+                            <q-item class="q-px-none">
                                 <q-item-section avatar>
                                     <q-icon name="mdi-dns" color="indigo" />
                                 </q-item-section>
                                 <q-item-section>
-                                    <q-item-label>DNS</q-item-label>
-                                    <q-item-label caption>{{
-                                        wg.dns
-                                    }}</q-item-label>
+                                    <q-item-label class="text-weight-medium"
+                                        >DNS</q-item-label
+                                    >
+                                    <q-item-label caption class="text-grey-8">
+                                        {{ wg.dns }}
+                                    </q-item-label>
                                 </q-item-section>
                             </q-item>
-                            <q-item>
+
+                            <q-item class="q-px-none">
                                 <q-item-section avatar>
                                     <q-icon
                                         :name="
                                             wg.enable_dns
-                                                ? 'mdi-check'
-                                                : 'mdi-close'
+                                                ? 'mdi-check-circle'
+                                                : 'mdi-close-circle'
                                         "
-                                        :color="wg.enable_dns ? 'green' : 'red'"
+                                        :color="
+                                            wg.enable_dns
+                                                ? 'positive'
+                                                : 'negative'
+                                        "
                                     />
                                 </q-item-section>
                                 <q-item-section>
-                                    <q-item-label>Enable DNS</q-item-label>
-                                    <q-item-label caption>{{
-                                        wg.enable_dns ? "Yes" : "No"
-                                    }}</q-item-label>
+                                    <q-item-label class="text-weight-medium"
+                                        >DNS Enabled</q-item-label
+                                    >
+                                    <q-item-label caption class="text-grey-8">
+                                        {{
+                                            wg.enable_dns
+                                                ? "Enabled"
+                                                : "Disabled"
+                                        }}
+                                    </q-item-label>
                                 </q-item-section>
                             </q-item>
                         </q-list>
                     </q-card-section>
 
-                    <q-separator />
-
-                    <q-card-actions class="q-pa-sm justify-end">
-                        <v-update @updated="getWgs" :wg="wg" />
-                        <v-reload @updated="getWgs" :wg="wg" />
-                        <v-toggle @updated="getWgs" :wg="wg" />
-                        <v-delete @deleted="getWgs" :wg="wg" />
+                    <!-- actions -->
+                    <q-card-actions
+                        class="q-px-md q-py-sm bg-grey-1 justify-end"
+                    >
+                        <v-toggle @updated="getWgs" :wg="wg" dense flat />
+                        <v-reload @updated="getWgs" :wg="wg" dense flat />
+                        <v-update @updated="getWgs" :wg="wg" dense flat />
+                        <v-delete @deleted="getWgs" :wg="wg" dense flat />
                     </q-card-actions>
                 </q-card>
             </div>
@@ -186,15 +264,31 @@ export default {
     data() {
         return {
             interfaces: [],
+            servers: [],
+            serverOptions: [],
             pages: {
                 total_pages: 0,
             },
             search: {
                 page: 1,
                 per_page: 15,
+                server_id: null,
             },
             links: [],
         };
+    },
+
+    computed: {
+        allServerOptions() {
+            const options = this.servers.map((server) => ({
+                label: server.country,
+                value: server.id,
+                ip: server.ip,
+                port: server.port,
+            }));
+
+            return options;
+        },
     },
 
     watch: {
@@ -207,14 +301,36 @@ export default {
                 this.getWgs();
             }
         },
+        "search.server_id"(value) {
+            this.getWgs();
+        },
     },
 
-    mounted() {
+    created() {
         this.links = this.$page.props.links;
         this.getWgs();
+        this.getServers();
     },
 
     methods: {
+        filterServers(val, update) {
+            if (val === "") {
+                update(() => {
+                    this.serverOptions = this.allServerOptions;
+                });
+                return;
+            }
+
+            update(() => {
+                const needle = val.toLowerCase();
+                this.serverOptions = this.allServerOptions.filter(
+                    (v) =>
+                        v.label.toLowerCase().indexOf(needle) > -1 ||
+                        v.ip.toLowerCase().indexOf(needle) > -1
+                );
+            });
+        },
+
         async getWgs() {
             try {
                 const res = await this.$api.get(this.links["wireguard"], {
@@ -225,8 +341,33 @@ export default {
                     this.interfaces = res.data.data;
                     this.pages = res.data.meta.pagination;
                 }
+            } catch (err) {
+                console.error("Error fetching WGs:", err);
+            }
+        },
+
+        async getServers() {
+            try {
+                const res = await this.$api.get(
+                    this.$page.props.links["servers"],
+                    {
+                        params: {
+                            per_page: 100,
+                        },
+                    }
+                );
+                if (res.status === 200) {
+                    this.servers = res.data.data;
+                    this.serverOptions = this.allServerOptions;
+                }
             } catch (err) {}
         },
     },
 };
 </script>
+
+<style scoped>
+.q-select {
+    border-radius: 8px;
+}
+</style>
