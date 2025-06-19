@@ -301,28 +301,28 @@ export default {
             ],
             deviceColumns: [
                 {
-                    name: "name",
-                    label: "Device Name",
-                    field: "name",
+                    name: "IP Address",
+                    label: "IP Address",
+                    field: "ip",
                     align: "left",
                     sortable: true,
                 },
                 {
-                    name: "browser",
+                    name: "Browser",
                     label: "Browser",
-                    field: "browser",
+                    field: "agent",
                     align: "left",
                 },
                 {
-                    name: "os",
-                    label: "OS",
-                    field: "os",
+                    name: "name",
+                    label: "Name",
+                    field: "name",
                     align: "left",
                 },
                 {
                     name: "last_active",
                     label: "Last Active",
-                    field: "last_active",
+                    field: "created",
                     align: "left",
                 },
                 {
