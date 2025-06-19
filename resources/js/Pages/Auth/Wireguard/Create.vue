@@ -20,18 +20,56 @@
                     <div class="col-12 mb-2">
                         <q-select
                             v-model="form.server_id"
-                            :options="interfaces"
+                            :options="filteredServers"
                             option-value="id"
-                            option-label="name"
                             emit-value
                             map-options
                             filled
                             label="Choose Server"
-                        />
+                            use-input
+                            input-debounce="300"
+                            @filter="filterServers"
+                            clearable
+                        >
+                            <template v-slot:prepend>
+                                <q-icon name="mdi-server" />
+                            </template>
+                            <template v-slot:option="scope">
+                                <q-item v-bind="scope.itemProps">
+                                    <q-item-section avatar>
+                                        <q-icon name="mdi-earth" />
+                                    </q-item-section>
+                                    <q-item-section>
+                                        <q-item-label>{{
+                                            scope.opt.name
+                                        }}</q-item-label>
+                                        <q-item-label caption>{{
+                                            scope.opt.server_country
+                                        }}</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                            </template>
+                            <template v-slot:selected-item="scope">
+                                <span class="q-mr-xs">{{
+                                    scope.opt.name
+                                }}</span>
+                                <q-badge color="blue" text-color="white">
+                                    {{ scope.opt.server_country }}
+                                </q-badge>
+                            </template>
+                            <template v-slot:no-option>
+                                <q-item>
+                                    <q-item-section class="text-grey">
+                                        No servers found
+                                    </q-item-section>
+                                </q-item>
+                            </template>
+                        </q-select>
                         <v-error :error="errors.server_id"></v-error>
                     </div>
                 </div>
 
+                <!-- Resto del código permanece igual -->
                 <div v-if="peer.id" class="column items-center q-gutter-y-md">
                     <span class="text-h6">
                         <strong>Configuration Ready</strong>
@@ -87,6 +125,7 @@ export default {
         return {
             dialog: false,
             interfaces: [],
+            filteredServers: [],
             peer: {},
             form: {
                 name: "",
@@ -94,6 +133,7 @@ export default {
             },
             errors: {},
             qrCode: "",
+            searchTerm: "",
         };
     },
     methods: {
@@ -102,6 +142,24 @@ export default {
             this.getWgs();
             this.qrCode = "";
             this.peer = {};
+        },
+
+        filterServers(val, update) {
+            if (val === "") {
+                update(() => {
+                    this.filteredServers = this.interfaces;
+                });
+                return;
+            }
+
+            update(() => {
+                const needle = val.toLowerCase();
+                this.filteredServers = this.interfaces.filter(
+                    (server) =>
+                        server.name.toLowerCase().includes(needle) ||
+                        server.server_country.toLowerCase().includes(needle)
+                );
+            });
         },
 
         async addPeer() {
@@ -142,8 +200,11 @@ export default {
                 );
                 if (res.status === 200) {
                     this.interfaces = res.data.data;
+                    this.filteredServers = res.data.data;
                 }
-            } catch (err) {}
+            } catch (err) {
+                console.error("Error loading servers:", err);
+            }
         },
 
         generateQRCode(content) {

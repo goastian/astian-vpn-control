@@ -61,7 +61,7 @@ export default {
 
     methods: {
         toggleLeftDrawer() {
-            leftDrawerOpen = !leftDrawerOpen;
+            this.leftDrawerOpen = !this.leftDrawerOpen;
         },
 
         openLink(item) {

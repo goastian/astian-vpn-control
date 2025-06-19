@@ -17,12 +17,15 @@
                     </div>
 
                     <!-- RIGHT STATS -->
-                    <div class="containerInfoTag row q-gutter-x-lg items-center">
+                    <div
+                        class="containerInfoTag row q-gutter-x-lg items-center"
+                    >
                         <div class="row q-gutter-x-sm items-center">
                             <q-icon name="mdi-remote-desktop" />
                             <span>Peers</span>
                             <div class="text-weight-bold">
-                                <span>{{ user_plan?.used_devices }}</span>/<span v-if="user.id">
+                                <span>{{ user_plan?.used_devices }}</span
+                                >/<span v-if="user.id">
                                     <span>{{ user_plan?.total_devices }}</span>
                                 </span>
                             </div>
@@ -49,9 +52,16 @@
                 </div>
 
                 <div v-else class="peers q-gutter-y-md">
-                    <v-card-peer v-for="(item, index) in peers" :key="index" :title="item.name"
-                        :server="item.network.server_name" :network="item.network.name" :port="item.network.listen_port"
-                        :state="item.active" :peer="item" />
+                    <v-card-peer
+                        v-for="(item, index) in peers"
+                        :key="index"
+                        :title="item.name"
+                        :server="item.network.server_name"
+                        :network="item.network.name"
+                        :port="item.network.listen_port"
+                        :state="item.active"
+                        :peer="item"
+                    />
                 </div>
             </div>
 
@@ -64,10 +74,19 @@
                     <a href="">See all</a>
                 </div>
 
-                <div class="instructionsCards grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <v-card-instruction v-for="(item, index) in instructions" :key="index" :title="item.title"
-                        :description="item.description" :number="item.number" :image="item.image"
-                        :btnTitle="item.btnTitle" :btnUrl="item.btnUrl" />
+                <div
+                    class="instructionsCards grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                >
+                    <v-card-instruction
+                        v-for="(item, index) in instructions"
+                        :key="index"
+                        :title="item.title"
+                        :description="item.description"
+                        :number="item.number"
+                        :image="item.image"
+                        :btnTitle="item.btnTitle"
+                        :btnUrl="item.btnUrl"
+                    />
                 </div>
             </div>
         </q-page>
@@ -121,7 +140,7 @@ export default {
             );
         },
         goToPeers() {
-            this.$router.push({ name: "peers" });
+            window.location.href = this.$page.props.routes['wireguard_generator'];
         },
         async getPeers() {
             try {

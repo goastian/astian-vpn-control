@@ -40,8 +40,9 @@ class ServerTransformer extends TransformerAbstract
             'country' => $server->country,
             'ip' => $server->ip,
             'port' => $server->port,
-            'client_port' => $server->client_port,
-            'socks5_port' => $server->socks5_port,
+            'url' => $server->url,
+            'client_port' => $server->client_port ?? 1080,
+            'socks5_port' => $server->socks5_port ?? 1090,
             'created' => $this->format_date($server->created_at),
             'updated' => $this->format_date($server->updated_at),
             'links' => [

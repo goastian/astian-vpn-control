@@ -62,8 +62,9 @@ class ServerRepository implements Contracts
             'country' => $data['country'],
             'port' => $data['port'],
             'ip' => $data['ip'],
-            'client_port' => $data['client_port'] ?? null,
-            'socks5_port' => $data['socks5_port'] ?? null,
+            'url' => $data['url'] ?? null,
+            'client_port' => $data['client_port'] ?? 1080,
+            'socks5_port' => $data['socks5_port'] ?? 1090,
         ]);
 
         return $this->showOne($server, $server->transformer, 201);
@@ -72,10 +73,10 @@ class ServerRepository implements Contracts
     /**
      * Update new resource
      * @param string $id
-     * @param mixed $data
+     * @param array $data
      * @return JsonResponser
      */
-    public function update(string $id, $data)
+    public function update(string $id, array $data)
     {
         $server = $this->model->find($id);
 
@@ -85,6 +86,10 @@ class ServerRepository implements Contracts
 
         if (!empty($data['country'])) {
             $server->country = $data['country'];
+        }
+
+        if (!empty($data['url'])) {
+            $server->url = $data['url'];
         }
 
         if (!empty($data['port'])) {
@@ -111,7 +116,7 @@ class ServerRepository implements Contracts
      */
     public function find(string $id)
     {
-        return $this->model->find($id);
+        return $this->model->with(['wgs'])->find($id);
     }
 
     /**

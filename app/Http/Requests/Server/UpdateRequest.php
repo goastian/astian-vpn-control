@@ -25,6 +25,7 @@ class UpdateRequest extends FormRequest
             'country' => ['nullable', 'max:190'],
             'ip' => ['required', 'ipv4'],
             'port' => ['nullable', 'max:6'],
+            'url' => ['nullable', 'max:100'],
             'client_port' => ['nullable', 'max:5'],
             'socks5_port' => ['nullable', 'max:5']
         ];

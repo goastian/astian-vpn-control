@@ -16,7 +16,8 @@ class Menu
                 "redirect" => route('redirect'),
                 "logout" => route("user.logout"),
                 'home' => route('home'),
-                'dashboard' => route('user.dashboard')
+                'dashboard' => route('user.dashboard'),
+                'wireguard_generator' => route('user.wireguard.generator')
             ],
         ];
     }

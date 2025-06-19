@@ -24,10 +24,10 @@ interface Contracts
     /**
      * Update new resource
      * @param string $id
-     * @param mixed $data
+     * @param array $data
      * @return void
      */
-    public function update(string $id, $data);
+    public function update(string $id, array $data);
 
     /**
      * Retrieve resource by $id

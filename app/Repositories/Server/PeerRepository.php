@@ -90,6 +90,7 @@ class PeerRepository implements Contracts
             'persistent_keepalive' => 25,
             'user_id' => $user->id,
             'wg_id' => $wireguard_server->id,
+            'active' => true
         ]);
 
 
@@ -104,7 +105,7 @@ class PeerRepository implements Contracts
          * Therefore, it is omitted to ensure broader compatibility.
          */
         // $config[] = "ListenPort = {$wireguard_server->listen_port}";
-        
+
         $config[] = "Address =  {$ip_allowed}/32";
         if ($wireguard_server->enable_dns) {
             $config[] = "DNS =  {$dns}";
@@ -120,16 +121,30 @@ class PeerRepository implements Contracts
         // Add configuration to the model
         $model->config = implode("\n", $config);
 
+        // Open connection with core
+        $core = new Core($model->wg->server->ip, $model->wg->server->port);
+        // Mount peer to start service
+        $core->addPeer(
+            $this->user()->id,
+            $model->name,
+            $model->wg->slug,
+            $model->public_key,
+            $model->allowed_ips,
+            $model->wg->getEndpoint(),
+            $model->preshared_key,
+            $model->persistent_keepalive
+        );
+
         return $this->showOne($model, $this->model->transformer, 201);
     }
 
     /**
      * Update new resource
      * @param string $id
-     * @param mixed $data
+     * @param array $data
      * @return void
      */
-    public function update(string $id, $data)
+    public function update(string $id, array $data)
     {
 
     }
