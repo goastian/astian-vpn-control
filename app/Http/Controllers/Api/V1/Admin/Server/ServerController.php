@@ -21,12 +21,12 @@ class ServerController extends ApiController
     public function __construct(ServerRepository $serverRepository)
     {
         $this->repository = $serverRepository;
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index', 'interfaces');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->only('index', 'interfaces');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_create')->only('store');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_show')->only('show');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_update')->only('update', 'toggle');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_destroy')->only('destroy');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view')->only('index', 'interfaces');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view')->only('index', 'interfaces');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:create')->only('store');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:show')->only('show');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:update')->only('update', 'toggle');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:destroy')->only('destroy');
     }
 
     /**
