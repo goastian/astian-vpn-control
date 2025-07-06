@@ -35,7 +35,7 @@ services:
             - public-net
 
     app:
-        image: elyerr/vpn-control:latest
+        image: elyerr/vpn-control:v1.0.0
         restart: always
         ports:
             - "8001:80"
