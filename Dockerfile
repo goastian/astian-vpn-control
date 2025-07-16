@@ -29,6 +29,7 @@ RUN apk add --no-cache \
     php83-bcmath \
     php83-gd \
     php83-intl \
+    php83-iconv \
     nginx \ 
     curl \
     wireguard-tools \
