@@ -1,4 +1,8 @@
-js
-fonts
-css
-mix-manifest.json
+*
+!img
+!.htaccess
+!favicon.png
+!robots.txt
+!index.php
+!robots.txt
+!.dockerignore

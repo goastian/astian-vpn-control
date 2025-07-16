@@ -21,11 +21,8 @@ echo "Installing Node.js dependencies..."
 npm install --no-progress
 
 chown -R www-data:www-data /var/www
+chmod -R 775 /var/www
 chmod 600 secrets/*.pem
-
-echo "Building assets..."
-npm run production
-echo "Node.js build completed successfully."
 
 echo "Starting PHP-FPM..."
 php-fpm83 -D || { echo "Failed to start PHP-FPM"; exit 1; }
