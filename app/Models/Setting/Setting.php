@@ -32,8 +32,8 @@ class Setting extends Master
      */
     public static function defaultSetting()
     {
-        if ($item = config('system.schema_mode', 'https')) {
-            URL::forceScheme($item);
+        if (config('system.schema_mode', 'https') == 'https') {
+            URL::forceScheme("https");
         }
 
         Config::set('app.name', settingItem('app.name', 'VPN Server'));
@@ -124,17 +124,16 @@ class Setting extends Master
         settingLoad('queue.failed.table', 'failed_jobs');
 
         //System settings
-        settingLoad('system.schema_mode', "https");
         settingLoad('system.home_page', "/");
-        settingLoad('system.csp_enabled', true);
+        settingLoad('system.csp_enabled', false);
         settingLoad('system.redirect_to', "/account");
 
         //Session settings
         settingLoad('session.driver', 'database');
-        settingLoad('session.encrypt', false); 
+        settingLoad('session.encrypt', false);
         settingLoad('session.cookie', 'vpn_server_session');
-        settingLoad('session.xcsrf-token', 'vpn_server_csrf'); 
-        settingLoad('session.secure', true);
+        settingLoad('session.xcsrf-token', 'vpn_server_csrf');
+        settingLoad('session.secure', false);
         settingLoad('session.http_only', true);
         settingLoad('session.partitioned', false);
     }
@@ -219,7 +218,6 @@ class Setting extends Master
      */
     public static function getSystemSetting()
     {
-        Config::set('system.schema_mode', settingItem('system.schema_mode', "https"));
         Config::set('system.home_page', settingItem('system.home_page', "/"));
         Config::set('system.cookie_name', settingItem('system.cookie_name', null));
         Config::set('system.csp_enabled', settingItem('system.csp_enabled', false));
@@ -236,7 +234,7 @@ class Setting extends Master
         Config::set('session.encrypt', settingItem('session.encrypt', false));
         Config::set('session.cookie', settingItem('session.cookie', 'vpn_server_session'));
         Config::set('session.xcsrf-token', settingItem('session.xcsrf-token', 'vpn_server_csrf'));
-        Config::set('session.secure', settingItem('session.secure', true));
+        Config::set('session.secure', settingItem('session.secure', false));
         Config::set('session.http_only', settingItem('session.http_only', true));
         Config::set('session.partitioned', settingItem('session.partitioned', false));
     }
