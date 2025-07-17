@@ -1,21 +1,33 @@
 # Changelog
 
-## [Unreleased]
+## 🚧 Unrealized
 
-### 👤 Users
+- 🚀 Migrated Laravel to **12.x** from **11.x**
+- 🔄 Migrate passport connect to **v2.0.1** from **v1.0.16**
+- 🛠️ Fixed setting to deploy in **HTTP environment**
+- 🐳 Optimized **Docker image**
+- 🐞 **Debugbar Integration**: Enabled debugbar for enhanced debugging in development environments.
 
--   **Dashboard**: User overview panel.
--   **Devices**: Displays all browser extensions in use.
--   **Wireguard Generator**: Manage devices using the WireGuard protocol.   
+-------
+## [v1.0.0]
+
+### 👤 User Features
+
+- 📊 **Dashboard**: Intuitive panel to view user activity and status.
+- 🖥️ **Devices**: Complete list of connected browser extensions.
+- 🔐 **WireGuard Generator**: Simple device management using the WireGuard protocol.
+
 ---
 
 ### 🛠️ Admin Panel
 
--   **Server Management**: Add, view, edit, etc servers.
--   **Wireguard Management**: Organize wireguard interfaces   
--   **Settings**:
-    -   **General**: General application configuration.
-    -   **Session**: App session management.
-    -   **Plans**: Configure plans.
-    -   **Redis**: Redis connection configuration *(currently inactive)*.
-    -   **Queue**: Queue service configuration *(currently inactive)*.
+- 🗄️ **Server Management**: Easily add, view, and edit servers.
+- 🌐 **VPN Proxy API Support**: Added compatibility for Firefox browsers to facilitate extension development.
+- 🧩 **WireGuard Management**: Efficient organization of WireGuard interfaces.
+- ⚙️ **Settings**:
+    - 🛠️ **General**: Main application configuration.
+    - 🔑 **Session**: App session management.
+    - 💳 **Plans**: Plan configuration options.
+    - 🗃️ **Redis**: Redis connection settings *(inactive)*.
+    - 📦 **Queue**: Queue service configuration *(inactive)*.
+
