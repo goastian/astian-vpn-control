@@ -4,11 +4,10 @@ namespace App\Repositories\Traits;
 use App\Models\Server\Peer;
 use App\Models\Server\Device;
 use Elyerr\ApiResponse\Exceptions\ReportError;
-use Elyerr\Passport\Connect\Traits\Passport;
+use Elyerr\Passport\Connect\Services\Passport;
 
 trait Generic
 {
-    use Passport;
 
     /**
      * generateNextSubnet
@@ -120,6 +119,8 @@ trait Generic
      */
     public function verifyPlan($user)
     {
+        $passport = app(Passport::class);
+        
         //Retrieve the all vpn device (Wireguard protocol)
         $wireguard = Peer::query();
         $wireguard->where('user_id', $user->id);
@@ -131,7 +132,7 @@ trait Generic
         //Join the all devices
         $total_devices = $devices->count() + $wireguard->count();
 
-        $access = collect($this->access())->pluck('id');
+        $access = collect($passport->access())->pluck('id');
 
         //available plans 
         $plans = [
@@ -193,9 +194,10 @@ trait Generic
      */
     public function userPlan()
     {
-        $user = $this->user();
-
-        $access = collect($this->access())->pluck('id');
+        $passport = app(Passport::class);
+        $user = $passport->user();
+        
+        $access = collect($passport->access())->pluck('id');
 
         //available plans 
         $plans = [

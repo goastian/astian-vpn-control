@@ -8,13 +8,13 @@ use App\Repositories\Traits\Generic;
 use Illuminate\Database\QueryException;
 use App\Repositories\Contracts\Contracts;
 use Elyerr\ApiResponse\Assets\JsonResponser;
-use Elyerr\Passport\Connect\Traits\Passport;
 use Elyerr\ApiResponse\Exceptions\ReportError;
+use Elyerr\Passport\Connect\Services\Passport;
 
 class DeviceRepository implements Contracts
 {
 
-    use JsonResponser, Passport, Generic;
+    use JsonResponser, Generic;
 
     /**
      * 
@@ -24,12 +24,18 @@ class DeviceRepository implements Contracts
 
 
     /**
+     *  * @var \Elyerr\Passport\Connect\Services\Passport $passport
+     */
+    protected $passport;
+
+    /**
      * Constructor
      * @param \App\Models\Server\Device $device
      */
-    public function __construct(Device $device)
+    public function __construct(Device $device, Passport $passport)
     {
         $this->model = $device;
+        $this->passport = $passport;
     }
 
     /**
@@ -40,7 +46,7 @@ class DeviceRepository implements Contracts
     {
         $data = $this->model->query();
 
-        $user = $this->user();
+        $user = $this->passport->user();
 
         $data->where('user_id', $user->id);
 
@@ -54,7 +60,7 @@ class DeviceRepository implements Contracts
      */
     public function create(array $data)
     {
-        $user = $this->user();
+        $user = $this->passport->user();
 
         if (!app()->environment(['local', 'dev'])) {
             //user access

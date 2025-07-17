@@ -20,7 +20,7 @@
     "require": {
         "php": "^8.2",
         "elyerr/api-response": "^1.0",
-        "elyerr/passport-connect": "^1.0",
+        "elyerr/passport-connect": "^2.0",
         "google/protobuf": "^4.30",
         "grpc/grpc": "^1.57",
         "guzzlehttp/guzzle": "^7.0",

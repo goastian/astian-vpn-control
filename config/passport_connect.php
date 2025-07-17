@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Support\Str;
-
 return [
 
+    'environment' => env('APP_ENV'),
     /**
      * OAuth2 Server URL
      */
@@ -12,7 +11,12 @@ return [
     /**
      * Client ID generated on the OAUTH 2 Server
      */
-    'server_id' => env('PASSPORT_SERVER_ID') ?: null,
+    'client_id' => env('PASSPORT_CLIENT_ID') ?: null,
+
+    /**
+     * Client secret
+     */
+    'client_secret' => env('PASSPORT_CLIENT_SECRET') ?: null,
 
     /**
      * Host
@@ -22,7 +26,7 @@ return [
     /**
      * Redirect page after login
      */
-    'redirect_after_login' => env('PASSPORT_REDIRECT_TO', '/'),
+    'redirect_after_login' => env('PASSPORT_REDIRECT_TO', 'user/dashboard'),
 
     /**
      * Login route
@@ -58,6 +62,5 @@ return [
         'secure' => env('PASSPORT_SECURE_COOKIE', true),
         'http_only' => env('PASSPORT_HTTP_ONLY_COOKIE', true),
         'same_site' => env('PASSPORT_SAME_SITE_COOKIE', 'lax'),
-        'partitioned' => env('PASSPORT_PARTITIONED_COOKIE', false),
     ],
 ];
