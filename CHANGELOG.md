@@ -8,6 +8,9 @@
 - 🐳 Optimized **Docker image**
 - 🐞 **Debugbar Integration**: Enabled debugbar for enhanced debugging in development environments.
 
+- 🧬 **VPN Core Compatibility**:    
+    - Compatible with [vpn-core v1.0.1](https://hub.docker.com/r/elyerr/vpn-core)
+
 -------
 ## [v1.0.0]
 
@@ -30,4 +33,7 @@
     - 💳 **Plans**: Plan configuration options.
     - 🗃️ **Redis**: Redis connection settings *(inactive)*.
     - 📦 **Queue**: Queue service configuration *(inactive)*.
+
+- 🧬 **VPN Core Compatibility**:    
+    - Compatible with [vpn-core v1.0.1](https://hub.docker.com/r/elyerr/vpn-core)
 
