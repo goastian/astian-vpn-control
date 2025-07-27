@@ -135,10 +135,10 @@ trait Generic
 
         //available plans 
         $plans = [
-            'commerce_vpn_advanced' => config('vpn.advanced'),
-            'commerce_vpn_intermediate' => config('vpn.intermediate'),
-            'commerce_vpn_basic' => config('vpn.basic'),
-            'commerce_vpn_free' => config('vpn.free'),
+            'commerce:vpn:advanced' => config('vpn.advanced'),
+            'commerce:vpn:intermediate' => config('vpn.intermediate'),
+            'commerce:vpn:basic' => config('vpn.basic'),
+            'commerce:vpn:free' => config('vpn.free'),
         ];
 
         //check user plan
@@ -199,10 +199,10 @@ trait Generic
 
         //available plans 
         $plans = [
-            'commerce_vpn_advanced' => config('vpn.advanced'),
-            'commerce_vpn_intermediate' => config('vpn.intermediate'),
-            'commerce_vpn_basic' => config('vpn.basic'),
-            'commerce_vpn_free' => config('vpn.free'),
+            'commerce:vpn:advanced' => config('vpn.advanced'),
+            'commerce:vpn:intermediate' => config('vpn.intermediate'),
+            'commerce:vpn:basic' => config('vpn.basic'),
+            'commerce:vpn:free' => config('vpn.free'),
         ];
 
         //check user plan

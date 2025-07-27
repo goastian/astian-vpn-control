@@ -9,8 +9,8 @@ class SettingController extends WebController
 
     public function __construct()
     {
-        $this->middleware('scope:administrator_settings_full, administrator_settings_view')->except('update');
-        $this->middleware('scope:administrator_settings_full, administrator_settings_update')->only('update');
+        $this->middleware('scope:administrator:settings:full,administrator:settings:view')->except('update');
+        $this->middleware('scope:administrator:settings:full,administrator:settings:update')->only('update');
     }
 
     /**

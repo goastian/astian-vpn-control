@@ -19,6 +19,10 @@ php artisan settings:upload
 
 echo "Installing Node.js dependencies..."
 npm install --no-progress
+
+chown -R www-data:www-data /var/www
+chmod 600 secrets/*.pem
+
 echo "Building assets..."
 npm run production
 echo "Node.js build completed successfully."

@@ -23,8 +23,8 @@ class AdminDashboardController extends WebController
 
     public function __construct(DashboardRepository $dashboardRepository)
     {
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_dashboard')->only('dashboard');
-        $this->middleware('scope:administrator_vpn_full,administrator_vpn_view')->except('dashboard');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:dashboard')->only('dashboard');
+        $this->middleware('scope:administrator:vpn:full,administrator:vpn:view')->except('dashboard');
         $this->admin_dashboard_routes = Menu::adminRoutes();
         $this->repository = $dashboardRepository;
     }
