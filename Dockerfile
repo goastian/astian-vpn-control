@@ -1,6 +1,5 @@
 FROM alpine:3.20
-
-# Instala dependencias principales
+LABEL maintainer="Elvis Yerel Roman C. <yerel9212@yahoo.es>"
 RUN apk add --no-cache \
     php83 \
     php83-fpm \
