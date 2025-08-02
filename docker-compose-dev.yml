@@ -35,7 +35,7 @@ services:
       - public-net
 
   app:
-    image: elyerr/vpn-control:dev
+    image: astian/vpn-control:dev
     restart: always
     ports:
       - "8091:80"
