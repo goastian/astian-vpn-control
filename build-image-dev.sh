@@ -1,1 +1,1 @@
-docker build --no-cache -t elyerr/vpn-control:dev .
+docker build --no-cache -t astian/vpn-control:dev .

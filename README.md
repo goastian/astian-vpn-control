@@ -18,10 +18,6 @@ Features 🚀
 This project is licensed under the GNU Affero General Public License v3.0. See the [LICENSE](./LICENSE) file for details.
 
 
-## Contact
-
-For direct contact, visit [Telegram](https://t.me/elyerr).
-
 # 🚀 Deploy Setup
 
 This project uses Docker and Laravel for OAuth2 authentication. Follow the steps below to deploy the production environment and create the first user.
@@ -50,7 +46,7 @@ This file contains environment-specific settings for your application. Below is 
 
 - `PASSPORT_SERVER=https://auth.elyerr.xyz`: Base URL of the OAuth2 authentication server.
 - `PASSPORT_SERVER_ID="9e77717c-d78f-4fcc-853d-036135405471"`: OAuth2 client ID used to authenticate this application with the Passport server.
-- `PASSPORT_PROMPT_MODE=none`: Defines the prompt behavior (`none`, `consent`, or `login`).
+- `PASSPORT_PROMPT_MODE=none`: Defines the prompt behavior (`internal`,`none`, `consent`, or `login`).
 - `PASSPORT_DOMAIN_SERVER=".elyerr.xyz"`: Cookie domain scope for passport authentication.
 - `PASSPORT_TOKEN_NAME="passport_server"`: Name of the cookie used to store the access token.
 - `PASSPORT_SECURE_COOKIE=true`: Ensures the cookie is only sent over HTTPS.
