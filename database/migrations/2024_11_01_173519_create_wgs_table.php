@@ -17,13 +17,16 @@ return new class () extends Migration {
             $table->string('subnet', 150)->index();
             $table->string('gateway', 150);
             $table->string('private_key', 150);
-            $table->string('listen_port', 10)->unique(); 
+            $table->string('listen_port', 10)->index(); 
             $table->string('dns', 150)->nullable();
             $table->boolean('active')->default(false)->index();
             $table->boolean('mounted')->default(false)->index();
             $table->string('interface', 100);
-            $table->uuid('server_id');
-            $table->timestamps();
+            $table->uuid('server_id')->index();
+            $table->boolean("enable_dns")->default(false);
+            $table->timestamps();        
+
+            $table->unique(['listen_port', 'server_id']);
         });
     }
 

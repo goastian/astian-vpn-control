@@ -13,10 +13,11 @@ return new class () extends Migration {
         Schema::create('servers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('country');
-            $table->string('url');
+            $table->string('url', 100)->nullable();
             $table->string('port');
             $table->ipAddress('ip');
-            $table->boolean('active')->default(false);
+            $table->string('client_port')->nullable();
+            $table->string('socks5_port')->nullable();
             $table->timestamps();
         });
     }
