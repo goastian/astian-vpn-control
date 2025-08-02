@@ -43,7 +43,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - .env:/var/www/.env
+      - .env:/root/.env
     command: sh -c "/usr/local/bin/laravel-scripts.sh"
     networks:
       - internal-net
