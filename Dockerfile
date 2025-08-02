@@ -1,4 +1,5 @@
 FROM alpine:3.20
+LABEL maintainer="Elvis Yerel Roman C. <yerel9212@yahoo.es>"
 RUN apk add --no-cache \
     php83 \
     php83-fpm \
@@ -27,35 +28,41 @@ RUN apk add --no-cache \
     php83-bcmath \
     php83-gd \
     php83-intl \
-    vim \
-    nginx \
-    npm \
+    php83-iconv \
+    nginx \ 
     curl \
     wireguard-tools \
-    unzip \
     php83-pecl-grpc \
     grpc
 
+# Create user if it doesn't exists
 RUN getent passwd www-data || adduser -S -G www-data -s /usr/sbin/nologin www-data
 
+# Alias php
 RUN ln -sf /usr/bin/php83 /usr/bin/php
+
+# Composer installation
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www/
 
+# Copy directory and configuration files
 COPY . /var/www/
-
-RUN composer install --no-dev --optimize-autoloader
-
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www
-
 COPY docker/www.conf /etc/php83/php-fpm.d/www.conf
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/default.conf /etc/nginx/http.d/default.conf
 COPY docker/laravel-scripts.sh /usr/local/bin/laravel-scripts.sh
 
-RUN chmod 755 /etc/nginx/http.d/default.conf
-RUN chmod 755 /usr/local/bin/laravel-scripts.sh
+RUN chmod 755 /etc/nginx/http.d/default.conf /usr/local/bin/laravel-scripts.sh
 
-EXPOSE 80
+# Install Laravel dependencies
+RUN apk add --no-cache --virtual .build-deps npm unzip \
+    && composer install --no-dev --optimize-autoloader \
+    && composer clear-cache \
+    && npm install \
+    && npm run production \
+    && rm -rf node_modules \
+    && npm cache clean --force \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/* /tmp/* /var/tmp/* \
+    && rm -rf /var/www/docker

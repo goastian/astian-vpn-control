@@ -35,7 +35,7 @@ services:
             - public-net
 
     app:
-        image: elyerr/vpn-control:latest
+        image: elyerr/vpn-control
         restart: always
         ports:
             - "8001:80"
@@ -43,7 +43,7 @@ services:
             db:
                 condition: service_healthy
         volumes:
-            - .env:/var/www/.env
+            - .env:/root/.env
         command: sh -c "/usr/local/bin/laravel-scripts.sh"
         networks:
             - internal-net

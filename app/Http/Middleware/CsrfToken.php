@@ -3,8 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Cookie\CookieValuePrefix;
-use Symfony\Component\HttpFoundation\Cookie;
-use Illuminate\Contracts\Encryption\Encrypter;
+use Symfony\Component\HttpFoundation\Cookie; 
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
 

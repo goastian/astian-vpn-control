@@ -9,12 +9,12 @@ use App\Repositories\Traits\Generic;
 use App\Repositories\Traits\Wireguard;
 use App\Repositories\Contracts\Contracts;
 use Elyerr\ApiResponse\Assets\JsonResponser;
-use Elyerr\Passport\Connect\Traits\Passport;
 use Elyerr\ApiResponse\Exceptions\ReportError;
+use Elyerr\Passport\Connect\Services\Passport;
 
 class PeerRepository implements Contracts
 {
-    use JsonResponser, Passport, Generic, Wireguard;
+    use JsonResponser, Generic, Wireguard;
 
     /**
      * 
@@ -22,13 +22,20 @@ class PeerRepository implements Contracts
      */
     public $model;
 
+
+    /**
+     * @var \Elyerr\Passport\Connect\Services\Passport $passport  
+     */
+    protected $passport;
+
     /**
      * Summary of __construct
      * @param  Peer $server
      */
-    public function __construct(Peer $server)
+    public function __construct(Peer $server, Passport $passport)
     {
         $this->model = $server;
+        $this->passport = $passport;
     }
 
     /**
@@ -41,7 +48,7 @@ class PeerRepository implements Contracts
 
         $data = $this->model->query();
 
-        $data = $data->with(['wg'])->where('user_id', $this->user()->id);
+        $data = $data->with(['wg'])->where('user_id', $this->passport->user()->id);
 
         $data = $this->searchByBuilder($data, $params);
 
@@ -60,7 +67,7 @@ class PeerRepository implements Contracts
         /**
          * Retrieve the user
          */
-        $user = $this->user();
+        $user = $this->passport->user();
 
         //---------check plans --------------------------//
         if (!app()->environment(['local', 'dev'])) {
@@ -125,7 +132,7 @@ class PeerRepository implements Contracts
         $core = new Core($model->wg->server->ip, $model->wg->server->port);
         // Mount peer to start service
         $core->addPeer(
-            $this->user()->id,
+            $this->passport->user()->id,
             $model->name,
             $model->wg->slug,
             $model->public_key,
@@ -201,7 +208,7 @@ class PeerRepository implements Contracts
         } else {
             $model->active = !$model->active;
             $core->addPeer(
-                $this->user()->id,
+                $this->passport->user()->id,
                 $model->name,
                 $model->wg->slug,
                 $model->public_key,

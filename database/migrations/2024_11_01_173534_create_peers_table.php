@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('active')->default(false);
             $table->uuid('user_id')->index();
             $table->uuid('wg_id')->index();
+            $table->boolean('stand_by')->default(false);
             $table->timestamps();
         });
     }

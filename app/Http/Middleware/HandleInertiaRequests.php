@@ -2,18 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use Elyerr\ApiResponse\Exceptions\ReportError;
 use Exception;
 use Inertia\Middleware;
 use App\Models\Setting\Menu;
 use Illuminate\Http\Request;
-use Elyerr\Passport\Connect\Traits\Passport;
+use Elyerr\Passport\Connect\Services\Passport;
 
 class HandleInertiaRequests extends Middleware
 {
-
-    use Passport;
-
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -45,7 +41,8 @@ class HandleInertiaRequests extends Middleware
         $user = null;
 
         try {
-            $user = $this->user();
+            $passport = app(Passport::class);
+            $user = $passport->user();
         } catch (Exception $th) {
         }
 
@@ -74,8 +71,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function checkGroup($user, string $name)
     {
-        return $user ? collect($user->groups)->contains(function ($item) use ($name) {
-            return $item->name === $name;
-        }) : false;
+        if (!$user || !isset($user->groups)) {
+            return false;
+        }
+
+        return collect($user->groups)->contains(function ($item) use ($name) {
+            return $item['slug'] === $name;
+        });
     }
 }

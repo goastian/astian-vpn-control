@@ -1,0 +1,73 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  # Globals keys
+  DOCKER_IMAGE_NAME: "$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
+  TAG: ""  #Override on before_script
+
+docker-build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - |
+      if [[ -n "$CI_COMMIT_TAG" ]]; then
+        export DOCKER_IMAGE_TAG="$CI_COMMIT_TAG"
+      elif [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        export DOCKER_IMAGE_TAG="latest"
+      elif [[ "$CI_COMMIT_BRANCH" == "dev" ]]; then
+        export DOCKER_IMAGE_TAG="dev"
+      else
+        echo "Not a tag or default branch. Skipping image build."
+        exit 0
+      fi
+      echo "Docker image to build: $CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG" .
+    - docker push "$CI_REGISTRY_IMAGE:$DOCKER_IMAGE_TAG"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      exists: [Dockerfile]
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      exists: [Dockerfile]
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+      exists: [Dockerfile]
+
+docker-push-hub:
+  image: docker:latest
+  stage: deploy
+  services:
+    - docker:dind
+  needs:
+    - job: docker-build
+      artifacts: false
+  before_script:
+    - |
+      if [[ -n "$CI_COMMIT_TAG" ]]; then
+        export TAG="$CI_COMMIT_TAG"
+      elif [[ "$CI_COMMIT_BRANCH" == $CI_DEFAULT_BRANCH ]]; then
+        export TAG="latest"
+      elif [[ "$CI_COMMIT_BRANCH" == "dev" ]]; then
+        export TAG="dev"
+      else
+        echo "Not a tag or default branch. Skipping Docker Hub push."
+        exit 0
+      fi
+      echo "Using tag: $TAG"
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  script:
+    - docker pull "$CI_REGISTRY_IMAGE:$TAG"
+    - docker tag "$CI_REGISTRY_IMAGE:$TAG" "$DOCKER_HUB_USER/vpn-control:$TAG"
+    - docker push "$DOCKER_HUB_USER/vpn-control:$TAG"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      exists: [Dockerfile]
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      exists: [Dockerfile]
+    - if: '$CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+      exists: [Dockerfile]
